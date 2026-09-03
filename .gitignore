@@ -1,0 +1,35 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build artefacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+
+# NOTE: .probatio/ is deliberately NOT ignored. It holds committed baselines and
+# judge validation records, which CI must read.
