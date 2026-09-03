@@ -1,0 +1,9 @@
+# Hand-written in Phase 1. The third variant deliberately avoids the word "reading", which is the
+# keyword the demo app matches on, so the demo shows a paraphrase violation on a brittle app.
+case_id: htn-definition
+field: input.question
+generated_by: {provider: human, model: null, created: "2026-09-03", prompt_hash: null}
+variants:
+  - "How does hypertension differ from a single high blood-pressure reading?"
+  - "What does it mean to have high blood pressure, as opposed to one elevated reading at the clinic?"
+  - "Is one elevated blood-pressure measurement the same thing as having hypertension?"

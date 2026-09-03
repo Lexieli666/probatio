@@ -7,7 +7,7 @@ with phase N's code.
 ## Phases
 
 - [x] **Phase 0** — Scaffolding, tooling, CI, `PROGRESS.md`, PyPI name check (spec §2)
-- [ ] **Phase 1** — `examples/demo_suite/` as the executable design spec (spec §4)
+- [x] **Phase 1** — `examples/demo_suite/` as the executable design spec (spec §4)
 - [ ] **Phase 2** — Foundations, `LLMCase`, YAML loader, providers (spec §3.1–3.3)
 - [ ] **Phase 3** — Assertions and the similarity backend (spec §3.4)
 - [ ] **Phase 4** — Judge, Cohen's kappa, validation records, `validate-judge` (spec §3.5, §3.13)
@@ -33,3 +33,13 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   (`examples/demo_suite/` byte-identity) is not yet applicable: the demo suite is created in
   Phase 1. Distribution name fixed to `probatio-llm` (DECISIONS 1). Local interpreter is
   Python 3.13.5; CI covers 3.11 and 3.12 (DECISIONS 4).
+- 2026-09-03 — **Phase 1** — gate green: `pytest -q` 7 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples`; `mypy --strict src/probatio` clean (3 source files).
+  `examples/demo_suite/` is committed exactly as drafted: it was already ruff-clean and already
+  satisfied the scripted-keyword invariant, so no line of it changed. Ten cases, two
+  frozen variant files, four test functions, the `collect_ignore` import guard still in place, so
+  `pytest --collect-only examples/demo_suite` reports 0 items and 0 errors until Phase 9.
+  `tests/test_demo_spec.py` adds the collection check, the byte-identity check against this commit
+  and the scripted-keyword invariant; `tests/conftest.py` enables `pytester`. Gate condition 5 is
+  live from this commit onward. DECISIONS 5–10; `docs/DESIGN.md` Phase 1.

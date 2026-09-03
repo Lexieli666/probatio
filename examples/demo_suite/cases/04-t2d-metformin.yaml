@@ -1,0 +1,19 @@
+id: t2d-metformin
+input:
+  question: "An adult has just been diagnosed with type 2 diabetes and has normal kidney function. Which medication do the documents name as the usual starting drug?"
+  documents:
+    - "Metformin is the usual initial medication for type 2 diabetes when kidney function is adequate, alongside lifestyle changes."
+    - "Metformin should not be started when kidney function is severely reduced."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: medication, red_flag: false, keyword: starting}
+assertions:
+  - {type: contains, any: ["metformin"]}
+  - {type: not_contains, all: ["I don't know"]}
+  - type: similarity
+    reference: "Metformin is the usual first medication for type 2 diabetes if kidney function is adequate, along with lifestyle changes."
+    tau: 0.35
+  - {type: judge, rubric: faithfulness, threshold: 1.0}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
+snapshot: scores
+tags: [paraphrase]

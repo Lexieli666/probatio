@@ -1,0 +1,16 @@
+# Answered by the ScriptedProvider in conftest.py, which fails the first of five calls.
+# snapshot stays off: under --runs the snapshot compares the first run, which is the failing one.
+id: flu-antivirals-flaky
+input:
+  question: "Which antiviral drugs do the documents mention for influenza, and when should they be given?"
+  documents:
+    - "Oseltamivir and other neuraminidase inhibitors are the antivirals used for influenza."
+    - "Antiviral treatment works best when started within 48 hours of symptom onset and is recommended regardless of timing for people at high risk of complications."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: medication, red_flag: false}
+assertions:
+  - {type: contains, any: ["oseltamivir", "neuraminidase"]}
+  - {type: not_contains, all: ["I don't know"]}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
+tags: [flaky]

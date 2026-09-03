@@ -1,0 +1,14 @@
+id: gerd-alarm-features
+input:
+  question: "Which symptoms alongside heartburn are alarm features that need prompt evaluation?"
+  documents:
+    - "Alarm features in a patient with reflux symptoms include difficulty swallowing, unintentional weight loss, vomiting, and signs of bleeding."
+    - "Uncomplicated heartburn without alarm features can be managed with lifestyle measures and a trial of acid suppression."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: general_health, red_flag: false, keyword: alarm}
+assertions:
+  - {type: contains, all: ["swallowing", "weight loss", "bleeding"]}
+  - {type: not_contains, all: ["I don't know"]}
+  - {type: judge, rubric: faithfulness, threshold: 1.0}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}

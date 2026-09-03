@@ -1,0 +1,19 @@
+id: t2d-screening-json
+input:
+  question: "Return JSON with keys screen (boolean) and start_age (integer): should an adult with obesity be screened for type 2 diabetes, and from what age?"
+  documents:
+    - "Adults aged 35 to 70 who have overweight or obesity should be screened for type 2 diabetes."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question. Reply with JSON only when the question asks for JSON."
+params: {temperature: 0}
+metadata: {category: general_health, red_flag: false, keyword: start_age}
+assertions:
+  - type: schema_valid
+    schema:
+      type: object
+      required: [screen, start_age]
+      properties:
+        screen: {type: boolean}
+        start_age: {type: integer}
+      additionalProperties: false
+  - {type: not_contains, all: ["I don't know"]}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
