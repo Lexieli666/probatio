@@ -1,0 +1,92 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "probatio-llm"
+dynamic = ["version"]
+description = "A pytest plugin for regression-testing LLM applications: metamorphic relations and flakiness statistics."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Yichen Li", email = "lexieli@seas.upenn.edu" }]
+keywords = ["pytest", "llm", "testing", "metamorphic-testing", "regression-testing"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Framework :: Pytest",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+  "Typing :: Typed",
+]
+dependencies = [
+  "pytest>=8",
+  "pydantic>=2",
+  "jsonschema>=4",
+  "PyYAML>=6",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.40"]
+dev = [
+  "ruff",
+  "mypy",
+  "coverage",
+  "types-PyYAML",
+  "types-jsonschema",
+  "build",
+  "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/Lexieli666/probatio"
+Repository = "https://github.com/Lexieli666/probatio"
+
+[project.entry-points.pytest11]
+probatio = "probatio.plugin"
+
+[project.scripts]
+probatio = "probatio.cli:main"
+
+[tool.hatch.version]
+path = "src/probatio/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/probatio"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/probatio", "tests", "README.md", "LICENSE", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests", "examples/demo_suite"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D"]
+"examples/**" = ["D"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src/probatio"]
+
+[tool.coverage.run]
+source = ["src/probatio"]
+
+[tool.coverage.report]
+show_missing = true
