@@ -1,0 +1,19 @@
+id: htn-definition
+input:
+  question: "What is high blood pressure, and how is it different from one high reading?"
+  documents:
+    - "Hypertension is persistently raised arterial pressure, confirmed on repeated visits or by out-of-office monitoring."
+    - "A single elevated clinic measurement is a measurement, not a diagnosis; it should be repeated before hypertension is diagnosed."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: general_health, red_flag: false, keyword: reading}
+assertions:
+  - {type: contains, any: ["persistently", "over time", "sustained", "repeated"]}
+  - {type: not_contains, all: ["I don't know"]}
+  - type: similarity
+    reference: "Hypertension is sustained high blood pressure confirmed on repeated measurements; a single high value is not a diagnosis."
+    tau: 0.35
+  - {type: judge, rubric: faithfulness, threshold: 1.0}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
+snapshot: scores
+tags: [paraphrase]

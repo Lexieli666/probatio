@@ -1,0 +1,13 @@
+# A bare-string input with no documents: every relation that names a field under input.*
+# reports "not applicable" here, which is a result, not a zero.
+id: copd-spirometry
+input: "In one sentence, what test confirms a diagnosis of COPD?"
+params: {temperature: 0}
+metadata: {category: general_health, red_flag: false, keyword: confirms}
+assertions:
+  - {type: contains, any: ["spirometry"]}
+  - type: similarity
+    reference: "COPD is confirmed by spirometry demonstrating airflow obstruction."
+    tau: 0.30
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
+tags: [no-documents]

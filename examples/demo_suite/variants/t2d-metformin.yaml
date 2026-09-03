@@ -1,0 +1,8 @@
+# Hand-written in Phase 1. Every variant keeps the keyword "starting" outside the first sentence.
+case_id: t2d-metformin
+field: input.question
+generated_by: {provider: human, model: null, created: "2026-09-03", prompt_hash: null}
+variants:
+  - "For a newly diagnosed adult with type 2 diabetes and normal kidneys, what is the usual starting medication according to the documents?"
+  - "Someone was just diagnosed with type 2 diabetes; their kidneys work normally. What starting drug do the documents mention?"
+  - "Which drug do the documents describe as the usual starting treatment for a new type 2 diabetes diagnosis when kidney function is normal?"

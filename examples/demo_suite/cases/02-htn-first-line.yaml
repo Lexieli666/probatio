@@ -1,0 +1,16 @@
+id: htn-first-line
+input:
+  question: "Which treatments are first-line for newly diagnosed hypertension without other conditions?"
+  documents:
+    - "Lifestyle measures (sodium reduction, weight loss, regular activity) are recommended for everyone with hypertension."
+    - "Thiazide-type diuretics are among the recommended initial drug classes for uncomplicated hypertension."
+    - "ACE inhibitors, angiotensin receptor blockers and calcium channel blockers are also recommended initial classes."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: general_health, red_flag: false, keyword: first-line}
+assertions:
+  - {type: contains, all: ["lifestyle", "thiazide"], any: ["ACE inhibitor", "angiotensin"]}
+  - {type: not_contains, all: ["I don't know"]}
+  - {type: judge, rubric: faithfulness, threshold: 1.0}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
+snapshot: scores

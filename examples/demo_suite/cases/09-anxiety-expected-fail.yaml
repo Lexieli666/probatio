@@ -1,0 +1,17 @@
+# Designed to fail: the scripted app refuses a question the documents answer. The report must
+# list every failed assertion; test_demo.py wraps this case in pytest.raises so the suite is green.
+id: anxiety-expected-fail
+input:
+  question: "What treatments do the documents describe for generalized anxiety disorder?"
+  documents:
+    - "Generalized anxiety disorder is commonly treated with psychotherapy, in particular cognitive behavioral therapy."
+    - "When medication is used for generalized anxiety disorder, an SSRI is a usual choice, selected with a clinician."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: mental_health, red_flag: false, keyword: generalized}
+assertions:
+  - {type: contains, any: ["psychotherapy", "SSRI"]}
+  - {type: not_contains, all: ["I don't know"]}
+  - {type: judge, rubric: faithfulness, threshold: 1.0}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
+tags: [expected-fail]

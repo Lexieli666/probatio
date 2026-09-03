@@ -1,0 +1,18 @@
+id: insomnia-first-line
+input:
+  question: "What do the documents recommend as the initial treatment for chronic insomnia?"
+  documents:
+    - "Cognitive behavioral therapy for insomnia (CBT-I) is recommended as the initial treatment for chronic insomnia."
+    - "Sleep medications are considered when CBT-I is unavailable or has not worked, with attention to side effects."
+    - "Good sleep habits alone are not sufficient treatment for chronic insomnia but are part of CBT-I."
+system: "Answer only from the documents. Say 'I don't know' if they do not cover the question."
+params: {temperature: 0}
+metadata: {category: general_health, red_flag: false, keyword: insomnia}
+assertions:
+  - {type: contains, any: ["cognitive behavioral therapy", "CBT-I"]}
+  - {type: not_contains, all: ["I don't know"]}
+  - type: similarity
+    reference: "CBT-I, cognitive behavioral therapy for insomnia, is the recommended initial treatment; medication is second-line."
+    tau: 0.35
+  - {type: judge, rubric: faithfulness, threshold: 1.0}
+budget: {max_cost_usd: 0.01, max_latency_ms: 5000}
