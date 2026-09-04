@@ -905,3 +905,234 @@ different things, which is the one thing a cassette key may never do.
   would have left the other two copies to be made a third time and then factored later; and
   putting the helpers in `hashing.py`, which is the other module everything already imports but
   is about identity, not persistence.
+
+## 47. `order_invariant` samples shuffles under a computed ceiling, rather than enumerating
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** Spec §3.9 asks for "up to `k` distinct non-identity permutations" seeded from
+  `random.Random(stable_hash((case.id, field)))`. A seeded shuffle can return the identity or a
+  repeat, and asking for `k=3` permutations of a two-element list — which spec §3.9's own
+  acceptance criterion does — can only ever yield one. How does the loop know when to stop?
+- **A:** Compute the number of distinct non-identity orderings first and take `min(k, ceiling)`.
+  The count is `n! / ∏(duplicate counts!) − 1`, computed exactly for lists of up to ten items and
+  treated as unbounded above that, since no realistic `k` approaches `11!`. Duplicated items are
+  divided out through `canonical_json`, so `["a", "a", "b"]` reports two orderings, not five. Then
+  shuffle until that many distinct non-identity orderings have been seen, with a budget of
+  `200 × k` attempts as a backstop.
+- **Why:** The ceiling is what makes the two-element acceptance criterion a property of the code
+  rather than of luck: without it the loop either spins to its attempt budget on every short list
+  or returns fewer variants for a reason no reader could predict. Dividing out duplicates matters
+  because a retrieval-grounded suite really does have cases with two identical documents, and
+  "3 variants, 0 violations" over a list with two distinct orderings would be a rate over a
+  variant that was never generated. Rejected alternative: enumerating `itertools.permutations` and
+  sampling from it, which is exact and correct up to about eight items and then allocates
+  factorially; a hybrid of the two code paths costs more to read than the ceiling does.
+
+## 48. Variant labels are fixed strings the relation chooses, not indices from the caller
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** `Variant(case, label)` gives every variant a label, and `Flip` reports it. Who names
+  them?
+- **A:** The relation, from its own configuration: `permutation-1..k`,
+  `distractor-<position>-<index>`, the jitter kind itself (`whitespace`, `casing`, `markdown`),
+  and `paraphrase-1..k`. No label is derived from a position in a list the plugin holds.
+- **Why:** A label is what a report and a results JSON identify a violation by, so it has to mean
+  the same thing in two runs and in two reports. `format_jitter`'s labels being the kind names is
+  the point of the example: "casing flipped this case" is a diagnosis, where "variant 2 flipped
+  this case" is a lookup. Rejected alternative: numbering every variant uniformly, which is one
+  line shorter and makes the most useful relation's output unreadable.
+
+## 49. `changed_assertions` names each type once, and a length mismatch truncates
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** Spec §3.9's `Flip.changed_assertions` "names the assertion types whose passed flag
+  differed". A case may declare two assertions of the same type, and a defensive reader has to ask
+  what happens if the two result lists are not the same length.
+- **A:** Types are reported once each, in declaration order, first occurrence first. The two lists
+  are compared position by position with `zip(..., strict=False)`, so a mismatch truncates rather
+  than raising.
+- **Why:** A variant is the same case with one field replaced, so the lists are always the same
+  length and the `strict=False` branch is unreachable by construction — but "unreachable by
+  construction" is exactly the kind of claim that stops being true, and spec §3.9 promises that a
+  relation violation never raises. Truncating loses a line of a report; raising would turn a
+  robustness observation into a failed test. Reporting a type once rather than per assertion keeps
+  the field a diagnosis of *what kind* of check moved, which is what a reader of the flips table
+  wants. Rejected alternatives: `strict=True`, which trades a readable report for an exception at
+  the worst moment; and reporting `assertion_type[index]` pairs, which is more precise and reads
+  like a stack trace.
+
+## 50. `distractor_robust` makes one variant per position and distractor
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** The relation takes a list of distractors and a tuple of positions. Is a variant one
+  distractor at one position, or every distractor at one position?
+- **A:** One variant per `(position, distractor)` pair, positions outer and distractors inner, so
+  two distractors at two positions is four variants.
+- **Why:** A violation rate is only actionable if a violation names one change. With every
+  distractor inserted at once, a flip says "some irrelevant text at the start moved the verdict"
+  and the developer has to bisect the list by hand; per pair, the label says which text at which
+  end. It also makes the rate's denominator equal to the number of things actually varied.
+  Rejected alternative: inserting the whole list per position, which is two variants instead of
+  four for the demo suite and would report `distractor-start` as a single opaque failure.
+
+## 51. The demo README's casing claim holds for three of its five candidate cases, and cannot hold for the other two
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** `examples/demo_suite/README.md` says of `format_jitter`: "Upper-casing the first sentence
+  destroys the keyword when it is in that sentence, so those cases flip; the two cases whose
+  keyword sits in a second sentence (`t2d-metformin`, `red-flag-chest-pain`) do not." Measured,
+  the casing variant flips `htn-definition`, `htn-first-line` and `t2d-screening-json` — and not
+  `gerd-alarm-features` or `insomnia-first-line`, whose keywords are in their questions' first
+  sentences. Is the implementation wrong?
+- **A:** No, and no implementation can make those two flip. The demo applies
+  `format_jitter(field="input.question")`, so the transform reaches the question and nothing else;
+  the scripted provider matches its keyword against the **whole prompt**, which the app builds
+  from the documents *and* the question. `gerd-alarm-features` has "alarm" in its second document
+  ("without alarm features") and `insomnia-first-line` has "insomnia" in two of its three, both in
+  lower case. Upper-casing the question removes the keyword from the question and leaves it in the
+  prompt, so the provider still matches, the answer is unchanged and the verdict cannot move. The
+  README's sentence is true of the question and overstates its consequence for the prompt; the
+  frozen directory is not edited (gate condition 5), the measured outcome is asserted in
+  `tests/test_metamorphic_demo.py`, and a test named for these two cases pins the reason — keyword
+  in the question's first sentence, keyword also in a document, no flip — so the discrepancy is
+  recorded in the suite rather than in prose.
+- **Why:** The alternative readings all cost more than they are worth. Making the two cases flip
+  would need `format_jitter` to jitter fields the decorator was not given, which contradicts the
+  `field=` argument the demo passes and DECISIONS 8's whole notion of a relation's target.
+  Weakening the test to assert only "at least three cases flip" would let a future regression in
+  `upper_first_sentence` pass unnoticed. Editing the README is forbidden and, in any case, the
+  README's mechanism claim is the useful half: the three cases whose keyword is unique to the
+  question do flip, exactly as it says they should. The correction itself is written down where a
+  reader of the demo will meet it, in an "Errata for `demo_suite/README.md`" section of
+  `examples/README.md`, which is tracked and outside the frozen directory; a test asserts that the
+  section names both cases and both pinning tests, so renaming a test cannot orphan the errata.
+
+## 52. A frozen variants file with fewer entries than `k` is used as it stands
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** `paraphrase_invariant(k=3)` reads paraphrases from `variants/<case_id>.yaml`. What if the
+  file holds two?
+- **A:** It is measured over two, and the `RelationResult` reports `n_variants: 2`. Only an empty
+  `variants` list is an error, and it is a `MissingVariantsError` — "the file exists but holds no
+  variants" — carrying the same `probatio freeze-variants` command with `--force`, since a file is
+  already there and has to be replaced rather than created. Identity is still strict: a `case_id`
+  or a `field` that disagrees with the relation remains a `ProbatioConfigError`.
+- **Why:** A short file is the normal outcome of the review the frozen file exists for, not
+  damage. The runbook's Phase 12 instructs the human freezing paraphrases against a live model to
+  **delete the ones that changed the meaning of the question and note the deletion in the file's
+  header comment**; a relation that then refused to run would punish exactly the care the workflow
+  asks for, and the only way to satisfy it would be to re-freeze until a model happened to return
+  three usable rewordings — which is generation pressure applied to a human, in the one place the
+  design deliberately puts a human. Two variants honestly labelled as two are a smaller
+  measurement than three, not a wrong one, which is what reporting `n_variants` alongside the rate
+  is for. An empty list is different in kind: nothing was varied, so there is no measurement at
+  all, and that is the same statement `MissingVariantsError` already makes about a file that is
+  not there. **Rejected alternative, and this entry's first answer:** refusing a file with fewer
+  than `k` entries as a `ProbatioConfigError`, on the grounds that a suite declaring `k=3` and a
+  report quoting a rate over two entries disagree with nothing saying so. That reasoning holds
+  only if `n_variants` is hidden; it is in `RelationResult`, in the results JSON and in the
+  relations table, so the disagreement is visible wherever the rate is. Also rejected: silently
+  padding with the entries that were deleted, which would resurrect the paraphrases the reviewer
+  judged unusable, and warning-but-continuing, which adds a line nobody can act on to every run of
+  a file that is exactly as its author left it.
+
+## 53. The `freeze-variants` hint in a missing-variants error names the sibling `cases/` directory
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** Spec §3.9 requires the `MissingVariantsError` message to contain the exact
+  `probatio freeze-variants --cases … --field … --provider claude-cli` command. A relation knows
+  its field and its variants directory, but nothing gives it the `--cases` directory: that
+  argument is passed to `load_cases` in the user's test module, not to the decorator.
+- **A:** Name `<variants_dir>/../cases`, the layout spec §5 documents and the demo suite uses, and
+  fill in `--k` and `--out` from the relation so the whole line is runnable as printed.
+- **Why:** A command a user can run and correct beats a placeholder they have to decode; if the
+  guess is wrong, the wrong half is a visible directory path in a shell line, not a silent
+  default. Passing the cases directory into the decorator was rejected: it would put the same path
+  in two places in every user's test module and make the decorator's signature depend on how the
+  cases happened to be loaded.
+
+## 54. `--provider fake` bypasses the provider entirely, and tests reach the model path by replacing the factory
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** Spec §3.13 says `freeze-variants --provider fake` writes "mechanical rewrites" and warns
+  they are not paraphrases. It also says tests exercise the command through a `FakeProvider`.
+  Those are two different things through one flag.
+- **A:** They stay two things. `--provider fake` calls nothing at all: it writes rewrites whose
+  provenance reads `provider: mechanical`, `model: null`, `prompt_hash: null`, and prints
+  `MECHANICAL_WARNING` on standard error. The model path is tested by naming a real provider and
+  monkeypatching `cli.build_provider`, which is the seam `validate-judge --run-judge`'s tests
+  already use (DECISIONS 26's neighbourhood).
+- **Why:** Writing `provider: fake` into a committed file would claim a provider produced text
+  that no provider saw, and the file is the artefact a reviewer trusts; `mechanical` is the honest
+  word and it is visible in the file as well as on the terminal. Testing the model path through
+  the factory rather than through the flag keeps one code path in the command instead of two, and
+  means the tested path is the one a human actually runs. Rejected alternative: a `provider=`
+  argument on the command function, which is a second seam for the same purpose and diverges from
+  how `validate-judge` is already tested.
+
+## 55. A `--field` that resolves on no case is a mistake in the flag, not an empty batch
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** A directory of cases is normally mixed: `copd-spirometry` has a bare-string input and no
+  `input.question`. Skipping it is right (DECISIONS 8's reasoning). What if *every* case is
+  skipped?
+- **A:** A case without the field is skipped with a printed note; if no case has it, that is a
+  `ProbatioConfigError` naming the field and the directory.
+- **Why:** `get_field` already refuses a path whose first segment is not an `LLMCase` field
+  (DECISIONS 13), but `--field input.quesion` gets past that and resolves on nothing, so the
+  command would print ten skips and exit 0 having frozen nothing. Since a person runs this once,
+  with a model, and then commits the result, "nothing to do" is the one outcome that must not look
+  like success. Rejected alternative: exiting 0 with a summary line, which is consistent with
+  every other count the command prints and turns a typo into a silent no-op.
+
+## 56. `check_field_path` and `write_yaml` are lifted into the modules that already own their rule
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** A relation validates its `field` argument at construction time, before any case exists,
+  and the rule for a well-formed dotted path already lives in `case.py` as the private
+  `_segments`. Frozen variants are the fourth kind of persisted file and the first that is YAML,
+  and `artefacts.py` holds the writer for the other three.
+- **A:** `case._segments` becomes the public `case.check_field_path`, called by both `_root` and
+  every relation constructor; `artefacts.write_yaml` joins `write_json`, writing the caller's key
+  order with a fixed indent, no line wrapping and optional comment lines above the document.
+- **Why:** A path rule copied into `metamorphic/relations.py` would drift from the one `get_field`
+  enforces, and the first symptom would be a relation that accepts a path the loader rejects. YAML
+  keeps insertion order rather than sorting because this is the one file kind a person reads top to
+  bottom — case, field, provenance, then the variants — and the order is fixed in the caller's
+  code, so two writes are still byte-identical, which a test asserts. Rejected alternatives: a
+  three-line duplicate of the path check in the relations module; and hand-rolling the YAML, which
+  would put string-quoting rules in Probatio for no gain.
+
+## 57. `paraphrase_invariant` takes a `base_dir`, and resolves a relative directory when it reads
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** DECISIONS 19 makes a relative path resolve against a `base_dir` argument defaulting to
+  the working directory, with the plugin passing `config.rootpath`. A relation is constructed by a
+  decorator at import time, long before pytest's config exists.
+- **A:** The decorator takes an optional fourth argument, `base_dir`, and the directory is
+  resolved inside `variants()` — so with no `base_dir` the working directory is read when the
+  variants are needed, not when the module was imported. The demo passes an absolute path built
+  from `HERE`, so none of this affects it (DECISIONS 10).
+- **Why:** Reading `Path.cwd()` at decoration time would freeze whatever directory the import
+  happened in, which under `pytester` is not the directory the test runs in. Keeping the argument
+  on the relation rather than on `Relation.variants` leaves the abstract method the two-argument
+  signature spec §3.9 fixes, so a user's own relation is not obliged to thread a directory it does
+  not use. Rejected alternative: a mutable `base_dir` attribute the plugin sets before calling
+  `variants()`, which works and makes the relation's behaviour depend on an assignment somewhere
+  else.
+
+## 58. Two Phase-0-and-3 tests were updated rather than left pinning an empty surface
+
+- **Date:** 2026-09-04 (Phase 8)
+- **Q:** `tests/test_public_api.py` asserted the export set is exactly Phase 3's, and
+  `tests/test_smoke.py` asserted `probatio.plugin.__all__ == []`. Phase 8 adds four exports and
+  the plugin's first hook.
+- **A:** `test_public_api.py` gains a `PHASE_8_EXPORTS` set and compares against the union, with
+  `flaky_tolerant`, `CaseResult` and `RunReport` still asserted absent; the smoke test now asserts
+  `plugin.pytest_configure` is callable.
+- **Why:** Both tests exist to pin the *shape* of the surface as it grows — the demo suite's
+  import guard and `tests/test_demo_spec.py`'s lifecycle check both depend on the still-missing
+  names being missing, and that half is unchanged and still enforced. The alternative, deleting
+  them, would drop the one check that keeps a phase from exporting a name early. This is the same
+  move Phase 4 made when it deleted the test pinning the Phase 3 judge stub (DECISIONS 27's
+  neighbourhood), except that here the assertion is narrowed rather than removed.

@@ -399,3 +399,72 @@ is why the test suite may run it end to end. Unknown keys on a line are refused 
 dropped (DECISIONS 45), for the reason `LLMCase` refuses them: the file is written by a script, and
 a misspelled `latency` silently becoming a zero-latency tape would pass every latency ceiling in
 the suite forever.
+
+## Phase 8
+
+**A relation is a class with a citation, because the alternative is a lambda with a marketing
+name.** Spec §9 rejects "adversarial" for a permutation, and the way to make that rule enforceable
+rather than aspirational is to require every relation to name the entry in `docs/relations.md` it
+is attributed to and to carry that key in its docstring, where a test can check it. The four
+shipped relations do the dullest possible things — permute a list, insert a paragraph, double the
+spaces, substitute a sentence somebody wrote down — and the violation rate is a claim about the
+application under test rather than about a generator. The rejected alternative was a registry of
+transformation functions, `Callable[[LLMCase], list[LLMCase]]`, which is shorter by a class per
+relation and has nowhere to put the citation, the applicability rule or the labels, all three of
+which end up in the report.
+
+**"Not applicable" is a third outcome, and printing zero for it would be a lie.** Spec §3.9 asks
+for `violation_rate: None` on `order_invariant` over a one-element list; Phase 1 generalised that
+to any field that does not resolve (DECISIONS 8), because the demo suite deliberately mixes a
+bare-string case in with mapping inputs and one parametrised test covers both. The reason is not
+the division by zero. A relation that generated no variants has observed nothing, and `0.00` in a
+robustness column is read as "measured, and clean". So `applicable()` is asked first, an empty
+variant list is treated the same way, and the reporter counts these cases separately. The rejected
+alternative was raising a configuration error for an unresolvable field, which forces every mixed
+suite to shard its cases by input shape before it can use a relation at all.
+
+**Paraphrases are frozen on disk, and that is the whole design.** A relation whose variants come
+out of a model measures the paraphrasing model as much as the application, and its violation rate
+is not comparable with last week's — which makes it useless for the one thing Probatio is for.
+So `paraphrase_invariant` reads `variants/<case_id>.yaml` and nothing else, a missing file is an
+error carrying the command that writes one, and the file is strict about the two things that would
+otherwise make it silently wrong: a `case_id` that belongs to another case and a `field` the
+relation does not vary. It is deliberately *not* strict about the count. Reviewing a frozen file
+means deleting the rewordings that changed the meaning of the question, so a file holding fewer
+than `k` paraphrases is a decision somebody made and the relation reports `n_variants` as what it
+evaluated; only an empty list is an error, because then nothing is varied (DECISIONS 52). Every file
+carries the provider, the model, the timestamp and the hash of the prompt that produced it, so a
+reviewer can tell one batch from another; hand-written files carry `null` for the model and the
+prompt hash, which is what the demo suite's two committed files do. The rejected alternative was
+generating paraphrases at test time behind a cache, which is what makes such a relation cheap to
+adopt and impossible to trust — and is listed in spec §9 as a review rejection.
+
+**One seeded generator, one computed ceiling.** `order_invariant` is the only relation with any
+randomness, and it is seeded from `stable_hash((case.id, field))` so that two processes agree; the
+subprocess test that spec §3.9 asks for on `format_jitter`'s fixed transforms covers it too. What
+needed a decision was when to stop shuffling, because spec §3.9's own acceptance criterion — `k=3`
+on a two-element list yields exactly one variant — is a statement about the stopping rule, not
+about the seed. Counting the distinct non-identity orderings first, exactly for short lists and
+duplicates divided out, makes that criterion a property of the code (DECISIONS 47). Enumerating
+`itertools.permutations` was rejected for allocating factorially on the lists a real retrieval
+suite produces.
+
+**The decorators are thin so that nothing about a suite's relations is decided by the plugin.**
+Each one constructs its relation and applies `pytest.mark.probatio_relation(instance)`; all of the
+configuration travels on the instance, and Phase 9's `check` reads the marks off the item and calls
+`evaluate_relation` once per relation after the original case has run. That is also why
+`evaluate_relation` takes a callable rather than a system under test: the arithmetic — what counts
+as a violation, in either direction, and what "not applicable" means — is testable without a
+provider, a fixture or a pytest session, and the phase that owns the fixtures supplies the closure.
+The rejected alternative was evaluating relations inside the relation classes, which would give
+each of them a dependency on the runner and make the four shipped ones untestable without one.
+
+**`freeze-variants` validates before it writes, because it is the last moment a human is in the
+loop.** A reply with two paraphrases instead of three, a duplicate, or one that is just the
+original question again is refused rather than written, since after this command runs the file is
+committed and read for free forever. `--provider fake` is a separate path that calls nothing and
+writes rewrites labelled `provider: mechanical` in the file itself as well as warning on standard
+error (DECISIONS 54): the flag exists so the command's shape can be seen and exercised offline, and
+naming a fake provider in a committed artefact's provenance would defeat the point of having
+provenance. The model path is tested by replacing `cli.build_provider`, which is the seam
+`validate-judge --run-judge` already uses, so the path a test exercises is the path a person runs.

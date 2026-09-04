@@ -29,6 +29,18 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEMO = REPO_ROOT / "examples" / "demo_suite"
 DEMO_RUBRICS = DEMO / "rubrics"
 DEMO_CONFTEST_MODULE = "demo_suite_conftest"
+DEMO_APP_MODULE = "demo_suite_app"
+
+
+def _import_demo_module(name: str, filename: str) -> Iterator[ModuleType]:
+    """Import one file of the frozen demo suite as a module of its own, then unregister it."""
+    spec = importlib.util.spec_from_file_location(name, DEMO / filename)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    yield module
+    sys.modules.pop(name, None)
 
 
 @pytest.fixture(scope="session")
@@ -52,13 +64,18 @@ def demo_rubrics() -> Path:
 @pytest.fixture(scope="session")
 def demo_conftest() -> Iterator[ModuleType]:
     """The demo suite's ``conftest.py``, imported as a plain module for its committed constants."""
-    spec = importlib.util.spec_from_file_location(DEMO_CONFTEST_MODULE, DEMO / "conftest.py")
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[DEMO_CONFTEST_MODULE] = module
-    spec.loader.exec_module(module)
-    yield module
-    sys.modules.pop(DEMO_CONFTEST_MODULE, None)
+    yield from _import_demo_module(DEMO_CONFTEST_MODULE, "conftest.py")
+
+
+@pytest.fixture(scope="session")
+def demo_app() -> Iterator[ModuleType]:
+    """The demo suite's ``app.py``: the system under test the relations are measured against.
+
+    The relation tests need the prompt the app actually builds, because the demo's scripted
+    provider is keyed by a substring of it. Reaching for ``scripted_answer`` instead would answer
+    by the case's metadata keyword and so bypass the very matching a format variant breaks.
+    """
+    yield from _import_demo_module(DEMO_APP_MODULE, "app.py")
 
 
 @pytest.fixture(scope="session")

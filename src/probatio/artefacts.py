@@ -1,8 +1,10 @@
-"""What every file Probatio writes has in common: a clock, a name check and a JSON writer.
+"""What every file Probatio writes has in common: a clock, a name check and the writers.
 
 Four kinds of file are persisted — baselines (§3.6), judge validation records (§3.5), cassettes
 (§3.8) and frozen variants (§3.9) — and by the third of them the same three lines had been
-written three times. They live here instead.
+written three times. They live here instead. Three of the four are JSON; frozen variants are YAML,
+because a human reads and edits paraphrases, so :func:`write_yaml` sits beside
+:func:`write_json` with the same guarantee.
 
 **The clock is a value, not a call.** Every persisted file carries a ``recorded`` or ``created``
 stamp, and none of them is ever compared: identity is a :func:`~probatio.hashing.stable_hash`
@@ -15,19 +17,22 @@ stem and a case id comes out of a YAML file; neither is a path the user typed on
 and `CLAUDE.md` allows Probatio to write only inside paths the user did type. Five lines that make
 the derived half unable to escape are cheaper than a rule that holds only by luck (DECISIONS 34).
 
-**Every file is written the same way**: sorted keys, indent 2, one trailing newline. These files
-are committed to the user's repository, so re-recording something that did not change has to
-produce no diff.
+**Every file is written the same way**: a fixed key order, a fixed indent, one trailing newline.
+These files are committed to the user's repository, so re-recording something that did not change
+has to produce no diff. JSON sorts its keys; YAML keeps the caller's order, which is fixed in the
+caller's code and so is just as stable.
 """
 
 from __future__ import annotations
 
 import json
-from collections.abc import Callable, Mapping
+from collections.abc import Callable, Mapping, Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from re import compile as _compile
 from typing import Any, Final
+
+import yaml
 
 from .errors import ProbatioConfigError
 
@@ -40,6 +45,7 @@ __all__ = [
     "timestamp",
     "utc_now",
     "write_json",
+    "write_yaml",
 ]
 
 Clock = Callable[[], datetime]
@@ -50,6 +56,9 @@ NAME_PATTERN: Final = _compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 JSON_INDENT: Final = 2
 """The indent every persisted file uses, so a hand-edited file looks like a written one."""
+
+_YAML_WIDTH: Final = 10_000
+"""Wide enough that a paraphrase is never wrapped, so a variant is one greppable line."""
 
 
 def utc_now() -> datetime:
@@ -127,4 +136,35 @@ def write_json(path: Path, payload: Mapping[str, Any]) -> Path:
     path.write_text(
         json.dumps(dict(payload), indent=JSON_INDENT, sort_keys=True) + "\n", encoding="utf-8"
     )
+    return path
+
+
+def write_yaml(
+    path: Path, payload: Mapping[str, Any], *, header: Sequence[str] | None = None
+) -> Path:
+    """Write one persisted YAML artefact, creating its directory if needed.
+
+    Keys are written in the order the mapping gives them rather than sorted, because this is the
+    one file kind a person reads top to bottom: a frozen variants file starts with the case it
+    belongs to and ends with the variants themselves. That order is a property of the caller's
+    dict, so two writes of the same payload are still byte-identical.
+
+    Args:
+        path: Where to write. Its parent directories are created.
+        payload: JSON-compatible data.
+        header: Comment lines written above the document, without their ``#``.
+
+    Returns:
+        The path written, so a caller can report it.
+    """
+    body = yaml.safe_dump(
+        dict(payload),
+        sort_keys=False,
+        allow_unicode=False,
+        default_flow_style=False,
+        width=_YAML_WIDTH,
+    )
+    comment = "".join(f"# {line}\n" for line in header or ())
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(comment + body, encoding="utf-8")
     return path
