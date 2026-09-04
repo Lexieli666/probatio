@@ -23,8 +23,43 @@ A `Completion` carries the answer and what is known about the call:
 | `latency_ms` | wall-clock duration of the call |
 | `raw` | the provider's own payload, carried for the record and never inspected by Probatio |
 
-`cost_usd` is `None`, never `0.0`, when the cost is unknown. A cost ceiling evaluated over a call
-with an unknown cost is reported as **unenforceable**, not as passed.
+## Cost semantics
+
+`cost_usd` is `None`, never `0.0`, when the cost is unknown. This is the load-bearing rule of the
+whole budget layer: a zero that means "unknown" makes every `max_cost_usd` ceiling pass forever,
+so a cost ceiling evaluated over a call whose cost is unknown is reported as **unenforceable** and
+never as passed. It fails, it is listed under warnings, and its detail names the model nobody
+priced (`budget.py`, spec §3.7). The same holds for a case that recorded no provider calls at all:
+both its cost and its latency ceiling are unenforceable, because the sum of nothing is inside
+every ceiling and a check that cannot fail is not a check.
+
+There are three ways a completion comes to carry a cost.
+
+1. **A price table prices it from its tokens.** `PriceTable` loads a YAML mapping of model name to
+   `{input_per_mtok, output_per_mtok}` — the file is yours, `examples/prices.example.yaml` shows
+   the shape and ships no numbers — and `pytest --probatio-prices prices.yaml` applies it. It
+   prices a completion only when `cost_usd` is still `None` and both token counts are known.
+   A model that is not in the table is not priced, which leaves the ceiling unenforceable rather
+   than guessing.
+2. **`AnthropicProvider` prices it at completion time**, if it was constructed with a table. Same
+   arithmetic, applied where the tokens are freshest, so a tape recorded through the adapter
+   carries the price that was in force when it was recorded.
+3. **The provider reported one.** Only `ClaudeCLIProvider` does, and a price table never
+   overwrites it — see the caveat below, which is the reason that figure is treated as evidence
+   rather than as an invoice.
+
+### The Claude CLI's `total_cost_usd` overstates the answer
+
+The CLI's `total_cost_usd` is the **notional API price** of the turn, not money billed to a plan,
+and it is the price of *everything the CLI did*, not of the answer alone. The captured payload in
+`tests/fixtures/claude_cli_payload.json` shows this directly: `total_cost_usd` is **$0.003769**,
+while the model that produced the answer accounts for **$0.002695** of it in `modelUsage`. The
+remaining **$0.001074** belongs to a second, smaller model that appears there because the CLI
+bills its own side work — topic detection and the like — to a cheap model alongside the one that
+answered. So a `max_cost_usd` ceiling checked against this figure is enforceable but pessimistic:
+it charges the answer for work the answer did not do, and the same prompt through the Messages API
+with a price table would come out lower. `tests/test_docs_providers.py` reads all three numbers
+back out of that fixture, so they are measurements rather than prose.
 
 ## `FakeProvider` and `ScriptedProvider`
 
@@ -65,9 +100,11 @@ AnthropicProvider(model="claude-opus-5", client=None, max_tokens=1024)
 
 `system` and the prompt become one user message; every parameter other than `model` is forwarded
 to `messages.create` unchanged, so `temperature`, `top_p`, `stop_sequences` and anything else the
-SDK accepts work. Token counts come from `usage`. **Cost is always `None`**: the Messages API
-reports tokens, not money, and Probatio ships no price list. Pass `client=` to inject anything with
-a `messages.create(...)` method; that is how this adapter is tested, with no API key present.
+SDK accepts work. Token counts come from `usage`. **Cost is `None` unless you pass a price
+table**: the Messages API reports tokens, not money, and Probatio ships no price list, so
+`AnthropicProvider(prices=PriceTable.load("prices.yaml"))` is what makes a `max_cost_usd` ceiling
+over this adapter enforceable. Pass `client=` to inject anything with a `messages.create(...)`
+method; that is how this adapter is tested, with no API key present.
 
 ## `ClaudeCLIProvider`
 
@@ -107,7 +144,8 @@ Two things this adapter does not do, both deliberate (`DECISIONS.md` entry 14):
 > payload is the **notional API price** of the turn as the CLI computes it. A developer running on
 > a Claude subscription is not charged that amount. It is reported because it is the only cost
 > signal available, and it makes a `max_cost_usd` ceiling enforceable rather than unenforceable —
-> not because it is an invoice.
+> not because it is an invoice. It also covers the CLI's own side calls, so it overstates the
+> answer's price; see [Cost semantics](#cost-semantics) for the numbers.
 
 A non-zero exit, unparsable stdout, or a payload reporting an error raises `ProbatioConfigError`
 with the CLI's stderr included.

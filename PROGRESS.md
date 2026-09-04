@@ -12,7 +12,7 @@ with phase N's code.
 - [x] **Phase 3** — Assertions and the similarity backend (spec §3.4)
 - [x] **Phase 4** — Judge, Cohen's kappa, validation records, `validate-judge` (spec §3.5, §3.13)
 - [x] **Phase 5** — Snapshots (spec §3.6)
-- [ ] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
+- [x] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
 - [ ] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
 - [ ] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
 - [ ] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
@@ -142,3 +142,45 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   changed" — because it needs the `--update-baseline` flag and the `probatio` fixture, neither of
   which exists before Phase 9.** All four are covered as unit tests here.
   DECISIONS 30–34; `docs/DESIGN.md` Phase 5.
+- 2026-09-04 — **Phase 6** — gate green: `pytest -q` 444 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples`; `mypy --strict src/probatio` clean (27 source files);
+  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  Shipped `budget.py`: `ModelPrice`, `PriceTable`, `price_completions`, `case_cost`,
+  `evaluate_budget` and `SuiteBudget`. `PriceTable.load` reads a YAML mapping of model name to
+  `{input_per_mtok, output_per_mtok}`; an unknown key, a negative price and a price that is not a
+  number (a quoted string and `true` included, DECISIONS 40) are errors naming the file and the
+  model, and an empty or all-comments file is an empty table (DECISIONS 35). It prices a completion
+  from its model and token counts, returning `None` — never `0.0` — when the model is absent or
+  either count is unknown, and it prices only completions whose `cost_usd` is still `None`, so the
+  Claude CLI's reported notional total is never overwritten (DECISIONS 41). `AnthropicProvider`
+  gained the optional `prices` argument spec §3.3 describes and applies it at completion time,
+  which closes the deferral recorded in DECISIONS 15. `evaluate_budget` returns
+  `budget_cost` and `budget_latency` results, in that order, for the ceilings a case declares:
+  cost is the sum over all completions against `budget.max_cost_usd`, and a cost ceiling with any
+  completion still unpriced is `AssertionResult(passed=False, unenforceable=True)` whose detail is
+  spec §3.7's sentence plus `pytest --probatio-prices <path>` and every unpriced model
+  (DECISIONS 37), never a pass; latency is the sum of `latency_ms` against `budget.max_latency_ms`,
+  falling back to the `--max-latency` default when the case declares none, and is enforceable
+  wherever a call was made. Neither result carries a score (DECISIONS 38), and a case with no
+  ceiling of a kind gets no result of that kind. A case that recorded **no provider calls at all**
+  has both ceilings reported unenforceable, with the detail `<kind> ceiling for <case> is
+  unenforceable: no provider calls were recorded` and no fix clause, and `case_cost([])` is `None`
+  rather than `0.0`, so such a case reaches the suite total as unknown rather than as free: a pass
+  over zero calls is the vacuous pass the brief forbids and would hide a Phase 9 collector that
+  was never wired up (DECISIONS 36, reversing this phase's first answer).
+  `SuiteBudget` records `(case_id, cost)` per case, sums repeats under one id, keeps unknown-cost
+  cases as unknown rather than as zero, and renders one line naming the total, the `--max-cost`
+  ceiling, the three dearest cases and the unknown ones, composed through `BudgetExceededError`
+  (DECISIONS 39). Whether relation-variant and judge calls count toward a case's budget is Phase 9's
+  question, where the calls are collected; this phase prices what it is handed.
+  `examples/prices.example.yaml` ships the structure with every entry commented out and no real
+  prices, and a test shows all ten demo-suite cost ceilings are unenforceable against it.
+  `docs/providers.md` gained a cost-semantics section, and `tests/test_docs_providers.py` reads its
+  three dollar figures back out of `tests/fixtures/claude_cli_payload.json`
+  (total $0.003769, answering model $0.002695, the CLI's own side model $0.001074) and fails on any
+  fourth figure in that section. **Deferred to Phase 9: the `pytester` half of spec §3.7's
+  acceptance — a suite-level cost overrun producing a non-zero pytest exit status and printing the
+  overrun line — because it needs `--max-cost`, `pytest_sessionfinish` and the `probatio` fixture,
+  none of which exists before Phase 9.** The message itself, the ranking and the unknown-cost
+  accounting are covered here as unit tests. DECISIONS 35–41; `docs/DESIGN.md` Phase 6.

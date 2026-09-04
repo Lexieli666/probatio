@@ -17,6 +17,7 @@ from typing import Any
 import pytest
 
 from probatio import Completion, ProbatioConfigError
+from probatio.budget import ModelPrice, PriceTable
 
 MODULE = "probatio.providers.anthropic"
 
@@ -212,3 +213,37 @@ def test_a_client_is_constructed_from_the_sdk_when_none_is_injected() -> None:
     provider = module.AnthropicProvider(model="m")
     assert provider.complete("p").text == "an answer"
     assert client.messages.requests[0]["messages"][0]["content"] == "p"
+
+
+# --- Phase 6: the optional price table (spec §3.3, §3.7) ----------------------------------------
+
+
+def price_table(**models: tuple[float, float]) -> Any:
+    """A ``PriceTable`` over the given ``model: (input_per_mtok, output_per_mtok)`` pairs."""
+    return PriceTable(
+        {
+            model: ModelPrice(input_per_mtok=prices[0], output_per_mtok=prices[1])
+            for model, prices in models.items()
+        }
+    )
+
+
+def test_a_price_table_prices_the_reported_tokens_at_completion_time() -> None:
+    """469 prompt tokens at $10/Mtok is $0.00469; 14 completion tokens at $100/Mtok is $0.0014."""
+    client = StubClient(response(model="priced-1", tokens=(469, 14)))
+    prices = price_table(**{"priced-1": (10.0, 100.0)})
+    completion = provider_with(client, model="priced-1", prices=prices).complete("p")
+    assert completion.cost_usd == pytest.approx(0.00469 + 0.0014)
+
+
+def test_a_table_that_does_not_price_this_model_leaves_the_cost_unknown() -> None:
+    client = StubClient(response(model="claude-opus-5"))
+    prices = price_table(**{"some-other-model": (10.0, 100.0)})
+    assert provider_with(client, model="m", prices=prices).complete("p").cost_usd is None
+
+
+def test_a_response_with_no_usage_cannot_be_priced_and_says_so_with_none() -> None:
+    client = StubClient(response(model="priced-1", tokens=None))
+    prices = price_table(**{"priced-1": (10.0, 100.0)})
+    completion = provider_with(client, model="priced-1", prices=prices).complete("p")
+    assert (completion.tokens_in, completion.tokens_out, completion.cost_usd) == (None, None, None)
