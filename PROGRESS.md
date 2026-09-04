@@ -9,7 +9,7 @@ with phase N's code.
 - [x] **Phase 0** — Scaffolding, tooling, CI, `PROGRESS.md`, PyPI name check (spec §2)
 - [x] **Phase 1** — `examples/demo_suite/` as the executable design spec (spec §4)
 - [x] **Phase 2** — Foundations, `LLMCase`, YAML loader, providers (spec §3.1–3.3)
-- [ ] **Phase 3** — Assertions and the similarity backend (spec §3.4)
+- [x] **Phase 3** — Assertions and the similarity backend (spec §3.4)
 - [ ] **Phase 4** — Judge, Cohen's kappa, validation records, `validate-judge` (spec §3.5, §3.13)
 - [ ] **Phase 5** — Snapshots (spec §3.6)
 - [ ] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
@@ -62,3 +62,18 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   frozen guard probes `FakeProvider`, which this phase exports (DECISIONS 16). **Phase 9 must delete
   it**, and `tests/test_demo_spec.py` fails if it outlives the missing exports. DECISIONS 11–18;
   `docs/DESIGN.md` Phase 2; new `docs/providers.md`.
+- 2026-09-03 — **Phase 3** — gate green: `pytest -q` 229 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples` (and on the transitional repository-level `conftest.py`); `mypy --strict
+  src/probatio` clean (19 source files); `examples/demo_suite/` byte-identical to 8a998af, with
+  `git status --porcelain` on it empty. Shipped `assertions/` (`result`, `backends`, `contains`,
+  `schema`, `similarity`, `judge`) and `runner.py`; `probatio/__init__.py` adds `AssertionResult`.
+  `evaluate_case` runs every assertion in declaration order and returns one result each; the
+  scripted answers in the demo suite's frozen `conftest.py` pass every non-judge assertion of all
+  ten cases, and `anxiety-expected-fail` on `"I don't know."` fails both its `contains` and its
+  `not_contains` with the details the report will print. The judge evaluator is the unenforceable
+  half only: Phase 4 adds the grading and keeps the `judge_provider is None` branch. Similarity
+  ships one backend, `TrigramCosine`, and no embedding backend; `docs/assertions.md` carries the
+  five-pair score table and `tests/test_docs_assertions.py` reparses it from the markdown, so a
+  number in the doc that the code does not produce fails the suite. DECISIONS 19–22;
+  `docs/DESIGN.md` Phase 3; new `docs/assertions.md`.
