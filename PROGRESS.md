@@ -11,7 +11,7 @@ with phase N's code.
 - [x] **Phase 2** — Foundations, `LLMCase`, YAML loader, providers (spec §3.1–3.3)
 - [x] **Phase 3** — Assertions and the similarity backend (spec §3.4)
 - [x] **Phase 4** — Judge, Cohen's kappa, validation records, `validate-judge` (spec §3.5, §3.13)
-- [ ] **Phase 5** — Snapshots (spec §3.6)
+- [x] **Phase 5** — Snapshots (spec §3.6)
 - [ ] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
 - [ ] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
 - [ ] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
@@ -110,3 +110,35 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   fixtures in `tests/conftest.py` (`demo_conftest`, `judge_pass`, `judge_fail`, `fake_judge`,
   `scripted_answer`, and the three paths), so no module under `tests/` imports a sibling by bare
   name. DECISIONS 23–29; `docs/DESIGN.md` Phase 4.
+- 2026-09-03 — **Phase 5** — gate green: `pytest -q` 390 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples`; `mypy --strict src/probatio` clean (26 source files);
+  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  Shipped `snapshot.py`: `Baseline`, `BaselineAssertion`, `SnapshotResult`, `BaselineStore` and
+  `prompt_hash`. The store is constructed with a `baseline_dir` (default
+  `Path.cwd() / ".probatio" / "baseline"`; Phase 9's plugin passes the rootdir-based and
+  `--baseline-dir` values, as `schema_file` and rubric names already take their directories,
+  DECISIONS 19, 23) and an injectable clock, so no test in this repository reads the wall clock.
+  `BaselineStore.compare` takes the suite, the case, the prompt hash, the assertion results, the
+  output, the model and an update flag and returns a `SnapshotResult` in one of the six states —
+  `recorded`, `updated`, `unchanged`, `prompt_changed`, `scores_changed`, `output_changed` — or
+  `None` for a `snapshot: off` case, which is never read and never written (DECISIONS 31). It
+  never raises for drift; Phase 9's `check` turns a failing state into the failure, reusing the
+  `BaselineDriftError` text this module already composed. Files are one per case at
+  `<baseline_dir>/<suite>/<case_id>.json`, written with sorted keys, indent 2 and a trailing
+  newline, and a test proves two recordings of the same results are byte-identical. `scores` mode
+  fails on any flipped verdict or any score moving more than 0.05 — rounded to six decimals on
+  both sides so a value re-read from JSON never differs from itself, and so that 0.06 is drift,
+  0.04 and exactly 0.05 are not (DECISIONS 32) — with a per-assertion before/after table; `None`
+  to a number and back are changes. `output` mode fails on a text difference with a unified diff
+  capped at 40 lines including its truncation note. `prompt_changed` takes precedence over both
+  and prints one line, no table and no diff. A baseline whose assertion list no longer lines up
+  with the case's, and a case whose snapshot mode changed, are drift in the case's own mode with
+  an `absent`-padded table, not `prompt_changed` (DECISIONS 30); an unparsable baseline is a
+  `ProbatioConfigError` rather than a silent re-record (DECISIONS 33); suite and case names are
+  refused if they would escape the baseline directory (DECISIONS 34). **Deferred to Phase 9: the
+  `pytester` version of spec §3.6's acceptance — first run records, a changed output fails with a
+  diff, `--update-baseline` makes the next run pass, a changed `system` prompt reports "prompt
+  changed" — because it needs the `--update-baseline` flag and the `probatio` fixture, neither of
+  which exists before Phase 9.** All four are covered as unit tests here.
+  DECISIONS 30–34; `docs/DESIGN.md` Phase 5.

@@ -529,3 +529,106 @@ unpriced calls is reported unenforceable, not passed.
   alternatives: keeping `extra="forbid"` and treating a deviation as a fail, which is the
   behaviour just described; and coercing loosely (upper-case verdicts, string scores), which is
   the salvage pass rejected in `docs/DESIGN.md` because it hides a drifting judge.
+
+## 30. A baseline whose assertion list no longer lines up is drift in the case's own mode
+
+- **Date:** 2026-09-03 (Phase 5)
+- **Q:** Spec §3.6's `scores` comparison walks two lists of assertions in parallel. What happens
+  when the case has been edited since the baseline was recorded, so the two lists have different
+  lengths, or the same length with different types in a different order? The choice is between
+  `prompt_changed`-style "this baseline no longer describes this case, re-record" and reporting it
+  as a scores diff.
+- **A:** It is a scores diff: state `scores_changed`, `passed` false, and a table that lays the
+  two lists beside each other with `absent` in the column that has no row and `assertion list` in
+  the change column. The same rule covers a case whose `snapshot` setting changed since the
+  baseline was recorded: that reports in the *current* mode's state, `scores_changed` or
+  `output_changed`, with a detail naming both modes. Every one of these details names
+  `pytest --update-baseline`, which is the "re-record" half of the rejected option.
+- **Why:** The six states are fixed, and `prompt_changed` has one meaning that Phase 9's `check`
+  relies on: the model was asked a different question, so the old numbers are about something
+  else. An edited assertion list is the opposite situation — the same question, different
+  expectations — and calling it `prompt_changed` would print "prompt changed since baseline" over
+  a prompt that did not change, which is a false statement in the one place a developer is
+  looking for a true one. Reporting it as drift in the case's own mode keeps the two failures
+  distinguishable in a report while giving both the same fix. Rejected alternatives: a seventh
+  state such as `shape_changed`, which every reporter, the results JSON schema and the JUnit
+  properties would have to learn for a case that is already covered by "this case moved"; and
+  comparing the assertions that do line up and ignoring the rest, which reports `unchanged` for a
+  case that lost an assertion — the exact regression a snapshot exists to catch.
+
+## 31. `output` is stored only in `output` mode, and an `off` case gets no result at all
+
+- **Date:** 2026-09-03 (Phase 5)
+- **Q:** Spec §3.6's baseline JSON has both an `output` field, typed `"…" | null`, and an
+  `assertions` list, and does not say which mode fills which. And `compare` has to return
+  something for a case whose `snapshot` is `off`, but `off` is not one of the six states.
+- **A:** `assertions` is always recorded; `output` is recorded only in `output` mode and is
+  `null` in `scores` mode, enforced by a model validator on `Baseline` so neither half can be
+  written or read in a shape a comparison would have to guess about. `compare` returns
+  `SnapshotResult | None` and returns `None` for an `off` case, before it computes a path, so no
+  file is read and none is written.
+- **Why:** A `scores` baseline is a file a user commits, reviews in a pull request and diffs;
+  filling it with a paragraph of model prose that nothing compares would make every such diff
+  unreadable and would quietly commit generated text for a user who asked only for numbers.
+  Recording the assertions in both modes costs four short lines and means an `output` baseline
+  still says what the case concluded. `None` rather than a seventh state keeps the state set equal
+  to the set of things that can be *reported*, and makes the caller's "did a snapshot happen"
+  question a `is None` test rather than a string comparison it could get wrong. Rejected
+  alternatives: always storing the output, and an `"off"`/`"skipped"` state that every reporter
+  would have to filter out of its snapshot section.
+
+## 32. Scores are rounded to six decimals on both sides, and the tolerance is applied to the rounded difference
+
+- **Date:** 2026-09-03 (Phase 5)
+- **Q:** Spec §3.6 fails a `scores` comparison when a score "moves by more than 0.05". Binary
+  floating point makes both halves of that sentence ambiguous: a score written to JSON and read
+  back must compare equal to itself, and `abs(0.45 - 0.40)` is `0.049999999999999996`, so a move
+  of exactly the tolerance is on the wrong side of a naive `> 0.05`.
+- **A:** One rounding, `round(score, 6)`, is applied when a score is written into a baseline
+  **and** to every live score before it is compared, so the two sides are always rounded the same
+  way. The comparison is `round(abs(before - after), 6) > 0.05`, so a move of exactly 0.05 is not
+  drift, 0.06 is, and 0.04 is not. A score that changes between `None` and a number, in either
+  direction, is a change: there is no distance between "no score" and 0.0.
+- **Why:** Six decimals is far finer than the 0.05 tolerance and than anything a report prints
+  (the table shows three), so the rounding cannot change a verdict a user would recognise, while
+  it does remove every way a run can differ from itself. Rounding the difference rather than
+  comparing raw floats makes "more than 0.05" mean what it says at the boundary instead of
+  meaning it for most values and not for 0.45 against 0.40. Rejected alternatives: an epsilon
+  added to the tolerance, which is the same fix written so that the number in the code no longer
+  matches the number in the spec; and `math.isclose`, whose relative tolerance would make the
+  same absolute move drift at one end of the [0, 1] range and not at the other.
+
+## 33. An unparsable baseline is a configuration error, not a silent re-record
+
+- **Date:** 2026-09-03 (Phase 5)
+- **Q:** The store never raises for drift. What should it do with a baseline file that exists but
+  cannot be read or does not parse — truncated by a killed run, mangled by a bad merge, edited by
+  hand? The easy option is to treat it like a missing file and record a fresh one.
+- **A:** `BaselineStore.load` raises `ProbatioConfigError` naming the file, the case and
+  `pytest --update-baseline`. `compare` therefore raises too, unless `update` is set, which
+  overwrites without reading — so the flag the message names is also the flag that fixes it.
+- **Why:** Treating a corrupt baseline as a missing one turns a lost regression signal green: the
+  run that destroyed the file is also the run that reports `baseline recorded`, and the case is
+  then pinned to whatever it happened to do that day. A file that exists is a claim that a
+  baseline was recorded, and a store that cannot honour the claim has to say so. This is not the
+  same as drift, which is the case doing something new and is always a result. Rejected
+  alternative: returning `None` and recording over it, which is what makes the failure
+  unobservable; a warning would have been better than nothing, but Phase 5 has no reporter to
+  carry one and the error already names its own fix.
+
+## 34. Suite and case names are checked before they become path segments
+
+- **Date:** 2026-09-03 (Phase 5)
+- **Q:** A baseline path is `<baseline_dir>/<suite>/<case_id>.json`, and `suite` reaches the store
+  from its caller — in Phase 9, a test module's stem. Nothing in the store's own types stops a
+  caller passing `../..`.
+- **A:** Both segments must match `^[A-Za-z0-9][A-Za-z0-9._-]*$`, which is `LLMCase`'s own id
+  pattern without its length bound; anything else is a `ProbatioConfigError` naming which of the
+  two was wrong. The check is in `path_for`, so every read and every write goes through it.
+- **Why:** `CLAUDE.md` says nothing outside the repository is read or written except paths the
+  user passes explicitly, and `--baseline-dir` is such a path while a suite name is not: it is
+  derived. Five lines that make the derived half unable to escape are cheaper than a rule that
+  only holds because the one current caller happens to pass a Python module stem. Rejected
+  alternative: resolving the finished path and asserting it is under `baseline_dir`, which is
+  correct but reports the problem as a mysterious path comparison rather than naming the
+  offending argument.
