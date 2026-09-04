@@ -8,14 +8,16 @@ with phase N's code.
 
 - [x] **Phase 0** — Scaffolding, tooling, CI, `PROGRESS.md`, PyPI name check (spec §2)
 - [x] **Phase 1** — `examples/demo_suite/` as the executable design spec (spec §4)
-- [ ] **Phase 2** — Foundations, `LLMCase`, YAML loader, providers (spec §3.1–3.3)
+- [x] **Phase 2** — Foundations, `LLMCase`, YAML loader, providers (spec §3.1–3.3)
 - [ ] **Phase 3** — Assertions and the similarity backend (spec §3.4)
 - [ ] **Phase 4** — Judge, Cohen's kappa, validation records, `validate-judge` (spec §3.5, §3.13)
 - [ ] **Phase 5** — Snapshots (spec §3.6)
 - [ ] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
 - [ ] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
 - [ ] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
-- [ ] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12)
+- [ ] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
+  also deletes the `collect_ignore` guard in the demo suite's `conftest.py` **and** the
+  repository-level `conftest.py` that repeats it (DECISIONS 16)
 - [ ] **Phase 10** — JUnit XML and results JSON reporters (spec §3.11)
 - [ ] **Phase 11** — Consilium dogfood, offline, from published traces
 - [ ] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
@@ -43,3 +45,20 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   `tests/test_demo_spec.py` adds the collection check, the byte-identity check against this commit
   and the scripted-keyword invariant; `tests/conftest.py` enables `pytester`. Gate condition 5 is
   live from this commit onward. DECISIONS 5–10; `docs/DESIGN.md` Phase 1.
+- 2026-09-03 — **Phase 2** — gate green: `pytest -q` 128 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples` (and on the new repository-level `conftest.py`, which is outside the gate's
+  paths); `mypy --strict src/probatio` clean (11 source files); `examples/demo_suite/` byte-identical
+  to 8a998af, its introducing commit, with `git status --porcelain` on it empty. Shipped
+  `errors.py`, `hashing.py`, `case.py` and `providers/` (`base`, `fake`, `anthropic`, `claude_cli`);
+  `probatio/__init__.py` exports `LLMCase`, `load_cases`, `Completion`, `Provider`, `FakeProvider`,
+  `ScriptedProvider` and the eight error classes. `load_cases` returns the demo suite's ten cases in
+  path order and every one validates, the bare-string input of `copd-spirometry` included.
+  `tests/fixtures/claude_cli_payload.json` is a verbatim copy of one real CLI payload and the parser
+  is written against it; no test runs the CLI or imports the Anthropic SDK. Gate condition 5's check
+  was corrected to compare the introducing commit with the **working tree** and to reject untracked
+  files (DECISIONS 17); both failure modes were provoked and seen to fail. One transitional file was
+  added: a repository-level `conftest.py` excluding `examples/demo_suite/test_demo.py`, because the
+  frozen guard probes `FakeProvider`, which this phase exports (DECISIONS 16). **Phase 9 must delete
+  it**, and `tests/test_demo_spec.py` fails if it outlives the missing exports. DECISIONS 11–18;
+  `docs/DESIGN.md` Phase 2; new `docs/providers.md`.
