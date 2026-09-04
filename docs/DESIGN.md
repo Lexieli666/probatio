@@ -233,3 +233,52 @@ into an `LLMCase` built only from `--question-column` and `--context-column`, an
 sentinel strings in the label and notes columns and asserts they never reach a prompt. The
 rejected alternative, an exclusion list, is one CSV column away from measuring a judge that was
 shown the answer.
+
+## Phase 5
+
+**The baseline store returns results; only the plugin turns one into a failure.** The obvious
+shape for `snapshot.py` is a function that raises `BaselineDriftError` when a case has moved,
+because that is what the user ultimately sees. It is the wrong shape for the same reason
+assertions return `AssertionResult` instead of raising (Phase 3): a case can be broken in several
+ways at once, and a report that stops at the snapshot never gets to the budget. So `compare`
+returns a `SnapshotResult` for every one of the six states, three of which have `passed` false,
+and Phase 9's `Probatio.check` decides what a failing state does to the run. The detail text is
+still composed here, through `BaselineDriftError`, so the sentence a user reads is written once
+and the plugin re-raises it rather than paraphrasing it. The one thing the store does raise for is
+a baseline file it cannot parse (DECISIONS 33), which is a broken artefact rather than a case that
+moved; the rejected alternative, treating it like a missing file, makes the run that destroyed the
+file the run that silently re-records it.
+
+**`scores` mode is the default recommendation and `output` mode is the exception, because a
+snapshot of prose is a snapshot of the temperature.** Both modes exist because spec §3.6 asks for
+both, but they behave very differently under a model that is not deterministic: an `output`
+baseline fails on any rewording, so it is only honest for a case pinned to `temperature: 0` with a
+recorded tape behind it, while a `scores` baseline moves only when a verdict flips or a number
+walks more than 0.05 (DECISIONS 32), which is what "this case got worse" actually looks like. That
+is also why spec §3.6 says a case that needs `flaky_tolerant` should use `scores`. The two modes
+store different things — `output` mode keeps the text, `scores` mode stores `null` (DECISIONS 31)
+— and a model validator on `Baseline` refuses either half in the wrong shape, so a comparison
+never has to guess what a missing field meant. The rejected alternative was one mode that compared
+both, which would make every case that records its text fail on every paraphrase and so make the
+scores half unusable.
+
+**A drift detail is a table or a diff, never a sentence about a number.** `scores` drift prints
+every assertion, changed or not, with its baseline and current verdict and score side by side and
+a change column naming `verdict`, `score` or both; `output` drift prints a unified diff capped at
+40 lines including its own truncation note. Printing the unchanged rows costs four lines and is
+what makes the changed row legible — "similarity fell from 0.40 to 0.10 while the other three held
+steady" is a different bug report from "everything fell". The 40-line cap exists because the
+alternative, an uncapped diff, buries the rest of the report for exactly the case that has drifted
+furthest; the note on the last line says how many lines were dropped, so the cap is never mistaken
+for the end of the diff.
+
+**The recorded timestamp comes from an injectable clock, and identity never does.** Spec §0 makes
+every persisted identity a `stable_hash`, so a baseline belongs to a prompt through
+`prompt_hash(case)` — the case's input, system and params, and nothing else, so that editing an
+assertion or a tag does not orphan the baseline while rewording the question does. The `recorded`
+field is therefore decoration: it tells a reviewer how old a measurement is and is compared by
+nothing. That is what lets it come from a `Callable[[], datetime]` defaulting to UTC now, which in
+turn is what lets a test assert a baseline's exact bytes. The rejected alternative, calling
+`datetime.now` inside the store and freezing time in tests with a monkeypatch, works but makes the
+byte-identity test depend on patching a standard-library function that any transitive import might
+also be using.
