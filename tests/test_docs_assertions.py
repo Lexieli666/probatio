@@ -1,4 +1,4 @@
-"""Phase 3: ``docs/assertions.md``'s trigram table is recomputed from the shipped backend.
+"""``docs/assertions.md``'s numbers are recomputed from the code that produced them.
 
 No number appears in the documentation that a committed file did not produce (`CLAUDE.md`). This
 test is that rule enforced for the one table in the docs that is a measurement: it parses the
@@ -10,9 +10,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from probatio import load_cases
 from probatio.assertions import TrigramCosine
+from probatio.case import SimilarityAssertion
 
-DOC = Path(__file__).resolve().parents[1] / "docs" / "assertions.md"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DEMO = REPO_ROOT / "examples" / "demo_suite"
+DOC = REPO_ROOT / "docs" / "assertions.md"
 HEADER = "| Output | Reference | Trigram score |"
 
 
@@ -59,3 +63,33 @@ def test_the_contradictory_pair_the_prose_argues_from_is_still_in_the_table() ->
     reference = "Metformin is the usual initial medication for type 2 diabetes."
     assert (contradiction, reference, "0.223") in table_rows()
     assert backend.similarity(contradiction, reference) > 0.20
+
+
+# --- Phase 4: the tau values the doc is allowed to name -----------------------------------------
+
+
+def demo_tau_values() -> set[str]:
+    """Every ``tau`` the demo suite commits, as the doc prints them."""
+    cases = load_cases(DEMO / "cases")
+    return {
+        f"{assertion.tau:.2f}"
+        for case in cases
+        for assertion in case.assertions
+        if isinstance(assertion, SimilarityAssertion)
+    }
+
+
+def test_the_only_tau_values_the_doc_names_are_the_ones_the_demo_suite_commits() -> None:
+    """CLAUDE.md: no number in the docs that a committed run did not produce."""
+    text = DOC.read_text(encoding="utf-8")
+    assert demo_tau_values() == {"0.30", "0.35"}
+    for value in demo_tau_values():
+        assert f"tau: {value}" in text
+
+
+def test_no_recommended_similarity_band_is_published_before_phase_11() -> None:
+    """A range would be a recommendation, and no measurement behind one exists yet."""
+    text = DOC.read_text(encoding="utf-8")
+    assert "useful band" not in text
+    assert "0.30 to 0.40" not in text
+    assert "Phase 11" in text

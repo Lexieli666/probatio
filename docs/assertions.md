@@ -19,7 +19,9 @@ answer that matched four of four required substrings last week and three of four
 failure, but an answer that slipped from a similarity of 0.71 to 0.62 against a floor of 0.35 is a
 warning sign you can read off a diff. `unenforceable` is the third state between pass and fail: a
 judge with no provider configured, or a cost ceiling on a model nobody priced, is a check that did
-not happen. It is never counted as a pass.
+not happen, and it is never counted as a pass. One case is weaker on purpose — a judge that graded
+against an unvalidated rubric is marked unenforceable *and* keeps its verdict, because the verdict
+is the only evidence there is; see the judge section below.
 
 ## `contains`
 
@@ -114,10 +116,84 @@ exactly 1.0; strings sharing no trigram score 0.0.
 - {type: judge, rubric: faithfulness, threshold: 1.0}
 ```
 
-A rubric judge grades the output and the assertion passes when the verdict is `pass` and the
-score is at least `threshold`. See `docs/DESIGN.md` and the judge validation record written by
-`probatio validate-judge`: a judge with no record on disk is reported as unvalidated, and a judge
-with no provider configured is reported as **unenforceable**, never as a pass.
+A rubric judge grades the output and the assertion passes when the verdict is `pass` and the score
+is at least `threshold`.
+
+**The rubric.** A markdown file holding the grading instructions. `rubric` is either an absolute
+path or a name, and a name resolves to `<dir>/<name>.md` in the first directory that has it,
+searched in this order: `<rootdir>/rubrics`, then `<the requesting test module's
+directory>/rubrics`. That is why `examples/demo_suite/` can keep its own rubric beside its tests
+while pytest's rootdir is the repository above it. A rubric that resolves nowhere is a failed
+result naming every directory searched, not an exception.
+
+**The prompt.** One module constant, `probatio.judge.JUDGE_PROMPT_TEMPLATE`, wraps the rubric, the
+case's input, the output under test, and the instruction to answer with strict JSON:
+
+```json
+{"verdict": "pass", "score": 1.0, "rationale": "<one sentence>"}
+```
+
+Parsing is strict where it matters: one wrapping code fence is stripped, then `json.loads`, then
+pydantic. `verdict` must be `pass` or `fail` and `score` must be a number in [0, 1] — prose, a
+missing `score`, `"PASS"`, or a score of 1.4 is a failed result whose detail begins `judge output
+was not valid JSON`, never an exception, so one badly behaved judge does not end the run. Two
+deviations are tolerated instead: `rationale` may be missing, and keys the verdict does not
+declare are dropped. Only `verdict` and `score` decide the assertion, and failing a judge for
+volunteering a `confidence` field would count formatting against it as if it had judged badly. The
+template's hash is part of every judge cassette key, so a tape recorded under one wording is
+reported stale rather than replayed under another.
+
+**No provider, no verdict.** With no judge provider configured the assertion is
+`unenforceable`, has no score, and is never a pass. A suite whose judge assertions are silently
+green because nothing graded them is the failure mode this prevents.
+
+### Validating a judge
+
+A judge you have not measured is an opinion with a JSON schema. `probatio validate-judge` measures
+it against human labels and writes the record that every graded judge assertion reads back:
+
+```bash
+# You already have a judge column and a human column in a labelled sample.
+probatio validate-judge \
+  --rubric faithfulness \
+  --labels labels.csv --human-column human_label --judge-column judge_label \
+  --min-kappa 0.6
+
+# Or produce the judge column now, by grading each row's answer against its context.
+probatio validate-judge \
+  --rubric faithfulness \
+  --labels labels.csv --human-column human_label \
+  --run-judge --provider claude-cli --model <model> \
+  --answer-column answer --question-column question --context-column sources_text
+```
+
+It prints observed agreement and Cohen's kappa, writes
+`.probatio/judges/<rubric>.validation.json`, and exits 1 when kappa is below `--min-kappa`, so a
+CI step can refuse to ship an unmeasured judge. The record carries `n`, `agreement`, `kappa`, the
+labels file and its hash, the method, the judge model, and the hash of the rubric text it applies
+to. Commit it: that is what lets CI know which judges are validated.
+
+Human labels and judge verdicts usually live in different label spaces — the Consilium samples are
+labelled `supported`/`unsupported` while the judge answers `pass`/`fail` — so judge labels are
+translated through `--label-map`, which defaults to `pass=supported,fail=unsupported`. Labels the
+map does not mention are compared verbatim. Under `--run-judge` the judge is built one case per
+row from the columns you name and nothing else, so it never sees the label columns it is being
+measured against.
+
+**The unvalidated-judge warning.** A judge assertion whose rubric has no record, or whose record
+was written for different rubric text, is marked `unenforceable` and its detail says so:
+
+```
+judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): every claim is in the
+documents; judge 'faithfulness' has not been validated against human labels (run: probatio
+validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label
+--judge-column judge_label)
+```
+
+The verdict still counts toward the case's pass or fail — unlike an unenforceable cost ceiling,
+which cannot fail a build — and the run's summary counts how many verdicts came from judges nobody
+has measured. Editing a rubric after validating it puts the warning back, because the record pins
+the rubric's content hash: an edited rubric is a different judge.
 
 ## Similarity is for paraphrase-stable content; a judge is for claims
 
@@ -159,8 +235,11 @@ Read down the column to pick a `tau`:
 - **1.000** — identical after normalisation. Only casing and whitespace differ.
 - **0.923** — a clause moved. This is what a stable paraphrase of a fixed sentence looks like, and
   a `tau` above about 0.85 is testing for a template, not for meaning.
-- **0.453** — the same claim in genuinely different words. **0.30 to 0.40 is the useful band**, and
-  it is what the demo suite uses; a case whose wording is free to move needs a floor here.
+- **0.453** — the same claim in genuinely different words. A case whose wording is free to move
+  needs its floor somewhere below this line. `examples/demo_suite/cases/` commits `tau: 0.30` and
+  `tau: 0.35`; those are the two values this repository has actually run. No general recommended
+  range appears here, because none has been measured yet: Phase 11's Consilium data is what will
+  produce one, and until it does a number in this document would be invention.
 - **0.223** — same topic, contradictory claim. Above this line is where similarity stops
   discriminating and a judge starts being the right tool.
 - **0.000** — a refusal. Short outputs share almost nothing with a long reference, which is what

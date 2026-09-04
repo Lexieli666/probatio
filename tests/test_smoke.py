@@ -24,4 +24,4 @@ def test_cli_module_imports_cleanly() -> None:
 def test_cli_main_returns_zero_exit_status() -> None:
     from probatio.cli import main
 
-    assert main() == 0
+    assert main([]) == 0
