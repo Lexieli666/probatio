@@ -13,7 +13,7 @@ with phase N's code.
 - [x] **Phase 4** — Judge, Cohen's kappa, validation records, `validate-judge` (spec §3.5, §3.13)
 - [x] **Phase 5** — Snapshots (spec §3.6)
 - [x] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
-- [ ] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
+- [x] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
 - [ ] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
 - [ ] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
   also deletes the `collect_ignore` guard in the demo suite's `conftest.py` **and** the
@@ -184,3 +184,58 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   overrun line — because it needs `--max-cost`, `pytest_sessionfinish` and the `probatio` fixture,
   none of which exists before Phase 9.** The message itself, the ranking and the unknown-cost
   accounting are covered here as unit tests. DECISIONS 35–41; `docs/DESIGN.md` Phase 6.
+- 2026-09-04 — **Phase 7** — gate green: `pytest -q` 517 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples`; `mypy --strict src/probatio` clean (29 source files);
+  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  Shipped `cassette.py` (`interaction_key`, `Interaction`, `Cassette`, `ActiveCase`,
+  `CassetteStore`, `CassetteProvider`, `ImportedCall`, `parse_trace_line`, `read_trace`,
+  `import_cassettes`) and `cli.py`'s `import-cassettes`. `CassetteProvider(inner, store, mode)`
+  satisfies the `Provider` protocol and reports the inner adapter's `name`, so the SUT and the
+  Judge see no difference; `replay` never calls `inner` (`FakeProvider.call_count == 0`), `record`
+  writes the tape after every call, and `off` forwards `prompt`, `system` and `**params`
+  untouched. The **store owns the active context**: `begin_case(suite, case_id, run_index)` — which
+  Phase 9's fixture will call before the SUT runs — plus a `judge_calls(template_hash)` context
+  manager that `CassetteProvider` re-exposes and `Judge.grade_with_completion` enters when the
+  provider it holds offers one, so the judge template hash reaches the key with no change to the
+  `Provider` protocol and no reserved parameter that could leak to a live adapter (DECISIONS 42);
+  two tests pin it, one showing a judge call and a SUT call with identical prompt text getting
+  different keys, one asserting the inner provider's recorded `system` and `params` are exactly
+  what the caller passed. The key is spec §3.8's five parts with `model` lifted out of `params`
+  rather than hashed twice (DECISIONS 43), and its model is the **effective** one:
+  `resolve_model` restates the precedence both live adapters already implement —
+  `params["model"]`, else the adapter's own constructor model, which is what `--probatio-model`
+  fills in — and `CassetteProvider.inner_model` supplies that fallback to the store in both record
+  and replay, with the params forwarded to `inner` untouched. Without it a case that names no
+  model, which is all ten of the demo suite's, would key blank, and a tape recorded through
+  `ClaudeCLIProvider(model="A")` would replay silently through `model="B"`; a test records through
+  `FakeProvider(model="m1")`, gets `StaleCassetteError` from an `m2` wrapper, and replays from a
+  second `m1` wrapper with `call_count == 0` (DECISIONS 43, amended). `Interaction` carries the
+  resolved model, so a stale tape says which model it belongs to. Files are
+  `<cassette_dir>/<suite>/<case_id>.json` with
+  the spec's five top-level fields; a mutated prompt, a changed model and a changed param each
+  raise `StaleCassetteError` naming the case, saying the prompt, model or params changed, and
+  giving `pytest --cassette=record`; a missing file raises `MissingCassetteError` naming the same
+  command; an unparsable tape is a `ProbatioConfigError`, as a corrupt baseline is (DECISIONS 33).
+  Recording three runs then replaying five returns samples 0, 1, 2, 0, 1; a one-sample tape
+  replayed under several runs adds one store-level note carrying spec §3.8's phrase
+  `1 recorded sample`, put on the store rather than in the completion's `raw` so that
+  record-then-replay round-trips a `Completion` exactly, `raw` included. Re-recording a key
+  replaces its samples the first time the session sees it and appends thereafter, so `--runs 3`
+  twice leaves three samples and not six (DECISIONS 44). Two recordings through `FakeProvider`
+  with the same clock are byte-identical. `probatio import-cassettes --from JSONL --suite NAME
+  --out DIR` (plus an optional `--provider`, default `imported`) turns a three-line trace into
+  tapes that replay with zero inner calls, several lines with one case and one key becoming one
+  interaction with several samples in file order; a malformed line is a `ProbatioConfigError`
+  naming the line number and the file, unknown keys included (DECISIONS 45). Phase 11 turns
+  Consilium traces into exactly this JSONL. The timestamp helper was the third copy, so
+  `snapshot.py`, `judge/validation.py` and `cassette.py` now share **`src/probatio/artefacts.py`**,
+  which holds `Clock`, `utc_now`, `format_instant`, `timestamp`, `NAME_PATTERN`,
+  `check_path_segment` and `write_json` — the clock, the DECISIONS 34 path-segment check and the
+  sorted-keys/indent-2/trailing-newline writer that all three stores had copied (DECISIONS 46);
+  `judge.validation.utc_now` is gone and `cli.py` calls `artefacts.timestamp()`. **Deferred to
+  Phase 9: the `pytester` half of spec §3.12's acceptance — `--cassette=replay` with no tapes
+  failing with `MissingCassetteError` in the test output — because it needs the `--cassette` flag
+  and the `probatio` fixture, neither of which exists before Phase 9.** The error itself, its text
+  and its zero-inner-call guarantee are covered here as unit tests. DECISIONS 42–46;
+  `docs/DESIGN.md` Phase 7.

@@ -340,3 +340,62 @@ completions in this phase, with the `pytester` half of spec §3.7's acceptance d
 phase that owns the flags. The rejected alternative, raising `BudgetExceededError` from the
 per-case evaluation, ends the session on the first expensive case and never reports the suite total
 at all.
+
+## Phase 7
+
+**A tape is a list of samples, so a pass rate survives the recording.** Spec §3.8's
+`interactions[].completions` is a list, and everything else in this module follows from that. A
+cassette format that stored one answer per call would make replay deterministic and the stability
+engine useless: every replayed case would report a pass rate of exactly 1.0 whatever the model
+actually did on the day it was recorded, and Probatio's second headline feature would measure the
+tape rather than the model. Recording under `--runs 5` appends five samples and replay hands back
+`completions[run_index % len(completions)]`, so the variance the recording saw is reproduced
+exactly, for nothing, on a CI runner with no key. The awkward case is the tape with one sample
+replayed under several runs: it can only report 0 or 1, which is a true statement about a
+one-sample measurement and a misleading number to print bare, so the store keeps a note carrying
+spec §3.8's phrase `1 recorded sample` for Phase 9's reporter to surface. The rejected alternative
+was to refuse to replay a tape shorter than `--runs N`, which is honest and makes every existing
+recording worthless the first time somebody raises the run count.
+
+**A miss is a failure, never a live call.** `replay` mode never touches `inner`: a key the tape
+does not hold is `StaleCassetteError` and a case with no file is `MissingCassetteError`, both
+naming the case and `pytest --cassette=record`. The tempting alternative — fall through to the
+provider and record the new interaction — is what most record/replay libraries do, and it is the
+behaviour that turns one edited prompt in a pull request into a CI job that needs an API key and
+spends money nobody approved. Failing loudly costs a developer one deliberate re-record and makes
+"this suite runs offline" a property of the tool rather than a hope. The same reasoning makes an
+unparsable tape a `ProbatioConfigError` rather than a missing recording, exactly as a corrupt
+baseline is (DECISIONS 33).
+
+**The judge marks its calls on the store, because the provider protocol is not the place to carry
+a recording concern.** Spec §3.5 puts the judge prompt template's hash in every judge cassette key,
+so that a tape recorded under one wrapper does not silently replay under a rewritten one. The hash
+describes the recording, not the request: nothing about it changes the bytes sent to a model. So it
+travels on the store, which already owns the active case and run index, and reaches it through a
+`judge_calls` context manager that `CassetteProvider` exposes and `Judge` enters when the provider
+it holds offers one (DECISIONS 42). The rejected alternative, a reserved `complete` parameter the
+wrapper strips, is shorter and leaks: a judge running against an unwrapped `AnthropicProvider` —
+which is what `--cassette=off` gives it — would hand the reserved key to `messages.create`. The
+test that matters here asserts what the inner provider received, not what the wrapper did.
+
+**The key's model is the model that will answer, not the one the case happened to name.** Almost
+no case names a model: the model comes from `--probatio-model` into an adapter's constructor, and
+both shipped adapters resolve `params["model"] or self.model` at call time. A key built from
+`params` alone is therefore blank for the model on nearly every real case, and a tape recorded
+against one model replays silently against another — the cassette reporting agreement where a
+regression is what actually happened. So `CassetteProvider` restates that precedence in
+`resolve_model` and hands the result to the store in both directions, and the interaction records
+it so a stale tape can be diagnosed by reading it. The rejected alternative was to take the model
+off the returned `Completion`, which names the model that genuinely answered and cannot be used:
+replay has to find the interaction before any completion exists, so record and replay would have
+keyed on different things.
+
+**Importing beats recording, when a trace already exists.** `probatio import-cassettes` builds the
+same tapes from a JSONL of interactions somebody else's system already logged, which is how Phase
+11 dogfoods Consilium without re-running anything: lines sharing a case and a call become one
+interaction with one sample per line, in file order, so a trace of repeated runs imports as a pass
+rate rather than as a single answer. It is the one command in `cli.py` that calls no model, which
+is why the test suite may run it end to end. Unknown keys on a line are refused rather than
+dropped (DECISIONS 45), for the reason `LLMCase` refuses them: the file is written by a script, and
+a misspelled `latency` silently becoming a zero-latency tape would pass every latency ceiling in
+the suite forever.

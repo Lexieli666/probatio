@@ -2,14 +2,20 @@
 
 Spec §3.13 gives this script three subcommands and one rule: the only live model calls in the
 whole project happen here, in ``validate-judge --run-judge`` and ``freeze-variants``, and a person
-types them. Phase 4 ships ``validate-judge``; ``freeze-variants`` and ``import-cassettes`` arrive
-with the phases that implement what they write.
+types them. Phase 4 ships ``validate-judge`` and Phase 7 ``import-cassettes``, which calls nobody
+at all; ``freeze-variants`` arrives with the phase that implements what it writes.
 
 ``validate-judge`` exists because spec §9 rejects the word "validated" for a judge with no record
 on disk. It measures agreement between a judge and a human over a labelled sample and writes the
 record every graded judge assertion reads back. Two modes: ``columns`` compares two columns that
 already hold labels, and ``--run-judge`` produces the judge column here and now by grading each
 row. Both write the same record; only the second needs a provider.
+
+``import-cassettes`` exists because a trace of real interactions is worth more than a recording
+made to order, and most of them already exist: Phase 11 turns Consilium's published traces into
+the JSONL this command reads, and the tapes it writes replay through
+:class:`~probatio.cassette.CassetteProvider` without a model or a network. It calls nobody, which
+is why it is the one command here a test may run end to end.
 """
 
 from __future__ import annotations
@@ -21,7 +27,9 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Final, Literal, TextIO
 
+from .artefacts import timestamp
 from .case import LLMCase
+from .cassette import IMPORT_PROVIDER, CassetteStore, import_cassettes, read_trace
 from .errors import ProbatioConfigError, ProbatioError
 from .judge import (
     Judge,
@@ -31,16 +39,17 @@ from .judge import (
     cohens_kappa,
     hash_labels_file,
     resolve_rubric,
-    utc_now,
     write_validation_record,
 )
 from .providers import Provider
 
 __all__ = [
+    "DEFAULT_CASSETTE_OUT",
     "DEFAULT_LABEL_MAP",
     "DEFAULT_VALIDATION_OUT",
     "build_parser",
     "build_provider",
+    "import_cassettes_command",
     "main",
     "parse_label_map",
     "validate_judge",
@@ -53,6 +62,9 @@ through this map before they are compared (DECISIONS 25)."""
 
 DEFAULT_VALIDATION_OUT: Final = Path(".probatio") / "judges"
 """Where a record is written when ``--out`` is not given; spec §5's location under rootdir."""
+
+DEFAULT_CASSETTE_OUT: Final = Path("cassettes")
+"""Where imported tapes are written when ``--out`` is not given; spec §5's location."""
 
 PROVIDER_CHOICES: Final = ("fake", "anthropic", "claude-cli")
 """The providers this script can construct. Only ``fake`` is ever used by a test."""
@@ -290,7 +302,7 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         labels_hash=hash_labels_file(labels_path),
         method=method,
         judge_model=judge_model,
-        created=utc_now(),
+        created=timestamp(),
     )
     written = write_validation_record(record, validation_dir=Path(args.out))
 
@@ -311,6 +323,40 @@ def _summary_line(rubric: Rubric, result: KappaResult, method: str) -> str:
         f"judge {rubric.name!r}: n={result.n} agreement={result.agreement:.3f} "
         f"kappa={result.kappa:.3f} (method: {method}, labels: {', '.join(result.labels)})"
     )
+
+
+def import_cassettes_command(args: argparse.Namespace, *, stream: TextIO | None = None) -> int:
+    """Build cassette files from a JSONL of recorded interactions, and report what was written.
+
+    Args:
+        args: The parsed ``import-cassettes`` arguments.
+        stream: Where the summary goes. Defaults to standard output.
+
+    Returns:
+        ``0``. There is no threshold here to fail: either every line parsed or the command
+        raised.
+
+    Raises:
+        ProbatioError: The trace cannot be read, a line is malformed, or a case id or the suite
+            name would escape the output directory.
+    """
+    out = stream if stream is not None else sys.stdout
+    source = Path(args.source)
+    store = CassetteStore(Path(args.out))
+    written = import_cassettes(
+        read_trace(source),
+        suite=args.suite,
+        store=store,
+        provider=args.provider,
+        source=source,
+    )
+    for path in written:
+        print(f"wrote {path}", file=out)
+    print(
+        f"imported {len(written)} cassette(s) for suite {args.suite!r} from {source}",
+        file=out,
+    )
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -377,6 +423,36 @@ def build_parser() -> argparse.ArgumentParser:
         help=f"directory the validation record is written to (default: {DEFAULT_VALIDATION_OUT})",
     )
     validate.set_defaults(handler=validate_judge)
+
+    importer = subparsers.add_parser(
+        "import-cassettes",
+        help="build cassette files from a JSONL of already-recorded interactions",
+        description=(
+            "Read one JSON object per line — case_id, prompt, system, params, model, text, "
+            "tokens_in, tokens_out, cost_usd, latency_ms — and write one cassette per case under "
+            "<out>/<suite>/. Lines sharing a case and a call become one interaction with one "
+            "sample per line, in file order, so a trace of repeated runs replays as a pass rate. "
+            "This command calls no model."
+        ),
+    )
+    importer.add_argument(
+        "--from",
+        dest="source",
+        required=True,
+        help="JSONL of recorded interactions, one JSON object per line",
+    )
+    importer.add_argument("--suite", required=True, help="suite name, the directory tapes go in")
+    importer.add_argument(
+        "--out",
+        default=str(DEFAULT_CASSETTE_OUT),
+        help=f"directory the tapes are written under (default: {DEFAULT_CASSETTE_OUT})",
+    )
+    importer.add_argument(
+        "--provider",
+        default=IMPORT_PROVIDER,
+        help=f"the 'provider' field written into each tape (default: {IMPORT_PROVIDER})",
+    )
+    importer.set_defaults(handler=import_cassettes_command)
     return parser
 
 

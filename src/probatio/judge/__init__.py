@@ -28,7 +28,6 @@ from .validation import (
     hash_labels_file,
     load_validation_record,
     rubric_is_validated,
-    utc_now,
     validation_record_path,
     write_validation_record,
 )
@@ -52,7 +51,6 @@ __all__ = [
     "render_judge_prompt",
     "resolve_rubric",
     "rubric_is_validated",
-    "utc_now",
     "validation_record_path",
     "write_validation_record",
 ]
