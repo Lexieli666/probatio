@@ -1,4 +1,4 @@
-"""Phase 2: what ``import probatio`` gives a user, and what it deliberately does not."""
+"""Phase 3: what ``import probatio`` gives a user, and what it deliberately does not."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import sys
 
 import probatio
 
-PHASE_2_EXPORTS = {
+PHASE_3_EXPORTS = {
     # spec §3.2
     "LLMCase",
     "load_cases",
@@ -25,6 +25,8 @@ PHASE_2_EXPORTS = {
     "BaselineDriftError",
     "BudgetExceededError",
     "JudgeOutputError",
+    # spec §3.4
+    "AssertionResult",
 }
 
 LATER_PHASES = {
@@ -33,21 +35,20 @@ LATER_PHASES = {
     "format_jitter",
     "paraphrase_invariant",
     "flaky_tolerant",
-    "AssertionResult",
     "CaseResult",
     "RunReport",
 }
 
 
-def test_the_public_surface_is_exactly_what_phase_2_implements() -> None:
-    assert set(probatio.__all__) == PHASE_2_EXPORTS | {"__version__"}
+def test_the_public_surface_is_exactly_what_phase_3_implements() -> None:
+    assert set(probatio.__all__) == PHASE_3_EXPORTS | {"__version__"}
     assert probatio.__all__ == sorted(probatio.__all__)
     for name in probatio.__all__:
         assert hasattr(probatio, name), name
 
 
 def test_every_export_is_documented_and_typed() -> None:
-    for name in PHASE_2_EXPORTS:
+    for name in PHASE_3_EXPORTS:
         symbol = getattr(probatio, name)
         assert symbol.__doc__, f"{name} has no docstring"
 

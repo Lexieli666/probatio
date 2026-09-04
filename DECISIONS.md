@@ -327,3 +327,80 @@ unpriced calls is reported unenforceable, not passed.
   keyword table that misses diagnosable without a debugger. Rejected alternative: longest match
   wins, which is more forgiving of overlapping keys and hides the overlap that
   `test_every_scripted_keyword_selects_exactly_one_case` exists to catch.
+
+## 19. `schema_file` resolves against a `base_dir` argument, defaulting to the working directory
+
+- **Date:** 2026-09-03 (Phase 3)
+- **Q:** `schema_valid` may name a schema by path instead of inlining it, and spec §3.4 does not
+  say what a relative `schema_file` is relative to, nor what format the file is in.
+- **A:** `evaluate_schema_valid` and `evaluate_case` take a keyword-only `base_dir: Path | None`,
+  and a relative `schema_file` is resolved against it; an absolute one ignores it. The default is
+  `Path.cwd()`, which is pytest's rootdir under a normal invocation, and Phase 9's plugin will
+  pass `config.rootpath` explicitly. The file is read with `yaml.safe_load`, so both YAML and JSON
+  work through one code path. `evaluate_case`'s `output` is the answer text, a `str`; normalising
+  a SUT's `str | Completion` return (spec §3.12) belongs at the SUT boundary in the plugin.
+- **Why:** `LLMCase` stays free of absolute paths and free of any knowledge of where it was
+  loaded from, which is what lets a case file be committed, diffed and moved between checkouts;
+  it is also consistent with spec §0, which makes rootdir the origin for every other path. JSON
+  is a subset of YAML, so one parser costs nothing and adds no dependency. Rejected alternatives:
+  recording the source file on each case at load time and resolving against it, which pushes an
+  absolute path from the loader's machine into a frozen model and into every hash computed over
+  it; and resolving against the case file implicitly by re-reading it at evaluation time, which
+  makes an assertion's behaviour depend on the loader having left the file where it was.
+
+## 20. `TrigramCosine`'s three degenerate cases are decided by equality, not by arithmetic
+
+- **Date:** 2026-09-03 (Phase 3)
+- **Q:** Character trigrams over a string shorter than three characters produce an empty vector,
+  so the cosine is undefined; identical strings can come out fractionally under 1.0 in floating
+  point; and strings sharing no trigram divide a zero dot product by a positive norm.
+- **A:** If either string has no trigrams after normalisation, return `1.0` when the two normalised
+  strings are equal and `0.0` otherwise. Return `0.0` as soon as the dot product is zero, without
+  dividing. Clamp the result with `min(1.0, ...)` so identical strings score exactly `1.0`.
+- **Why:** "Two strings that normalise to the same thing are maximally similar" is the rule the
+  backend already follows everywhere else, so extending it to the strings too short to have a
+  trigram keeps one rule rather than adding a special case with its own answer. Exactness matters
+  beyond tidiness: Phase 5 compares snapshot scores with a 0.05 tolerance and Phase 8 compares
+  variant verdicts, and a similarity of 0.9999999999999999 for an unchanged output is a drift
+  signal that means nothing. Rejected alternatives: padding short strings with sentinel characters
+  so a vector always exists, which invents trigrams the input never had and makes `"ab"` and
+  `"cd"` share the padding; and returning `0.0` for anything too short, which reports a case whose
+  reference and output are both `"ok"` as maximally dissimilar.
+
+## 21. `contains` scores the fraction of all declared substrings, so score and verdict can disagree
+
+- **Date:** 2026-09-03 (Phase 3)
+- **Q:** Spec §3.4 gives `contains` the score "fraction matched", but a `contains` assertion has
+  two lists with different rules: every `all` entry is required and one `any` entry is enough.
+- **A:** The score is the fraction of `all` and `any` together that appear. The verdict is
+  unchanged: every `all` present, and at least one `any` present when `any` is non-empty. So
+  `any: [a, b, c, d]` matching one substring **passes with a score of 0.25**. `not_contains`
+  mirrors it as the fraction absent.
+- **Why:** The two numbers answer two questions and a report shows both. The verdict answers "did
+  this case pass", and one `any` match is exactly what `any` asked for. The score answers "what
+  moved", and that is what a snapshot in `scores` mode is diffing: an answer that used to name
+  three of the four recommended drug classes and now names one has changed in a way worth seeing
+  before the day it names none. Rejected alternative: scoring 1.0 or 0.0 to mirror the verdict,
+  which is honest but throws away the only continuous signal these assertions have and makes
+  `snapshot: scores` on a substring-only case identical to `snapshot: off`.
+
+## 22. A mistake inside an assertion is a failed result, not an exception
+
+- **Date:** 2026-09-03 (Phase 3)
+- **Q:** An empty similarity reference, a `backend:` name that is not registered, a `schema_file`
+  that does not exist and a `schema:` that is not a valid JSON Schema are all mistakes in the
+  case, not failures of the application. Spec §3.4 says assertions never raise; it does not say
+  whether these count as configuration errors that should escape anyway.
+- **A:** They are `AssertionResult(passed=False)` with a detail naming the mistake, and `score` is
+  `None` where no number would mean anything (empty reference, unknown backend) and `0.0` where
+  the check ran and failed. `schema_valid` scores `1.0` or `0.0`; it is binary, but a number keeps
+  it comparable in a snapshot alongside the fractional scores.
+- **Why:** These mistakes are found by running the suite, and one raised exception ends the
+  session at the first bad case, so a developer fixes them one per run. As results they all appear
+  in one report, next to the cases that are genuinely failing, which is the same argument that
+  makes `evaluate_case` run every assertion instead of stopping at the first. They are never
+  mistaken for passes, because they are failures. Rejected alternative: raising
+  `ProbatioConfigError` for the four of them, on the grounds that a typo in a case is categorically
+  different from a bad answer — true, but it is a distinction the `detail` already draws, and
+  paying for it with a suite that aborts is the wrong trade for a tool whose whole point is
+  reporting everything that is wrong at once.

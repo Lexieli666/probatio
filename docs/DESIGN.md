@@ -113,3 +113,48 @@ one line and keeps recording tapes; they do not wait for a Probatio release, and
 the adapter. The rejected alternative is hard-coding the argument vector, which is shorter and
 reads better right up to the first rename, at which point every user of the adapter is blocked on
 somebody else's release cycle.
+
+## Phase 3
+
+**Assertions return results; they never raise.** The pytest-native thing to do would be to write
+`assert needle in output`, get the rewritten-assertion output for free, and stop at the first
+failure. Probatio does the opposite: every evaluator returns an `AssertionResult` and
+`evaluate_case` runs all of them. The reason is what an LLM regression looks like. A prompt change
+does not break one thing; it breaks a case's schema *and* drops a required substring *and* moves
+its similarity below the floor, and those three facts together say "the model started answering in
+prose" while the first one alone says "line 41". The cost is that Probatio has to render its own
+failure text instead of inheriting pytest's, which is why every result carries a `detail` written
+to be read in a table. The rejected alternative is raising on the first failure and letting pytest
+format it, which is less code and strictly less information per run.
+
+**The default similarity backend is character trigrams with no padding, and it is deliberately
+stupid.** The hard constraint is that a `pytest` run downloads nothing and gives the same number on
+every machine, which rules out embeddings by default. Among the things that fit, character
+trigrams over the whole normalised string — across word boundaries, not per token — degrade
+gracefully in exactly the way this job needs: a clause that moves keeps almost all of its
+trigrams, so a reordered sentence scores 0.923 where token-set overlap would score 1.0 and lose
+the distinction, and a stem that changes keeps most of them, so `started`/`starting` does not fall
+off a cliff. The rejected alternative is token Jaccard or a bag-of-words cosine, which is simpler
+to explain but blind to morphology and to everything below the word, and which scores a genuine
+paraphrase and an unrelated sentence about the same drug closer together than trigrams do.
+`docs/assertions.md` publishes the five-pair table rather than describing this in prose, because
+the only useful thing to tell a user picking `tau` is where the numbers actually land.
+
+**`docs/assertions.md`'s table is parsed by a test, not duplicated in one.** The obvious way to
+keep a documented number honest is to write the pairs in a test and assert the values, then paste
+them into the doc. That keeps the *code* honest and lets the *doc* drift, which is the direction
+that matters, since nobody re-reads a doc to check it. So `tests/test_docs_assertions.py` reads
+`docs/assertions.md`, parses the markdown table, and recomputes each row with the shipped backend;
+editing a score in the doc fails the suite. The rejected alternative is generating the table into
+the doc from a script, which cannot drift either but puts a build step between a contributor and a
+documentation edit, and leaves the committed file looking like something you should not touch.
+
+**A judge with no provider is unenforceable, not skipped.** The tempting move for an assertion
+that cannot run is `pytest.skip`, which is visible, standard and does not fail the build. It is
+also how a suite ends up green while the only assertion that checks whether answers are *true* has
+not run for a month. So `AssertionResult.unenforceable` is a third state: never a pass, counted
+separately from ordinary failures, and listed under warnings with the number of judge verdicts
+that did not happen. It is the same mechanism as spec §3.7's unenforceable cost ceiling, and it
+exists for the same reason — an absent check has to be representable, or it is indistinguishable
+from a passing one. The rejected alternative is skipping, which hides the gap in a count that CI
+prints in grey and nobody reads.
