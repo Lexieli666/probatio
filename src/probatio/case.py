@@ -31,6 +31,7 @@ __all__ = [
     "NotContainsAssertion",
     "SchemaValidAssertion",
     "SimilarityAssertion",
+    "check_field_path",
     "get_field",
     "load_cases",
     "with_field",
@@ -151,8 +152,22 @@ _MISSING: Final = object()
 """Sentinel distinguishing "no default was given" from "the default is ``None``"."""
 
 
-def _segments(path: str) -> list[str]:
-    """Split a dotted field path, rejecting the empty segments a stray dot leaves behind."""
+def check_field_path(path: str) -> list[str]:
+    """Split a dotted field path, rejecting the empty segments a stray dot leaves behind.
+
+    A metamorphic relation is constructed with a field path long before any case is loaded, so it
+    calls this at construction time to fail on ``""`` or ``"input..question"`` there rather than
+    reporting every case in the suite as "not applicable" (DECISIONS 8, 13).
+
+    Args:
+        path: The candidate dotted path, such as ``input.documents``.
+
+    Returns:
+        The path's segments, in order.
+
+    Raises:
+        ProbatioConfigError: The path is empty or holds an empty segment.
+    """
     segments = path.split(".")
     if not path or any(not segment for segment in segments):
         raise ProbatioConfigError(
@@ -163,7 +178,7 @@ def _segments(path: str) -> list[str]:
 
 def _root(case: LLMCase, path: str) -> tuple[str, list[str]]:
     """Split a path into its ``LLMCase`` field and the mapping keys under it."""
-    root, *rest = _segments(path)
+    root, *rest = check_field_path(path)
     if root not in type(case).model_fields:
         raise ProbatioConfigError(
             f"{path!r} starts at {root!r}, which is not a field of LLMCase; the fields are "

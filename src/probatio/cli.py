@@ -2,8 +2,13 @@
 
 Spec §3.13 gives this script three subcommands and one rule: the only live model calls in the
 whole project happen here, in ``validate-judge --run-judge`` and ``freeze-variants``, and a person
-types them. Phase 4 ships ``validate-judge`` and Phase 7 ``import-cassettes``, which calls nobody
-at all; ``freeze-variants`` arrives with the phase that implements what it writes.
+types them. Phase 4 ships ``validate-judge``, Phase 7 ``import-cassettes``, which calls nobody at
+all, and Phase 8 ``freeze-variants``.
+
+``freeze-variants`` exists because spec §9 rejects paraphrases generated during a pytest run. It
+is the deliberate act that turns a model's rewordings into a reviewed, committed file that
+``paraphrase_invariant`` reads for nothing forever after; ``--provider fake`` writes mechanical
+rewrites instead and says loudly that they are not paraphrases.
 
 ``validate-judge`` exists because spec §9 rejects the word "validated" for a judge with no record
 on disk. It measures agreement between a judge and a human over a labelled sample and writes the
@@ -27,8 +32,8 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Final, Literal, TextIO
 
-from .artefacts import timestamp
-from .case import LLMCase
+from .artefacts import Clock, timestamp, utc_now, write_yaml
+from .case import LLMCase, load_cases
 from .cassette import IMPORT_PROVIDER, CassetteStore, import_cassettes, read_trace
 from .errors import ProbatioConfigError, ProbatioError
 from .judge import (
@@ -41,14 +46,20 @@ from .judge import (
     resolve_rubric,
     write_validation_record,
 )
+from .metamorphic import MECHANICAL_WARNING, VariantsFile, freeze_case, freeze_mechanically
+from .metamorphic.freeze import GENERATED_HEADER, field_text
+from .metamorphic.variants import variants_path
 from .providers import Provider
 
 __all__ = [
     "DEFAULT_CASSETTE_OUT",
     "DEFAULT_LABEL_MAP",
     "DEFAULT_VALIDATION_OUT",
+    "DEFAULT_VARIANTS_OUT",
+    "FREEZE_FIELD",
     "build_parser",
     "build_provider",
+    "freeze_variants",
     "import_cassettes_command",
     "main",
     "parse_label_map",
@@ -65,6 +76,15 @@ DEFAULT_VALIDATION_OUT: Final = Path(".probatio") / "judges"
 
 DEFAULT_CASSETTE_OUT: Final = Path("cassettes")
 """Where imported tapes are written when ``--out`` is not given; spec §5's location."""
+
+DEFAULT_VARIANTS_OUT: Final = Path("variants")
+"""Where frozen variants are written when ``--out`` is not given; spec §5's location."""
+
+DEFAULT_FREEZE_K: Final = 3
+"""How many paraphrases are asked for when ``--k`` is not given; ``paraphrase_invariant``'s k."""
+
+FREEZE_FIELD: Final = "input.question"
+"""The field named in the command's help, and the default ``paraphrase_invariant`` reads."""
 
 PROVIDER_CHOICES: Final = ("fake", "anthropic", "claude-cli")
 """The providers this script can construct. Only ``fake`` is ever used by a test."""
@@ -359,6 +379,79 @@ def import_cassettes_command(args: argparse.Namespace, *, stream: TextIO | None 
     return 0
 
 
+def _freeze_one(
+    case: LLMCase,
+    args: argparse.Namespace,
+    *,
+    clock: Clock,
+) -> VariantsFile:
+    """Freeze one case, either by asking a provider or by rewriting mechanically."""
+    if args.provider == "fake":
+        return freeze_mechanically(case, field=args.field, k=args.k, clock=clock)
+    provider = build_provider(args.provider, args.model)
+    return freeze_case(case, field=args.field, k=args.k, provider=provider, clock=clock)
+
+
+def freeze_variants(
+    args: argparse.Namespace, *, stream: TextIO | None = None, clock: Clock = utc_now
+) -> int:
+    """Ask a model for paraphrases of one field of every case, and write the frozen files.
+
+    A directory of cases is normally mixed, so a case with no text at ``--field`` is skipped with
+    a note rather than failing the batch; a case whose file already exists is skipped unless
+    ``--force``, because these files are reviewed by hand and overwriting them silently would
+    throw that review away. If **no** case in the directory has the field, that is a mistake in
+    ``--field`` rather than a batch with nothing to do, and it is an error.
+
+    Args:
+        args: The parsed ``freeze-variants`` arguments.
+        stream: Where the per-file lines and the summary go. Defaults to standard output.
+        clock: The clock each file's ``created`` stamp is read from. Injected by tests, so no
+            test in this repository writes a wall-clock timestamp.
+
+    Returns:
+        ``0``.
+
+    Raises:
+        ProbatioError: The cases cannot be loaded, ``--field`` resolves on no case, or a reply
+            does not validate.
+    """
+    out = stream if stream is not None else sys.stdout
+    out_dir = Path(args.out)
+    cases = load_cases(args.cases)
+    if args.k < 1:
+        raise ProbatioConfigError(f"--k must be at least 1, not {args.k}")
+    if args.provider == "fake":
+        print(f"probatio: {MECHANICAL_WARNING}", file=sys.stderr)
+
+    eligible = [case for case in cases if field_text(case, args.field) is not None]
+    if not eligible:
+        raise ProbatioConfigError(
+            f"none of the {len(cases)} case(s) under {args.cases} has text at "
+            f"{args.field!r}; name the field the paraphrase_invariant decorator varies"
+        )
+    for case in cases:
+        if field_text(case, args.field) is None:
+            print(f"skipped {case.id}: no text at {args.field!r}", file=out)
+
+    written: list[Path] = []
+    for case in eligible:
+        path = variants_path(case.id, out_dir)
+        if path.exists() and not args.force:
+            print(f"skipped {case.id}: {path} exists (pass --force to overwrite)", file=out)
+            continue
+        contents = _freeze_one(case, args, clock=clock)
+        write_yaml(path, contents.model_dump(mode="json"), header=GENERATED_HEADER)
+        written.append(path)
+        print(f"wrote {path}", file=out)
+    print(
+        f"froze {args.k} variant(s) of {args.field!r} for {len(written)} of "
+        f"{len(eligible)} eligible case(s) into {out_dir}",
+        file=out,
+    )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Build the argument parser for the ``probatio`` script.
 
@@ -423,6 +516,47 @@ def build_parser() -> argparse.ArgumentParser:
         help=f"directory the validation record is written to (default: {DEFAULT_VALIDATION_OUT})",
     )
     validate.set_defaults(handler=validate_judge)
+
+    freeze = subparsers.add_parser(
+        "freeze-variants",
+        help="ask a model for paraphrases of one case field and write the frozen variant files",
+        description=(
+            "Ask the provider for --k paraphrases of --field for every case under --cases, "
+            "validate the reply (exactly --k distinct non-empty strings, none of them the "
+            "original), and write variants/<case_id>.yaml with the provider, model, timestamp "
+            "and prompt hash that produced it. Existing files are skipped unless --force. "
+            "--provider fake writes mechanical rewrites and warns that they are not paraphrases. "
+            "This is one of the two commands that calls a live model, and a person runs it."
+        ),
+    )
+    freeze.add_argument("--cases", required=True, help="case file or directory of case files")
+    freeze.add_argument(
+        "--field",
+        required=True,
+        help=f"dotted path of the text to paraphrase, such as {FREEZE_FIELD}",
+    )
+    freeze.add_argument(
+        "--k",
+        type=int,
+        default=DEFAULT_FREEZE_K,
+        help=f"how many paraphrases to ask for per case (default: {DEFAULT_FREEZE_K})",
+    )
+    freeze.add_argument(
+        "--provider",
+        default="fake",
+        choices=PROVIDER_CHOICES,
+        help="provider to ask; 'fake' writes mechanical rewrites instead (default: fake)",
+    )
+    freeze.add_argument("--model", help="model to ask")
+    freeze.add_argument(
+        "--out",
+        default=str(DEFAULT_VARIANTS_OUT),
+        help=f"directory the variant files are written to (default: {DEFAULT_VARIANTS_OUT})",
+    )
+    freeze.add_argument(
+        "--force", action="store_true", help="overwrite variant files that already exist"
+    )
+    freeze.set_defaults(handler=freeze_variants)
 
     importer = subparsers.add_parser(
         "import-cassettes",

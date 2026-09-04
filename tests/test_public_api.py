@@ -1,4 +1,9 @@
-"""Phase 3: what ``import probatio`` gives a user, and what it deliberately does not."""
+"""What ``import probatio`` gives a user, and what it deliberately does not.
+
+The set grows one phase at a time and this test is the record of where it has got to: the demo
+suite's import guard, and ``tests/test_demo_spec.py``'s lifecycle check, both depend on the names
+that are still absent being absent.
+"""
 
 from __future__ import annotations
 
@@ -29,26 +34,32 @@ PHASE_3_EXPORTS = {
     "AssertionResult",
 }
 
-LATER_PHASES = {
+PHASE_8_EXPORTS = {
+    # spec §3.9
     "order_invariant",
     "distractor_robust",
     "format_jitter",
     "paraphrase_invariant",
+}
+
+EXPORTS = PHASE_3_EXPORTS | PHASE_8_EXPORTS
+
+LATER_PHASES = {
     "flaky_tolerant",
     "CaseResult",
     "RunReport",
 }
 
 
-def test_the_public_surface_is_exactly_what_phase_3_implements() -> None:
-    assert set(probatio.__all__) == PHASE_3_EXPORTS | {"__version__"}
+def test_the_public_surface_is_exactly_what_the_shipped_phases_implement() -> None:
+    assert set(probatio.__all__) == EXPORTS | {"__version__"}
     assert probatio.__all__ == sorted(probatio.__all__)
     for name in probatio.__all__:
         assert hasattr(probatio, name), name
 
 
 def test_every_export_is_documented_and_typed() -> None:
-    for name in PHASE_3_EXPORTS:
+    for name in EXPORTS:
         symbol = getattr(probatio, name)
         assert symbol.__doc__, f"{name} has no docstring"
 

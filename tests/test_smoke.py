@@ -13,7 +13,7 @@ def test_version_string() -> None:
 
 def test_plugin_module_imports_cleanly() -> None:
     plugin = importlib.import_module("probatio.plugin")
-    assert plugin.__all__ == []
+    assert callable(plugin.pytest_configure)
 
 
 def test_cli_module_imports_cleanly() -> None:

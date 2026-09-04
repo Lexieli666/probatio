@@ -14,7 +14,7 @@ with phase N's code.
 - [x] **Phase 5** — Snapshots (spec §3.6)
 - [x] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
 - [x] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
-- [ ] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
+- [x] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
 - [ ] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
   also deletes the `collect_ignore` guard in the demo suite's `conftest.py` **and** the
   repository-level `conftest.py` that repeats it (DECISIONS 16)
@@ -239,3 +239,66 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   and the `probatio` fixture, neither of which exists before Phase 9.** The error itself, its text
   and its zero-inner-call guarantee are covered here as unit tests. DECISIONS 42–46;
   `docs/DESIGN.md` Phase 7.
+- 2026-09-04 — **Phase 8** — gate green: `pytest -q` 653 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples` (and on the transitional repository-level `conftest.py`); `mypy --strict
+  src/probatio` clean (35 source files); `examples/demo_suite/` byte-identical to 8a998af with
+  `git status --porcelain` on it empty. Shipped `metamorphic/` (`base`, `relations`, `variants`,
+  `evaluate`, `freeze`), `cli.py`'s `freeze-variants`, the `probatio_relation` marker registration
+  in `plugin.py`, and `docs/relations.md`; `probatio/__init__.py` adds `order_invariant`,
+  `distractor_robust`, `format_jitter` and `paraphrase_invariant`. `flaky_tolerant` is still
+  absent, so the demo's import still fails on it and the repository-level exclusion stays, which
+  `tests/test_demo_spec.py`'s lifecycle test confirms.
+  `Relation` is an ABC with `name`, `citation`, `variants(case)` and `applicable(case)`; `Variant`,
+  `Flip` and `RelationResult` are spec §3.9's models, frozen and `extra="forbid"`; the four
+  relations register themselves in `RELATIONS` and no fifth name is registered. `evaluate_relation`
+  takes the relation, the case, the original verdict and results, and a callable evaluating one
+  case, so the arithmetic is testable with no provider and no pytest session: 1 flip in 4 variants
+  is 0.25, a variant passing where the original failed counts too, and a relation that is not
+  applicable or generated nothing reports `violation_rate=None` with `n_variants=0` — never 0.0
+  (DECISIONS 8). `order_invariant` on a two-element list yields exactly one variant, because the
+  loop takes `min(k, distinct non-identity orderings)` with duplicates divided out (DECISIONS 47);
+  `format_jitter`'s three transforms are fixed functions and a subprocess test shows its variants
+  — and `order_invariant`'s seeded permutations — are byte-identical across two processes.
+  `paraphrase_invariant` with no file raises `MissingVariantsError` whose message carries a
+  runnable `probatio freeze-variants --cases <dir> --field <field> --provider claude-cli --k 3
+  --out <dir>`, naming the sibling `cases/` of the variants directory (DECISIONS 53); a file whose
+  `case_id` or `field` disagrees is a `ProbatioConfigError`. A file holding **fewer than `k`**
+  paraphrases is used as it stands and `n_variants` reports the two, three or however many were
+  evaluated, because the runbook's Phase 12 tells the human freezing against a live model to
+  delete the rewordings that changed the meaning and note the deletion in the file's header;
+  only an empty `variants` list raises `MissingVariantsError` ("exists but holds no variants"),
+  with the same command plus `--force` (DECISIONS 52, reversing this phase's first answer).
+  `probatio freeze-variants` asks for `k` paraphrases as a JSON list, refuses a
+  reply that is not exactly `k` distinct non-empty strings none of which is the original, writes
+  provenance from an injected clock, skips existing files unless `--force`, skips a case with no
+  text at `--field` but errors when **no** case has it (DECISIONS 55), and with `--provider fake`
+  calls nothing at all, writing `provider: mechanical` and warning on stderr (DECISIONS 54); the
+  model path is tested by replacing `cli.build_provider` with a `FakeProvider`, so no test reaches
+  a provider it did not construct. Two recordings with the same clock are byte-identical.
+  **Measured on the frozen demo suite** (`tests/test_metamorphic_demo.py`, against its scripted
+  fake, no numbers copied into any doc): both committed variants files load with
+  `provider: human`, `model: null`, `prompt_hash: null` and `created: "2026-09-03"`;
+  `order_invariant` and `distractor_robust` flip nothing anywhere; whitespace and markdown jitter
+  flip nothing; `copd-spirometry` is not applicable for all three field relations;
+  `htn-definition`'s frozen paraphrases show exactly one violation in three, on `paraphrase-3`,
+  with `contains`, `similarity` and `judge` all moving, and `t2d-metformin`'s show none.
+  **One README claim holds only in part and cannot hold in full**: the casing variant flips
+  `htn-definition`, `htn-first-line` and `t2d-screening-json`, but not `gerd-alarm-features` or
+  `insomnia-first-line`, whose keywords appear in lower case in their own **documents**, which
+  `format_jitter(field="input.question")` does not touch, so the scripted provider still matches
+  and the verdict cannot move. The frozen directory is unedited; the measured outcome and the
+  reason are both asserted as tests, and the correction is written down in an
+  "Errata for `demo_suite/README.md`" section of `examples/README.md`, which is tracked and
+  outside the frozen directory, with a test asserting that section names both cases and both
+  pinning tests (DECISIONS 51). Lifted `case.check_field_path` out of the
+  private `_segments` and added `artefacts.write_yaml`, the fourth persisted file kind's writer
+  (DECISIONS 56). Narrowed two older tests rather than deleting them: `tests/test_public_api.py`
+  compares against `PHASE_3_EXPORTS | PHASE_8_EXPORTS` and still asserts `flaky_tolerant`,
+  `CaseResult` and `RunReport` absent, and `tests/test_smoke.py` now asserts
+  `plugin.pytest_configure` is callable (DECISIONS 58). `tests/conftest.py` gained a `demo_app`
+  fixture, because a relation measured on the demo needs the prompt the app really builds, which
+  the keyword-based `scripted_answer` fixture bypasses. **Deferred to Phase 9: everything the
+  `probatio` fixture owns** — reading the marks off an item, running `evaluate_relation` after the
+  original case inside `check`, and the report's relations table; `plugin.py` registers the marker
+  and nothing else. DECISIONS 47–58; `docs/DESIGN.md` Phase 8; new `docs/relations.md`.
