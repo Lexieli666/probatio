@@ -13,6 +13,7 @@ tells them where to put a breakpoint.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from pathlib import Path
 
 from .assertions import (
@@ -41,6 +42,8 @@ def evaluate_case(
     *,
     judge_provider: Provider | None = None,
     base_dir: Path | None = None,
+    rubric_dirs: Sequence[Path] | None = None,
+    validation_dir: Path | None = None,
 ) -> list[AssertionResult]:
     """Evaluate every assertion of a case against one output.
 
@@ -51,6 +54,10 @@ def evaluate_case(
             judge assertion as unenforceable rather than passing it.
         base_dir: Directory a relative ``schema_file`` is resolved against. Defaults to the
             current working directory, which is pytest's rootdir under a normal invocation.
+        rubric_dirs: Directories a judge's rubric name is searched in, in order. Defaults to
+            ``[Path.cwd() / "rubrics"]`` (DECISIONS 23).
+        validation_dir: Where judge validation records live. Defaults to
+            ``Path.cwd() / ".probatio" / "judges"``.
 
     Returns:
         One :class:`~probatio.assertions.AssertionResult` per assertion, in declaration order.
@@ -67,5 +74,14 @@ def evaluate_case(
         elif isinstance(assertion, SimilarityAssertion):
             results.append(evaluate_similarity(assertion, output))
         else:
-            results.append(evaluate_judge(assertion, case, output, judge_provider=judge_provider))
+            results.append(
+                evaluate_judge(
+                    assertion,
+                    case,
+                    output,
+                    judge_provider=judge_provider,
+                    rubric_dirs=rubric_dirs,
+                    validation_dir=validation_dir,
+                )
+            )
     return results

@@ -404,3 +404,128 @@ unpriced calls is reported unenforceable, not passed.
   different from a bad answer — true, but it is a distinction the `detail` already draws, and
   paying for it with a suite that aborts is the wrong trade for a tool whose whole point is
   reporting everything that is wrong at once.
+
+## 23. A rubric name is resolved against an ordered list of directories, not against rootdir alone
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** Spec §3.5 says a rubric is `rubrics/<name>.md` "under rootdir, or an absolute path".
+  `examples/demo_suite/` keeps its rubric at `examples/demo_suite/rubrics/faithfulness.md` and
+  runs with rootdir above it — the repository root under a plain `pytest`, and `pytester`'s
+  temporary directory when the gate runs the suite through `pytester` — so a rootdir-only rule
+  fails every judge assertion in the frozen example. What is a rubric name relative to?
+- **A:** `resolve_rubric`, `evaluate_judge` and `evaluate_case` take a keyword-only
+  `rubric_dirs: Sequence[Path] | None`, searched in order, defaulting to `[Path.cwd() /
+  "rubrics"]`. Phase 9's plugin will pass `[rootdir / "rubrics", <requesting test module's
+  directory> / "rubrics"]`. An absolute `rubric` ignores the list. A name that resolves nowhere is
+  a failed `AssertionResult` naming every directory searched (DECISIONS 22), not an exception.
+- **Why:** rootdir stays first, so spec §0's "paths are relative to rootdir" remains the rule and
+  a repository-wide `rubrics/` keeps working; the second entry is what makes a self-contained
+  suite — one a user can copy, or that lives in `examples/` — carry its own rubrics. It is the
+  same shape as DECISIONS 19's `base_dir` for `schema_file`, so the two path-resolving assertions
+  behave alike. Rejected alternatives: recording each case's source file at load time and looking
+  for `rubrics/` beside it, which pushes the loader's absolute paths into a frozen model and into
+  every hash taken over it (rejected for the same reason in DECISIONS 19); and requiring an
+  absolute path in the demo suite, which would mean editing the frozen example and would make the
+  YAML unportable between checkouts.
+
+## 24. Kappa with one label used by both raters is 1.0, decided rather than computed
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** When both raters give every item the same single label, the expected agreement `p_e` is
+  1 and Cohen's kappa is `0 / 0`. Statistics packages variously return `NaN`, `0.0` or raise.
+- **A:** Return `1.0`. Observed agreement in that situation is necessarily perfect, so this is the
+  only value that is not actively misleading, and it is documented in the function's docstring and
+  pinned by a test.
+- **Why:** the alternative that reads best on paper, `NaN`, would then flow into a validation
+  record, into `--min-kappa` comparisons (where every comparison against `NaN` is false, so a
+  degenerate sample would silently pass any floor) and into the report. `0.0` is worse: it says
+  "no better than chance" about two raters who agreed on all forty items. Raising was rejected
+  because a degenerate sample is a fact about the data, not a bug in the caller, and the honest
+  handling is to report it with the agreement and `n` beside it. The situation is also visible in
+  the result: `labels` has one entry.
+
+## 25. Judge verdicts are translated into the human label space by a `--label-map`
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** Cohen's kappa is defined over one label space. The judge answers `pass`/`fail`; the
+  Consilium samples are labelled `supported`/`unsupported`. Comparing them raw gives an agreement
+  of exactly zero, which is a units error, not a measurement.
+- **A:** `validate-judge --label-map` takes comma-separated `from=to` pairs and defaults to
+  `pass=supported,fail=unsupported`; the map is applied to labels in both modes, and a label the
+  map does not mention is compared verbatim. So the fixtures' `judge_label` column, which already
+  holds `supported`/`unsupported`, passes through untouched and reproduces 0.350 and 0.592, while
+  `--run-judge` verdicts land in the same space. `--label-map ""` compares labels verbatim.
+- **Why:** one option, one default, and the translation is written down in the command line and in
+  the record's provenance rather than hidden in the code. Rejected alternatives: hard-coding the
+  pair, which silently mistranslates any other rubric's labels; and normalising both columns to
+  booleans "positive/negative", which requires Probatio to decide which label is the positive
+  class for a rubric it has never seen, and which loses multi-label rubrics entirely.
+
+## 26. `validate-judge` requires `--rubric` in both modes, and builds each row's case from named columns
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** Spec §3.13 lists `--rubric` inside the `--run-judge` group, and names
+  `--answer-column`/`--context-column` but no column for the question and no id column. What does
+  `columns` mode write into `rubric` and `rubric_hash`, and what exactly does the judge see?
+- **A:** `--rubric` is required in both modes: the record is named after a rubric and pins its
+  content hash, so a measurement with no rubric attached could not be read back by an assertion.
+  Under `--run-judge` each row becomes one `LLMCase` with id `row-<n>`, whose input holds only the
+  columns named by `--question-column` (default `question`) and `--context-column` (the cell
+  becomes one document); a row with neither is an error naming both flags. Nothing else from the
+  row reaches the prompt, and a test asserts that sentinel values planted in the label and notes
+  columns never appear in it.
+- **Why:** a judge shown the label it is being measured against measures nothing, so the prompt is
+  built from an allow-list of columns rather than by excluding the two label columns — excluding
+  is the rule that breaks the day a sample carries a third column with the answer in it. The added
+  `--question-column` is needed because the samples' questions are in a column of their own and a
+  faithfulness rubric graded without the question cannot tell "does not address the question" from
+  "unsupported". Rejected alternative: passing the whole row as the input, which is both a leak
+  and unfaithful to what the application under test was given.
+
+## 27. `cli.main` takes an argv sequence, and the Phase 0 smoke test was updated to pass one
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** Phase 0's `main()` took no arguments and returned 0, and its smoke test called `main()`.
+  A subcommand parser has to read arguments from somewhere, and argparse reading `sys.argv`
+  directly makes the CLI untestable in-process.
+- **A:** `main(argv: Sequence[str] | None = None) -> int`, defaulting to `sys.argv[1:]`. The
+  console script still calls `main()`. `tests/test_smoke.py` now calls `main([])`, which is
+  Phase 4's one edit to an earlier phase's test: called with no arguments inside a `pytest` run it
+  would parse pytest's own flags. `main([])` prints help and returns 0; a `ProbatioError` is
+  reported as one line on stderr with exit status 2, and `--min-kappa` failure is status 1.
+- **Why:** every CLI test in this phase runs in-process against a `FakeProvider`, which is what
+  keeps `--run-judge` covered without a live model. Rejected alternative: testing the CLI through
+  `subprocess`, which cannot inject a provider and would either need a network or a stub installed
+  into the child interpreter.
+
+## 28. `judge_model` is null in `columns` mode
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** Spec §3.5's record shows `judge_model` as a string, but in `columns` mode Probatio did
+  not produce the verdicts and has no way to know which model did.
+- **A:** `judge_model: str | None`, written as `null` in `columns` mode and set from the grading
+  completion's `model` under `--run-judge`.
+- **Why:** the same rule as `Completion.cost_usd` (spec §3.3): `None` means "unknown" and a
+  plausible stand-in is worse than an absent value. Rejected alternative: a `--judge-model` flag
+  the user types in `columns` mode, which records an unverified claim in a provenance file.
+
+## 29. `JudgeVerdict` requires `verdict` and `score`, tolerates a missing rationale and unknown keys
+
+- **Date:** 2026-09-03 (Phase 4)
+- **Q:** Phase 4 first parsed the judge's reply with `extra="forbid"` and a required `rationale`,
+  so a reply that omitted the sentence or volunteered a `confidence` key was rejected and the
+  assertion failed with `judge output was not valid JSON`. Is a format deviation a failed grade?
+- **A:** No. `verdict` (`"pass"`/`"fail"`) and `score` (a number in [0, 1]) stay required and
+  strictly typed, and a missing or out-of-range one is still `judge output was not valid
+  JSON: ...`. `rationale` defaults to `""` and `model_config` is `extra="ignore"`, so unknown keys
+  are dropped. When the rationale is empty the assertion's detail simply ends after the
+  threshold, with no dangling colon.
+- **Why:** `verdict` and `score` are the only load-bearing fields — they are what decides the
+  assertion and what a snapshot compares — and everything else is for the reader. The cost of
+  being strict beyond them is paid in Phase 12, where `validate-judge --run-judge` grades a
+  labelled sample and every rejected reply enters the comparison as a fail grade: a judge that
+  formats its JSON loosely would then show a lower kappa than its judgement deserves, and the
+  measurement would be partly about format compliance while being reported as agreement. Rejected
+  alternatives: keeping `extra="forbid"` and treating a deviation as a fail, which is the
+  behaviour just described; and coercing loosely (upper-case verdicts, string scores), which is
+  the salvage pass rejected in `docs/DESIGN.md` because it hides a drifting judge.

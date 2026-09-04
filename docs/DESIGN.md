@@ -158,3 +158,78 @@ that did not happen. It is the same mechanism as spec §3.7's unenforceable cost
 exists for the same reason — an absent check has to be representable, or it is indistinguishable
 from a passing one. The rejected alternative is skipping, which hides the gap in a count that CI
 prints in grey and nobody reads.
+
+## Phase 4
+
+**A judge is worth what its measured agreement says, so "validated" is a file on disk.** The
+tempting design is a `judge` assertion that grades and reports, with a note in the documentation
+saying users ought to check their judge against human labels. That note is read once. So the
+mechanism is inverted: `probatio validate-judge` writes
+`.probatio/judges/<rubric>.validation.json`, and any judge assertion whose rubric has no record
+for its *current text* is marked `unenforceable` and prints the command that would fix it, on
+every run, forever. The record pins the rubric's content hash rather than a timestamp or a version
+string, so editing the rubric is what invalidates it — which is correct, because an edited rubric
+is a different judge and the old kappa describes something that no longer exists. The rejected
+alternative is a `validated: true` key in the case or a decorator argument, which is a claim the
+author makes about their own judge with nothing behind it, and which spec §9 rejects by name.
+
+**An unvalidated judge's verdict still counts, and that is deliberately unlike the budget rule.**
+Both use the same `unenforceable` flag, but they resolve the pass/fail question in opposite
+directions. A cost ceiling on an unpriced model cannot fail a build, because there is no number to
+compare and failing would punish the user for a missing price table. An unvalidated judge, by
+contrast, did produce evidence about the answer: it read the rubric and the documents and returned
+a verdict. Discarding that verdict would leave the case with no faithfulness check at all, which
+is exactly the hole a judge assertion exists to close, and it would make adding a judge to a suite
+free — no verdict, no failures — until someone got round to validating it. So the verdict counts,
+the warning stays, and the summary reports how many verdicts came from unmeasured judges. Spec
+§3.5 says this in one sentence; the reason it is worth a paragraph is that the two rules look
+identical in the code and are not.
+
+**Strict about the fields that decide the assertion, tolerant about the rest, and a bad reply is a
+failed assertion rather than an exception.** A judge that answers with prose has not answered the
+question the template asked, and there is no defensible way to guess what it meant. Probatio
+strips exactly one code fence — models fence JSON even when told not to — then `json.loads`, then
+pydantic. `verdict` and `score` are required and strictly typed; the result is a failed
+`AssertionResult` whose detail begins `judge output was not valid JSON`, so one badly behaved
+judge produces one red case instead of ending the session, which is DECISIONS 22 applied to the
+judge. The line is drawn there rather than around the whole payload because of what a rejection
+costs in Phase 12: `validate-judge --run-judge` grades a labelled sample, and a reply that was
+thrown out for omitting its `rationale` or for adding a `confidence` key would land in the
+comparison as a fail grade and pull the measured kappa down for a reason that has nothing to do
+with the judge's judgement. So `rationale` defaults to empty and unknown keys are dropped
+(DECISIONS 29). The rejected alternatives are `extra="forbid"`, which measures formatting
+compliance and calls the number agreement, and a salvage pass at the other extreme — regex the
+first `{...}` out of the reply, lower-case the verdict, coerce `"1"` to `1.0` — which converts a
+broken judge into a quietly working one and makes the cassette key meaningless.
+
+**Rubric resolution searches a list of directories, because the frozen example proves rootdir
+alone is wrong.** Spec §3.5 names rootdir; `examples/demo_suite/` keeps its rubric beside its
+tests and runs with rootdir above it, so a rootdir-only rule fails every judge assertion in the
+one artefact this project treats as the specification. Rather than edit the example, resolution
+takes an ordered list with rootdir first (DECISIONS 23), which is also the shape `schema_file`
+already uses (DECISIONS 19). The rejected alternative — resolving relative to the case file by
+recording its path at load time — was rejected in Phase 3 for the same reason it is rejected here:
+it puts an absolute path from the loading machine into a frozen model, and therefore into every
+hash taken over it.
+
+**Cohen's kappa is ten lines of arithmetic, tested against a table computed by hand and against
+two published numbers.** Spec §9 rejects importing a statistics library for a ratio of two sums,
+so the implementation is a `Counter` over label pairs and one loop over the marginals. What makes
+it trustworthy is not its size but its two independent checks: a 2×2 example whose confusion
+table, `p_o`, `p_e` and kappa are all written out longhand in the test docstring, and the two
+Consilium label samples, whose agreement and kappa (0.675/0.350 and 0.800/0.592) were computed by
+a different implementation in another repository and published in its `docs/EVALUATION.md`. The
+implementation is multi-label rather than binary because a three-outcome rubric is an ordinary
+thing to validate and a binary-only version would mis-handle it silently instead of failing. The
+one degenerate case, both raters using a single label, is decided rather than computed
+(DECISIONS 24).
+
+**Under `--run-judge` the judge sees an allow-list of columns, never the sample minus its labels.**
+The obvious implementation grades each row and drops the two label columns from the prompt. The
+allow-list is the same thing today and a different thing the moment a sample carries a third
+column with the human's reasoning, a rationale from a previous judge, or the answer restated — all
+three of which appear in the Consilium samples this phase ships as fixtures. So each row is turned
+into an `LLMCase` built only from `--question-column` and `--context-column`, and a test plants
+sentinel strings in the label and notes columns and asserts they never reach a prompt. The
+rejected alternative, an exclusion list, is one CSV column away from measuring a judge that was
+shown the answer.
