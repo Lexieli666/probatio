@@ -282,3 +282,61 @@ turn is what lets a test assert a baseline's exact bytes. The rejected alternati
 `datetime.now` inside the store and freezing time in tests with a monkeypatch, works but makes the
 byte-identity test depend on patching a standard-library function that any transitive import might
 also be using.
+
+## Phase 6
+
+**No prices ship with the package, and the file that shows their shape ships no numbers.** A
+budget layer is only as good as its price list, and the tempting design — a table of current
+Anthropic prices baked into `budget.py`, refreshed at each release — is the one design that cannot
+be right. It is wrong the first time a price changes, wrong in a direction nobody notices (a
+ceiling that quietly got looser), and it puts a number in this repository that no committed run
+produced, which `CLAUDE.md` forbids outright. So `PriceTable` reads a YAML file the user
+maintains, `--probatio-prices` points at it, and `examples/prices.example.yaml` is a shape with
+every entry commented out and placeholders where the numbers go: it loads as an empty table
+(DECISIONS 35), and a test proves that against the empty table every cost ceiling in the demo
+suite is reported unenforceable. The rejected alternative was a shipped table with a "verify these
+before use" comment above it, which is a wrong number presented as a starting point — and nobody
+verifies a number that already looks like an answer.
+
+**The unenforceable rule is the reason `cost_usd` is `None` and not `0.0`, and it is worth the
+awkwardness.** An unenforceable ceiling is a result with `passed` false and `unenforceable` true:
+it is not a pass, so nothing green appears over an unmeasured number, and it is not an ordinary
+failure either, so a reporter can say "this check did not run" instead of "this case is too
+expensive". The awkwardness is real — a suite with cost ceilings and no price file is a suite full
+of failing budget checks — and it is the point. The alternative, which every tool that reports a
+cost of zero for an unpriced call has effectively chosen, is a ceiling that passes forever and a
+developer who believes their spend is bounded when nothing is checking it. Latency needs almost
+none of this machinery, because the clock always answered: spec §3.7 says latency is always
+enforceable, and wherever a call was made it is one comparison with no price file behind it. The
+one exception is the case that recorded no calls at all, where both ceilings are unenforceable
+(DECISIONS 36) — the sum of nothing is under every ceiling, so a pass there would be the vacuous
+pass the brief rules out, and it would hide a Phase 9 collector that was never wired up behind ten
+green ticks. Being warned about a legitimately call-free case is the cheaper of the two mistakes,
+because spec §3.7 makes an unenforceable result a warning rather than a case failure.
+
+**A price table fills a cost in; it never overwrites one.** `PriceTable.apply` returns the
+completion untouched whenever `cost_usd` is already set (DECISIONS 41). The concrete case is
+`ClaudeCLIProvider`, the one shipped adapter that reports money: its `total_cost_usd` is a notional
+API price, and it covers the CLI's own side calls as well as the answer, which the committed
+payload in `tests/fixtures/claude_cli_payload.json` shows plainly — the total exceeds the answering
+model's own `costUSD` because a second, smaller model appears in `modelUsage` beside it. That
+figure therefore overstates the answer's price, and `docs/providers.md` says so with all three
+numbers read back out of the fixture by a test rather than typed into the prose. But overstating is
+not the same as being wrong, and it is the only cost signal that adapter has: replacing it with a
+table's arithmetic would leave the tool disagreeing with the payload committed next to it, with no
+way for a user to tell which number they were reading. The rejected alternative was to price
+everything from the table for consistency, which trades a documented caveat for a silent
+contradiction.
+
+**Budgets are results, and the suite total is an object, because the exit status belongs to
+Phase 9.** `evaluate_budget` returns `AssertionResult`s that sit beside the case's other results,
+for the reason assertions return results (DECISIONS 22) and baselines do (Phase 5): a case that is
+over budget usually has something else wrong with it too. `SuiteBudget` accumulates, ranks and
+composes one sentence naming the total, the ceiling and the three dearest cases (DECISIONS 39),
+and it composes it through `BudgetExceededError` so that Phase 9's `pytest_sessionfinish` — which
+is where a non-zero exit status can be set at all — prints text written once here. Neither of them
+knows what a failure is, which is what let both be tested as plain functions over hand-built
+completions in this phase, with the `pytester` half of spec §3.7's acceptance deferred to the
+phase that owns the flags. The rejected alternative, raising `BudgetExceededError` from the
+per-case evaluation, ends the session on the first expensive case and never reports the suite total
+at all.

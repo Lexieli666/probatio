@@ -632,3 +632,145 @@ unpriced calls is reported unenforceable, not passed.
   alternative: resolving the finished path and asserting it is under `baseline_dir`, which is
   correct but reports the problem as a mysterious path comparison rather than naming the
   offending argument.
+
+## 35. An empty price file, and one whose entries are all commented out, is an empty table
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** `examples/prices.example.yaml` has to ship the structure without shipping any prices, and
+  it has to be loadable, because a test loads it. YAML parses an all-comments file to `None`. Is
+  that an empty table or a malformed file?
+- **A:** An empty table. `PriceTable.load` returns `PriceTable({}, source=path)` for a document
+  that parses to `None`, and only a document that parses to something other than a mapping is an
+  error.
+- **Why:** It makes the shipped example honest by construction: it loads, it prices nothing, and
+  against it every cost ceiling in a suite is reported unenforceable, which is exactly the state
+  of a suite whose prices nobody has entered. An error would have forced the example file to carry
+  at least one live price, and any price committed inside this repository is a number `CLAUDE.md`
+  forbids — nothing here produced it, and it would be stale within weeks. Rejected alternative:
+  shipping one plausible entry and a warning comment, which puts a wrong number in front of the
+  user at exactly the moment they are deciding what a ceiling means.
+
+## 36. A case that recorded no provider calls has no enforceable ceiling of either kind
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** The unenforceable rule fires when any call's `cost_usd` is `None`. A case whose system
+  under test made no calls at all has no such call, so both its cost and its latency sum to zero.
+  Is that a known zero that satisfies the ceilings, or nothing measured?
+- **A:** Nothing measured. Both ceilings the case declares come back as
+  `AssertionResult(passed=False, unenforceable=True)`, with the detail
+  `cost ceiling for <case> is unenforceable: no provider calls were recorded` and its latency
+  equivalent, and no fix clause, because no command fixes it. `case_cost([])` is `None` rather
+  than `0.0`, so the case reaches `SuiteBudget` as unknown cost and is named in the overrun line's
+  unknown list instead of counted as free. This narrows "latency is always enforceable" to
+  "enforceable wherever a call was made": what makes latency need no price file is that the clock
+  answered, and with no calls it was never asked.
+- **Why:** Spec §3.7 makes an unenforceable result a warning that is not counted as a passing
+  check — not a case failure — so a legitimately call-free case (a cached or short-circuited system
+  under test) is *warned about*, which costs its author a line in the warnings section, and is not
+  failed. A pass, by contrast, is the vacuous pass the brief forbids: a check over zero
+  observations cannot fail, so a green tick there asserts that spend and latency are bounded when
+  nothing looked. It also matters for the phase that comes next: in Phase 9 the calls reach a
+  budget through the collector, and a collector that is not wired up produces exactly this shape —
+  every case with zero calls. Under the old answer that reads as a suite of passing budget checks;
+  under this one it reads as every ceiling in the suite reporting that it measured nothing.
+  Rejected alternative, and this phase's first answer: a known `0.0` that passes, with `over 0
+  provider calls` in the detail as the visible symptom. It is defensible — the sum of no calls
+  really is zero, and `cost_usd is None` really does mean "this call happened and nobody priced
+  it" — but it buries the symptom in a detail line nobody reads on a green case, and it spends the
+  one mechanism the tool has for saying "this was not measured" on the one case where the
+  measurement is most obviously absent.
+
+## 37. The unenforceable detail is spec §3.7's sentence plus the flag that fixes it, and names every unpriced model
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** Spec §3.7 fixes the detail text as `cost ceiling for <case> is unenforceable: no price
+  configured for <model>`. A case can make calls against more than one model, and the sentence
+  names no way out.
+- **A:** The detail is that sentence, with every unpriced model listed in the order the calls were
+  made and de-duplicated, followed by `; fix it with: pytest --probatio-prices <path>`. It is
+  composed by passing the sentence through `ProbatioConfigError`, which is what renders the fix.
+- **Why:** Spec §6 requires that an error name the command that fixes it where one exists, and
+  here one does; the specified sentence is preserved verbatim as the prefix, so a report still
+  reads the way §3.7 says it should. Listing every unpriced model matters because a judged case
+  calls two models, and a detail naming only the first sends the user to add one price and run
+  again. Composing through the error class keeps the sentence in one place, exactly as Phase 5
+  composes drift details through `BaselineDriftError`, so Phase 9 can raise it rather than
+  paraphrase it. Rejected alternative: the bare sentence with the flag left to the reporter's
+  warnings section, which splits one message across two places and loses the fix wherever a raw
+  `AssertionResult.detail` is printed.
+
+## 38. Budget results carry no score
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** `AssertionResult.score` is a number in [0, 1] where one is meaningful. What is a cost
+  check's score?
+- **A:** `None`, for both `budget_cost` and `budget_latency`. The numbers live in the detail,
+  which names the total, the call count and the ceiling.
+- **Why:** The only natural score is the fraction of the ceiling used, and that number leaves
+  [0, 1] exactly when the check fails, so the field would have to be clamped — at which point
+  every failing case scores 1.0 and the score says less than the flag beside it. It also decides
+  the snapshot question for free: when Phase 9 puts budget results next to a case's other results,
+  a `scores`-mode baseline records `null` for them, so a latency that wobbled by two milliseconds
+  is not drift while a ceiling that started failing still is, because that is a flipped verdict.
+  Rejected alternative: `min(1.0, used / ceiling)`, which reads as a measurement and is not one.
+
+## 39. The suite accumulator sums per case id, ranks only known costs, and names three of each
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** `SuiteBudget.record(case_id, cost)` is called as cases complete, and under `--runs N` one
+  case completes N times. Spec §3.7 asks the overrun line for "the three most expensive cases"
+  and says a case of unknown cost is never counted as zero. What exactly is accumulated, and what
+  does the line list?
+- **A:** Per case id: known costs are summed, so five runs of one case are one entry holding five
+  runs' spend; a `None` marks that case unknown and contributes nothing to the total. The ranking
+  covers only cases whose cost is known, dearest first with ties broken by case id, and both lists
+  in the line — the three dearest and the unknown ones — are capped at three names, the unknown
+  list adding `and N more`.
+- **Why:** Ranking a case whose cost is unknown would mean ordering it by a number that does not
+  exist, and giving it a zero is the one thing spec §3.7 forbids; naming it in its own clause says
+  what is missing without pretending to know how much. The per-id sum is what makes the line's
+  "most expensive" mean "the case that cost the most this session" rather than "the run that cost
+  the most". The cap is there because §3.7 asks for one line, and a suite with two hundred unpriced
+  cases would otherwise print a paragraph. Ties broken by id keep the sentence identical across
+  two runs of the same suite, which is what lets a test assert it. Rejected alternative: recording
+  a list of `(case_id, cost)` pairs and ranking runs rather than cases, which reports the same
+  case three times in a three-line list.
+
+## 40. A price must be a number, and every ceiling comparison is rounded to six decimals
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** A price table is a hand-edited file, and pydantic in its default mode will read `"3.0"`
+  and `true` as `3.0` and `1.0`. Separately, `0.1 + 0.2` is more than `0.3` in binary floating
+  point, so a suite that spends exactly its ceiling can be over it.
+- **A:** Prices go through a validator that refuses anything that is not an `int` or a `float`,
+  bools included, naming the type it got; and every comparison of a total with a ceiling rounds
+  the difference to six decimals — a hundredth of a cent — before asking whether it is positive.
+  Money is printed to the same six decimals.
+- **Why:** A quoted price is a typo in a file whose numbers decide what every ceiling in the suite
+  means, and a silent coercion of `true` to one dollar per million tokens is a wrong ceiling that
+  nobody will ever look at again. The rounding is Phase 5's reasoning about score drift
+  (DECISIONS 32) applied to money: a ceiling met exactly must be met, and the only alternative —
+  an exact `>` on a float sum — fails a suite for the order its cases happened to complete in.
+  Rejected alternative: pydantic's `strict=True` on the model, which also refuses `3` for a float
+  field, and `input_per_mtok: 3` is a perfectly good price.
+
+## 41. The price table is applied at completion time, and never over a cost a provider reported
+
+- **Date:** 2026-09-04 (Phase 6)
+- **Q:** Entry 15 deferred `AnthropicProvider`'s `prices` argument to this phase. Where does
+  pricing happen — in the adapter, or in the budget layer at report time — and what happens when
+  the completion already carries a cost?
+- **A:** Both, and pricing is idempotent so that doing both is safe: `AnthropicProvider(prices=…)`
+  fills in `cost_usd` when it builds the completion, and `evaluate_budget` prices whatever it is
+  handed. `PriceTable.apply` returns the completion untouched whenever `cost_usd` is not `None`,
+  so a reported figure is never overwritten.
+- **Why:** Pricing in the adapter is what makes a recorded cassette carry the price that was in
+  force when it was recorded, rather than whatever the price file says on the day it is replayed;
+  pricing in the budget layer is what makes a ceiling enforceable for a provider that was built
+  without a table, which includes every completion a user hands `evaluate_budget` directly. The
+  protection of a reported cost is the important half: `ClaudeCLIProvider` reports a notional
+  total, and a table that silently replaced it would make the tool disagree with the payload
+  committed beside it — the user would have no way to tell which number they were reading.
+  Rejected alternative: pricing only at report time, which is simpler and loses the recorded-price
+  property of a tape; and pricing unconditionally, which quietly overwrites the one cost figure
+  any shipped provider actually reports.

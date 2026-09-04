@@ -1,0 +1,36 @@
+# Probatio price table — example only. VERIFY EVERY NUMBER BEFORE YOU USE IT.
+#
+# Probatio ships no prices. A price list committed inside a package is out of date the day after
+# it is written, and a stale price makes a `max_cost_usd` ceiling mean something nobody chose. So
+# this file is a shape, not data: every entry below is commented out, which means this file loads
+# as an EMPTY table, and against an empty table every cost ceiling in a suite is reported as
+# unenforceable rather than as passed. That is the honest state of a suite whose prices nobody
+# has entered.
+#
+# To use it: copy this file, read the current per-million-token prices off the provider's own
+# price page, uncomment one entry per model you call, replace the placeholders with those numbers,
+# commit it next to your suite, and point pytest at it:
+#
+#     pytest --probatio-prices prices.yaml
+#
+# The keys are the model names your completions report, verbatim, because that is what a price is
+# looked up by. Both fields are required, both are US dollars per million tokens, and both must be
+# non-negative numbers: a quoted string, a boolean or a misspelled key is an error naming this
+# file and the model, not a silently ignored line. A model that is not in the table is not priced,
+# and a call whose provider already reported a cost keeps the cost it reported.
+#
+# <model name as your completions report it>:
+#   input_per_mtok: <US dollars per million prompt tokens, from the provider's price page>
+#   output_per_mtok: <US dollars per million completion tokens, from the provider's price page>
+#
+# claude-opus-5:
+#   input_per_mtok: <verify against the price page>
+#   output_per_mtok: <verify against the price page>
+#
+# claude-sonnet-5:
+#   input_per_mtok: <verify against the price page>
+#   output_per_mtok: <verify against the price page>
+#
+# claude-haiku-4-5:
+#   input_per_mtok: <verify against the price page>
+#   output_per_mtok: <verify against the price page>

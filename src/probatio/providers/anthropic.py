@@ -9,6 +9,11 @@ Importing the SDK is not the same as calling it. Import happens when this module
 network calls happen only in :meth:`AnthropicProvider.complete`, and the constructor takes a
 ``client``, so Probatio's own tests exercise every line of the mapping below against an injected
 stub with no API key in the environment.
+
+The Messages API reports tokens, not money, so this adapter can only price a call if it is told
+what tokens cost. Spec §3.3 gives it an optional :class:`~probatio.budget.PriceTable` for that,
+and it is applied at completion time, so a cassette recorded through this adapter carries the
+cost that was in force when the tape was made rather than whatever the price file says today.
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ import importlib
 import time
 from typing import Any, Final
 
+from ..budget import PriceTable
 from ..errors import ProbatioConfigError
 from .base import Completion
 
@@ -60,9 +66,10 @@ sdk: Any = import_sdk()
 class AnthropicProvider:
     """Calls the Anthropic Messages API through the official SDK.
 
-    Cost is always ``None``: the Messages API reports token counts, not money, and Probatio does
-    not ship a price list. A case with a cost ceiling therefore reports that ceiling as
-    unenforceable rather than as passed until a price table is configured.
+    Cost is ``None`` unless the provider was constructed with a
+    :class:`~probatio.budget.PriceTable` that prices the model: the Messages API reports token
+    counts, not money, and Probatio ships no price list. Until a table is configured, a case with
+    a cost ceiling reports that ceiling as unenforceable rather than as passed (spec §3.7).
 
     Attributes:
         name: ``"anthropic"``.
@@ -76,6 +83,7 @@ class AnthropicProvider:
         model: str | None = None,
         client: Any | None = None,
         max_tokens: int = DEFAULT_MAX_TOKENS,
+        prices: PriceTable | None = None,
     ) -> None:
         """Build the provider, constructing a client from the environment unless one is given.
 
@@ -85,9 +93,13 @@ class AnthropicProvider:
                 own ``anthropic.Anthropic()`` is constructed, which reads the API key from the
                 environment. Probatio's tests always pass one.
             max_tokens: The default ``max_tokens`` for calls whose ``params`` name none.
+            prices: Prices for the models this provider calls. When one prices a call, the
+                completion carries the cost; when none does, the cost stays ``None`` and any cost
+                ceiling over the call is unenforceable rather than passed.
         """
         self.model = model
         self.max_tokens = max_tokens
+        self.prices = prices
         self._client: Any = sdk.Anthropic() if client is None else client
 
     def complete(self, prompt: str, *, system: str | None = None, **params: Any) -> Completion:
@@ -103,7 +115,8 @@ class AnthropicProvider:
             **params: The case's parameters. ``model`` overrides the constructor's.
 
         Returns:
-            The completion, with ``cost_usd`` of ``None``.
+            The completion. ``cost_usd`` is the configured price of the reported token counts, or
+            ``None`` when no price table prices this model or the API reported no token counts.
 
         Raises:
             ProbatioConfigError: No model was configured, here or on the case.
@@ -126,7 +139,7 @@ class AnthropicProvider:
         latency_ms = (time.perf_counter() - started) * 1000.0
 
         usage = getattr(response, "usage", None)
-        return Completion(
+        completion = Completion(
             text=_text_of(response),
             model=str(getattr(response, "model", None) or model),
             tokens_in=_int_or_none(getattr(usage, "input_tokens", None)),
@@ -135,6 +148,7 @@ class AnthropicProvider:
             latency_ms=latency_ms,
             raw=_raw_of(response),
         )
+        return completion if self.prices is None else self.prices.apply(completion)
 
 
 def _text_of(response: Any) -> str:
