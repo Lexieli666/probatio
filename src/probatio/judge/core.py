@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
+from contextlib import AbstractContextManager, nullcontext
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
@@ -27,10 +28,34 @@ from ..assertions.schema import strip_code_fence
 from ..case import LLMCase
 from ..errors import JudgeOutputError
 from ..providers import Completion, Provider
-from .prompt import render_judge_prompt
+from .prompt import judge_template_hash, render_judge_prompt
 from .rubric import Rubric
 
 __all__ = ["Judge", "JudgeVerdict"]
+
+
+def _marking_judge_calls(provider: Provider) -> AbstractContextManager[None]:
+    """Ask a provider to mark the calls made inside the block as judge calls.
+
+    Spec §3.8 puts the judge prompt template's hash in every judge cassette key, and there is no
+    room for it in :meth:`~probatio.providers.Provider.complete`: the protocol has no such
+    parameter, and a reserved keyword would be handed to a live adapter that knows nothing about
+    cassettes. So the mark travels through the provider instead. A
+    :class:`~probatio.cassette.CassetteProvider` exposes ``judge_calls``, which sets the context on
+    its store for the duration; any other provider does not, and is called with exactly the
+    arguments the judge passed (DECISIONS 42).
+
+    Args:
+        provider: Whatever provider the judge was constructed with.
+
+    Returns:
+        The provider's own context manager, or a do-nothing one.
+    """
+    marker = getattr(provider, "judge_calls", None)
+    if not callable(marker):
+        return nullcontext()
+    context: AbstractContextManager[None] = marker(judge_template_hash())
+    return context
 
 
 class JudgeVerdict(BaseModel):
@@ -136,7 +161,10 @@ class Judge:
             JudgeOutputError: The judge's reply is not the strict JSON object the template asked
                 for.
         """
-        completion: Completion = self.provider.complete(self.prompt(case, output), **self.params)
+        with _marking_judge_calls(self.provider):
+            completion: Completion = self.provider.complete(
+                self.prompt(case, output), **self.params
+            )
         return self.parse(completion.text, case_id=case.id), completion
 
     def parse(self, text: str, *, case_id: str | None = None) -> JudgeVerdict:

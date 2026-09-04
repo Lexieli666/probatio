@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from probatio.artefacts import timestamp
 from probatio.judge import (
     ValidationRecord,
     default_validation_dir,
@@ -14,7 +15,6 @@ from probatio.judge import (
     load_validation_record,
     resolve_rubric,
     rubric_is_validated,
-    utc_now,
     validation_record_path,
     write_validation_record,
 )
@@ -132,4 +132,4 @@ def test_the_labels_hash_of_a_committed_sample_is_stable() -> None:
 
 
 def test_the_created_stamp_is_an_iso_8601_instant_in_utc() -> None:
-    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", utc_now())
+    assert re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", timestamp())

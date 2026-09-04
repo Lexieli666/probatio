@@ -29,15 +29,13 @@ clock so that no test in this repository reads the wall clock.
 from __future__ import annotations
 
 import difflib
-import json
-import re
-from collections.abc import Callable, Sequence
-from datetime import UTC, datetime
+from collections.abc import Sequence
 from pathlib import Path
 from typing import Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
+from .artefacts import Clock, check_path_segment, timestamp, utc_now, write_json
 from .assertions import AssertionResult
 from .case import LLMCase
 from .errors import BaselineDriftError, ProbatioConfigError
@@ -85,9 +83,6 @@ DIFF_MAX_LINES: Final = 40
 
 UPDATE_COMMAND: Final = "pytest --update-baseline"
 """The command every drift detail names, because an error without a fix is a puzzle."""
-
-_NAME_PATTERN: Final = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
-"""Suite and case names become path segments, so neither may contain a separator or ``..``."""
 
 _CHANGED: Final[dict[str, SnapshotState]] = {
     "scores": "scores_changed",
@@ -196,17 +191,6 @@ def prompt_hash(case: LLMCase) -> str:
     return stable_hash({"input": case.input, "system": case.system, "params": case.params})
 
 
-def _format_instant(moment: datetime) -> str:
-    """Render an instant as ISO 8601 in UTC, to whole seconds, treating a naive value as UTC."""
-    aware = moment.replace(tzinfo=UTC) if moment.tzinfo is None else moment
-    return aware.astimezone(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
-def _utc_now() -> datetime:
-    """Return the current instant; the default clock, replaced in every test."""
-    return datetime.now(UTC)
-
-
 def _round(score: float | None) -> float | None:
     """Round a score the one way this module rounds, so re-reading a file cannot change it."""
     return None if score is None else round(score, SCORE_DECIMALS)
@@ -272,7 +256,7 @@ class BaselineStore:
         self,
         baseline_dir: Path | None = None,
         *,
-        clock: Callable[[], datetime] = _utc_now,
+        clock: Clock = utc_now,
     ) -> None:
         """Open a store over a directory.
 
@@ -299,12 +283,8 @@ class BaselineStore:
         Raises:
             ProbatioConfigError: Either name would escape the baseline directory.
         """
-        for label, name in (("suite", suite), ("case id", case_id)):
-            if not _NAME_PATTERN.match(name):
-                raise ProbatioConfigError(
-                    f"{name!r} is not usable as a {label}: a baseline path segment must start "
-                    "with a letter or a digit and hold only letters, digits, '.', '_' and '-'"
-                )
+        check_path_segment(suite, label="suite")
+        check_path_segment(case_id, label="case id")
         return self.baseline_dir / suite / f"{case_id}.json"
 
     def load(self, suite: str, case_id: str) -> Baseline | None:
@@ -352,13 +332,7 @@ class BaselineStore:
         Returns:
             The path written.
         """
-        path = self.path_for(suite, baseline.case_id)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(
-            json.dumps(baseline.model_dump(mode="json"), indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-        return path
+        return write_json(self.path_for(suite, baseline.case_id), baseline.model_dump(mode="json"))
 
     def compare(
         self,
@@ -408,7 +382,7 @@ class BaselineStore:
                 )
                 for result in results
             ],
-            recorded=_format_instant(self.clock()),
+            recorded=timestamp(self.clock),
             model=model,
         )
         if update:

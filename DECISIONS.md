@@ -774,3 +774,134 @@ unpriced calls is reported unenforceable, not passed.
   Rejected alternative: pricing only at report time, which is simpler and loses the recorded-price
   property of a tape; and pricing unconditionally, which quietly overwrites the one cost figure
   any shipped provider actually reports.
+
+## 42. The judge marks its calls through the provider, not through a parameter
+
+- **Date:** 2026-09-04 (Phase 7)
+- **Q:** Spec §3.5 says the judge prompt template's hash is part of every judge cassette key, and
+  spec §3.8's key is computed from a call's prompt, system, model and params. The `Provider`
+  protocol has no field for a template hash and `Judge` must keep working with a provider that is
+  not cassette-wrapped at all. How does the hash reach the key?
+- **A:** Through a method on the provider, which delegates to a context on the store.
+  `CassetteProvider.judge_calls(template_hash)` returns `CassetteStore.judge_calls(...)`, a
+  context manager that sets the store's active template for the duration; the store already owns
+  the rest of the active context (suite, case id, run index) that Phase 9's fixture sets with
+  `begin_case`. `Judge.grade_with_completion` looks for a callable `judge_calls` on whatever
+  provider it holds and enters it when it is there, and does nothing when it is not. The wrapper
+  forwards `prompt`, `system` and `**params` to the inner adapter exactly as they arrived;
+  `tests/test_cassette.py::test_the_judge_mark_never_reaches_the_inner_provider` and
+  `::test_a_judge_handed_a_bare_provider_calls_it_unchanged` pin both halves.
+- **Why:** The rejected alternative was a reserved parameter — `complete(..., _probatio_judge=...)`
+  — stripped by the wrapper. It is fewer lines, and it is wrong in the one case that matters: a
+  judge provider that is not cassette-wrapped, which is every `--cassette=off` run and every
+  direct `Judge(rubric, AnthropicProvider())`, would forward the reserved key straight into
+  `messages.create`, where it is either an API error or, worse, silently accepted. A parameter is
+  also a lie about the request: nothing about the template changes what is sent to the model, only
+  what the call is filed under, which is a property of the recording and belongs to the recorder.
+  Duck-typing on a method rather than an `isinstance` check keeps `judge/` from importing
+  `cassette.py`, which would close an import cycle through `probatio.judge.__init__`.
+
+## 43. The cassette key lifts `model` out of `params` rather than hashing it twice
+
+- **Date:** 2026-09-04 (Phase 7)
+- **Q:** Spec §3.8's key is `stable_hash({"prompt", "system", "model", "params": sorted…,
+  "template"})`, but in practice the model arrives *inside* `params`, because that is where
+  `LLMCase.params` puts it and what `Provider.complete(**params)` receives. Is `model` a copy of
+  `params["model"]`, or is it removed from `params`?
+- **A:** Removed. `interaction_key` pops `model` out of a copy of the params and hashes it under
+  the key's own `model` field; everything else is hashed under `params`. The key is computed
+  before the call in replay, so `model` can only ever be what the case asked for, never what a
+  provider reported.
+- **Why:** Hashing the same value twice makes the key's `model` field decorative — it could be
+  dropped with no change in behaviour — and spec §3.8 clearly means the two to be separate parts.
+  Popping it makes each part answer one question, so a stale-tape message can say "the prompt, the
+  model or the params changed" and mean three distinct things. Rejected alternative: leaving
+  `params` whole and taking `model` from the completion after the call, which cannot work at all
+  in replay, where there is no completion until the key has already found one.
+
+**Amendment, 2026-09-04 (Phase 7, before the phase was pushed).** The rule above was right about
+the key's shape and wrong about where the model comes from. `params.get("model")` is not the model
+that answers the call: both shipped live adapters compute `params.pop("model") or self.model`, and
+`self.model` is what `--probatio-model` puts in the constructor. Since no case in the demo suite
+names a model in `params` — none of the ten do — the key's `model` field was `None` for every one
+of them, so a tape recorded through `ClaudeCLIProvider(model="A")` replayed without complaint
+through `ClaudeCLIProvider(model="B")`: exactly the regression a cassette is supposed to catch, and
+one that would have shipped as a silent wrong answer rather than as a `StaleCassetteError`.
+
+The fix restates the adapters' own precedence in one place. `resolve_model(params, fallback)`
+returns `params["model"]` when the call names one and `fallback` otherwise;
+`CassetteProvider.inner_model` reads `getattr(self.inner, "model", None)` and passes it to the
+store in **both** `record` and `replay`, so the key is worked out the same way on both sides and
+before the call, which is what replay requires. The parameters forwarded to `inner` are untouched:
+the wrapper reads the adapter's model, it never writes one into the call.
+`Interaction` gained a `model` field recording what the key was computed from — a deviation from
+spec §3.8's illustrative JSON, taken because a stale tape a human has to diagnose should say which
+model it belongs to. `import-cassettes` uses the line's own `model` field as the fallback, which is
+the same precedence for the same reason. `tests/test_cassette.py::
+test_a_tape_recorded_on_one_model_does_not_replay_on_another` records through
+`FakeProvider(model="m1")` with no model in `params`, replays through `FakeProvider(model="m2")`
+and expects `StaleCassetteError`, then replays through a second `m1` wrapper and expects the
+recorded answer with `call_count == 0`.
+
+Rejected alternative: taking the model off the returned `Completion` instead. It is the model that
+genuinely answered, which is more truthful, and it is unavailable in replay — the key has to find
+the interaction before there is any completion to read — so the two modes would have keyed on
+different things, which is the one thing a cassette key may never do.
+
+## 44. Recording replaces a key's samples the first time it is seen in a session, and appends after
+
+- **Date:** 2026-09-04 (Phase 7)
+- **Q:** Spec §3.8's table says a `record`-mode hit overwrites the interaction and a miss appends
+  one, while the paragraph below says recording under `--runs N` appends one sample per run. Both
+  cannot be literally true of the same call: run 2 of 3 is a hit, and overwriting it would leave
+  one sample instead of three.
+- **A:** The store remembers which `(suite, case_id, key)` triples it has already recorded. The
+  first sample for a key clears that interaction's `completions`; every later sample appends. A
+  `--runs 3` re-record therefore leaves exactly three samples, not three added to the five that
+  were there before, and interactions the session never touched keep their old samples and their
+  position in the file.
+- **Why:** "Overwrite that interaction" is a statement about what a re-recording session leaves
+  behind, and this is the reading that makes it true for every N. The rejected alternative was to
+  key the behaviour on `run_index == 0`, which is one line shorter and quietly wrong whenever a
+  case makes the same call twice within one run — the second call would overwrite the first, and a
+  suite that asks its model the same question twice would record half its samples.
+
+## 45. An import line with an unknown key is refused, not ignored
+
+- **Date:** 2026-09-04 (Phase 7)
+- **Q:** `probatio import-cassettes` reads a JSONL whose fields spec §3.8 lists. What happens to a
+  line that carries a key that is not on the list?
+- **A:** `ProbatioConfigError` naming the line number and the key. `ImportedCall` is
+  `extra="forbid"`, like `LLMCase`, and every parse failure — bad JSON, a JSON array, a missing
+  `case_id`, an unparsable `latency_ms` — is reported the same way, with the line number and, when
+  the caller knows it, the file.
+- **Why:** The producer of this file is a script somebody wrote — Phase 11's Consilium trace
+  exporter is the first — and a misspelled `latency` that is silently dropped becomes a committed
+  tape full of zero latencies, which then passes every latency ceiling in the suite. `LLMCase`
+  already refuses unknown keys for exactly this reason (spec §3.2: "a typo like `assertion:` fails
+  loudly"), and an imported tape is no less an artefact than a case file. Rejected alternative:
+  ignoring unknown keys so that a richer trace format can be fed in unchanged, which trades a
+  five-second fix at import time for a silently wrong tape nobody re-reads.
+
+## 46. One `artefacts.py` for the clock, the name check and the JSON writer
+
+- **Date:** 2026-09-04 (Phase 7)
+- **Q:** The Phase 7 brief asks for the injectable timestamp helper to be factored out, this being
+  its third copy (`snapshot.py`, `judge/validation.py`, now `cassette.py`). Where does it live, and
+  does anything else move with it?
+- **A:** A new module `src/probatio/artefacts.py`, holding what every file Probatio persists has in
+  common: `Clock`, `utc_now`, `format_instant` and `timestamp`; `check_path_segment` and
+  `NAME_PATTERN`, the DECISIONS 34 rule that a derived name cannot escape a store's directory; and
+  `write_json`, the sorted-keys, indent-2, one-trailing-newline writer all three stores used.
+  `judge.validation.utc_now`, which returned a string, is gone: `cli.py` and its test now call
+  `artefacts.timestamp()`, and `probatio.judge`'s `__all__` is one entry shorter. `snapshot.py`
+  lost `_utc_now`, `_format_instant` and `_NAME_PATTERN`.
+- **Why:** All three were about to be copied a third time, and the two beyond the clock are the
+  ones where a copy diverging would be a defect rather than a nuisance — a store whose path check
+  drifted would let a derived name escape, and a store whose writer drifted would produce diffs in
+  a user's repository on re-recording. The module is named for what its contents are about (files
+  Probatio writes and commits) rather than for their shapes, so Phase 8's `variants/` writer has
+  somewhere obvious to go. Rejected alternatives: a `clock.py` holding only the timestamp, which
+  would have left the other two copies to be made a third time and then factored later; and
+  putting the helpers in `hashing.py`, which is the other module everything already imports but
+  is about identity, not persistence.

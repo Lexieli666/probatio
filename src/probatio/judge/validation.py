@@ -13,13 +13,12 @@ the next run without anyone having to remember to re-validate.
 
 from __future__ import annotations
 
-import json
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Final, Literal
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from ..artefacts import write_json
 from ..hashing import stable_hash
 from .rubric import Rubric
 
@@ -30,7 +29,6 @@ __all__ = [
     "hash_labels_file",
     "load_validation_record",
     "rubric_is_validated",
-    "utc_now",
     "validation_record_path",
     "write_validation_record",
 ]
@@ -94,16 +92,6 @@ def validation_record_path(rubric_name: str, *, validation_dir: Path | None = No
     return directory / f"{rubric_name}{RECORD_SUFFIX}"
 
 
-def utc_now() -> str:
-    """Return the current instant as an ISO 8601 string in UTC, to whole seconds.
-
-    Returns:
-        A string such as ``2026-09-03T18:00:00Z``. Nothing Probatio compares reads this field;
-        it is there so a reviewer can see how old a measurement is.
-    """
-    return datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
 def hash_labels_file(path: Path) -> str:
     """Return the stable hash of a labels file's contents.
 
@@ -132,13 +120,10 @@ def write_validation_record(
     Returns:
         The path written.
     """
-    path = validation_record_path(record.rubric, validation_dir=validation_dir)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(record.model_dump(mode="json"), indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
+    return write_json(
+        validation_record_path(record.rubric, validation_dir=validation_dir),
+        record.model_dump(mode="json"),
     )
-    return path
 
 
 def load_validation_record(
