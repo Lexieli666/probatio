@@ -57,6 +57,11 @@ def _git_available() -> bool:
     return shutil.which("git") is not None and (REPO_ROOT / ".git").exists()
 
 
+def _is_shallow() -> bool:
+    """Whether the checkout was truncated, which would make the byte-identity diff meaningless."""
+    return _git("rev-parse", "--is-shallow-repository").stdout.strip() == "true"
+
+
 def _introducing_commit() -> str | None:
     log = _git("log", "--diff-filter=A", "--format=%H", "--", "examples/demo_suite")
     if log.returncode != 0 or not log.stdout.split():
@@ -135,6 +140,11 @@ def test_the_demo_suite_differs_from_its_introducing_commit_by_the_deletion_alon
     if not _git_available():
         print("git is unavailable here; the byte-identity check has nothing to compare against")
         return
+    assert not _is_shallow(), (
+        "the byte-identity gate needs full history: in a shallow clone the commit that introduced "
+        "examples/demo_suite is missing, --diff-filter=A resolves to HEAD and the diff is empty, "
+        "so the gate passes vacuously. Check out with fetch-depth: 0."
+    )
     commit = _introducing_commit()
     if commit is None:
         print("examples/demo_suite is not committed yet; nothing to compare against")
