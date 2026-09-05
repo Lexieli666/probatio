@@ -57,22 +57,51 @@ def test_the_default_directory_is_probatio_judges_under_the_working_directory(
     )
 
 
+SPEC_3_5_FIELDS = {
+    "rubric",
+    "rubric_hash",
+    "n",
+    "agreement",
+    "kappa",
+    "labels_file",
+    "labels_hash",
+    "method",
+    "judge_model",
+    "created",
+}
+"""Exactly the keys spec §3.5's example record carries."""
+
+PROBATIO_FIELDS = {"reasked"}
+"""What Probatio adds, and the only thing it may add without another DECISIONS entry."""
+
+
 def test_a_record_round_trips_through_disk_with_the_fields_spec_3_5_names(tmp_path: Path) -> None:
     written = write_validation_record(record(), validation_dir=tmp_path / "judges")
     payload = json.loads(written.read_text(encoding="utf-8"))
-    assert set(payload) == {
-        "rubric",
-        "rubric_hash",
-        "n",
-        "agreement",
-        "kappa",
-        "labels_file",
-        "labels_hash",
-        "method",
-        "judge_model",
-        "created",
-    }
+    assert set(payload) == SPEC_3_5_FIELDS | PROBATIO_FIELDS
     assert load_validation_record("faithfulness", validation_dir=tmp_path / "judges") == record()
+
+
+def test_the_record_adds_exactly_one_field_to_the_ones_spec_3_5_names() -> None:
+    """A field added to a committed artefact's schema is a decision, not an implementation detail.
+
+    ``reasked`` is DECISIONS 92's: it says how many rows had to be asked a second time before the
+    judge produced a verdict at all, which is a fact about the judge that belongs beside its
+    kappa. This test exists so that a second such addition has to come here and be argued for.
+    """
+    assert set(ValidationRecord.model_fields) - SPEC_3_5_FIELDS == PROBATIO_FIELDS
+
+
+def test_an_old_record_written_before_the_re_ask_count_still_loads(tmp_path: Path) -> None:
+    """Records committed by Phase 4 carry no ``reasked``; they read as zero, not as an error."""
+    payload = record().model_dump(mode="json")
+    del payload["reasked"]
+    directory = tmp_path / "judges"
+    directory.mkdir(parents=True)
+    (directory / "faithfulness.validation.json").write_text(
+        json.dumps(payload, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+    )
+    assert load_validation_record("faithfulness", validation_dir=directory) == record()
 
 
 def test_writing_a_record_creates_its_directory(tmp_path: Path) -> None:
