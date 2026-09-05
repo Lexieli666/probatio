@@ -43,6 +43,7 @@ def case(
 ) -> CaseResult:
     return CaseResult(
         case_id=case_id,
+        node_id=f"test_demo.py::test_case[{case_id}]",
         suite="test_demo",
         verdict=all(verdicts),
         passed=passed,
