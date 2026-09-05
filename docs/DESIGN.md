@@ -665,3 +665,44 @@ unsorted key, an absolute path — makes two identical runs produce different by
 means nothing. The test that guards it does not name the field: it walks every string in a
 results file written under `pytester` and fails on any that reads as an absolute path, so the next
 path added anywhere in the report is caught by a test nobody has to remember to extend.
+
+## Phase 12 — the live suite
+
+**The live suite tests a different system, and says so first.** `examples/consilium/live/` shares
+its fifteen questions, its reference answers and its escalation phrase list with the offline
+suite, so it would be easy to read as "the same regression, now against Claude". It is not.
+`app_live.py` makes one grounded call with the corpus notes already in hand; Consilium plans,
+retrieves, runs one or more agents and repairs the draft through a safety step. The suite exists
+because the two headline features have nothing to fire against on a tape somebody else recorded:
+a metamorphic variant is a different prompt and so a different cassette key, and a judge is a
+provider call, so neither can be replayed from traces that contain neither. The alternative was
+to reimplement enough of Consilium's pipeline to make the comparison fair, which would have made
+the live numbers a measurement of a reimplementation nobody can check, and would have taken the
+phase's whole budget of live calls before the first relation ran.
+
+**The cases carry their documents instead of retrieving them.** A live case's `input.documents`
+hold the whole text of every corpus note its golden item names — around ten kilobytes a case, and
+most of the 144 KB the fifteen files occupy. The suite is then self-contained: it runs from a
+clone of this repository with no Consilium checkout, no vector store and no embedding model, and
+`convert_traces.py --emit-live-cases` can reproduce every byte of it from the committed golden
+subset and copies of the notes under `tests/fixtures/`. The rejected alternative was to store the
+`doc_id`s and read the notes at test time from a path given on the command line, which is smaller
+on disk and makes the recorded run unreproducible by anyone who does not have the same corpus at
+the same commit — the tapes would key on prompts nobody could rebuild.
+
+**Documents are literal YAML blocks, not quoted scalars.** `--emit-live-cases` dumps through a
+`SafeDumper` subclass whose string representer selects `|` for any value holding a newline. With
+the default representer each note becomes one folded line, the file is unreadable, and a one-word
+change to a note shows in `git diff` as a rewritten paragraph. This is the one formatting choice
+in the emitter that the byte-identity test would let either way, so it is worth writing down that
+it was chosen for the reviewer rather than for the parser.
+
+**The rubric is a slice, and the test checks it is still a slice.** `rubrics/faithfulness.md` is
+Consilium's `judges/faithfulness_v2.md` from `## System` up to its `## Output`, wrapped in a
+provenance header and a replacement output section, because Probatio's judge template supplies its
+own output instruction and v2's asks for a per-claim JSON list. A copy is a thing that drifts, so
+`tests/test_consilium_live_suite.py` re-derives the middle from a committed copy of v2 and asserts
+it is a contiguous slice of it, starting at the right heading and stopping before the wrong one.
+The alternative — writing a rubric of Probatio's own — would have made the two kappas in
+`docs/EVALUATION.md` incomparable with the GPT-4o-mini figures Consilium published on the same
+labels, which is the only reason those figures are worth quoting.
