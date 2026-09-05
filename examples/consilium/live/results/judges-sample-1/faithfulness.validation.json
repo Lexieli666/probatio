@@ -1,0 +1,13 @@
+{
+  "agreement": 0.8,
+  "created": "2026-09-05T08:37:23Z",
+  "judge_model": "claude-opus-5",
+  "kappa": 0.6000000000000001,
+  "labels_file": "tests/fixtures/consilium/judge-sample-labeled.csv",
+  "labels_hash": "4d4da87dd3771b34",
+  "method": "run-judge",
+  "n": 40,
+  "rows_reasked": 8,
+  "rubric": "faithfulness",
+  "rubric_hash": "2bfc999b338b0130"
+}
