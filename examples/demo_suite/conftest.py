@@ -8,11 +8,6 @@ flips the verdict) while permutations and distractors leave the keyword intact a
 
 from __future__ import annotations
 
-try:  # Phase 9 deletes this try/except block; it is the one sanctioned edit (DECISIONS.md).
-    from probatio import FakeProvider  # noqa: F401
-except ImportError:
-    collect_ignore = ["test_demo.py"]
-
 import pytest
 
 # One keyword per case, matched as a substring of the full prompt. Keywords are single tokens

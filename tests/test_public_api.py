@@ -42,13 +42,15 @@ PHASE_8_EXPORTS = {
     "paraphrase_invariant",
 }
 
-EXPORTS = PHASE_3_EXPORTS | PHASE_8_EXPORTS
-
-LATER_PHASES = {
+PHASE_9_EXPORTS = {
+    # spec §3.10
     "flaky_tolerant",
+    # spec §3.11
     "CaseResult",
     "RunReport",
 }
+
+EXPORTS = PHASE_3_EXPORTS | PHASE_8_EXPORTS | PHASE_9_EXPORTS
 
 
 def test_the_public_surface_is_exactly_what_the_shipped_phases_implement() -> None:
@@ -64,10 +66,32 @@ def test_every_export_is_documented_and_typed() -> None:
         assert symbol.__doc__, f"{name} has no docstring"
 
 
-def test_the_rest_of_the_surface_is_still_absent() -> None:
-    """The demo suite's import guard depends on this: Phase 9 is what makes it collectable."""
-    for name in LATER_PHASES:
-        assert not hasattr(probatio, name), f"{name} arrives in a later phase"
+def test_the_surface_is_now_exactly_the_one_the_specification_lists() -> None:
+    """Spec §6's export list, complete as of Phase 9, which is what makes the demo importable."""
+    assert EXPORTS == {
+        "LLMCase",
+        "load_cases",
+        "Completion",
+        "Provider",
+        "FakeProvider",
+        "ScriptedProvider",
+        "order_invariant",
+        "distractor_robust",
+        "format_jitter",
+        "paraphrase_invariant",
+        "flaky_tolerant",
+        "AssertionResult",
+        "CaseResult",
+        "RunReport",
+        "ProbatioError",
+        "ProbatioConfigError",
+        "MissingCassetteError",
+        "StaleCassetteError",
+        "MissingVariantsError",
+        "BaselineDriftError",
+        "BudgetExceededError",
+        "JudgeOutputError",
+    }
 
 
 def test_the_documented_import_line_works_in_a_fresh_interpreter() -> None:
@@ -75,7 +99,7 @@ def test_the_documented_import_line_works_in_a_fresh_interpreter() -> None:
         [
             sys.executable,
             "-c",
-            "from probatio import LLMCase, load_cases, FakeProvider, ScriptedProvider",
+            "from probatio import LLMCase, load_cases, FakeProvider, flaky_tolerant, RunReport",
         ],
         check=True,
         capture_output=True,

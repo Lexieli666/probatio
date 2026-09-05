@@ -1,0 +1,40 @@
+{
+  "assertions": [
+    {
+      "assertion_type": "contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "not_contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "similarity",
+      "passed": true,
+      "score": 0.707992
+    },
+    {
+      "assertion_type": "judge",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "budget_cost",
+      "passed": true,
+      "score": null
+    },
+    {
+      "assertion_type": "budget_latency",
+      "passed": true,
+      "score": null
+    }
+  ],
+  "case_id": "t2d-metformin",
+  "mode": "scores",
+  "model": "fake-1",
+  "output": null,
+  "prompt_hash": "46f15290c051c55e",
+  "recorded": "2026-09-05T01:35:52Z"
+}
