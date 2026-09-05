@@ -732,3 +732,11 @@ code — telling the CLI to think less, or to enforce a JSON schema on its outpu
 a reason worth stating separately from the entry: it would have made the judge whose kappa is
 published a different judge from the one whose 124 verdicts the live suite reports, and a
 validation record that does not describe the judge in use is worse than no record.
+
+**An error about text must contain the text.** A judge reply that does not parse is the only
+evidence of why it did not, and `Unterminated string ... column 49` cannot be turned back into the
+reply that produced it. `Judge.parse` now quotes the first 400 characters of what it was given
+(DECISIONS 94). The cost is a longer error line; the benefit is that the failure is diagnosable
+from a log, and that a real failing reply can become a test fixture instead of being invented —
+which matters here, because `tests/fixtures/` is worth having only if everything in it is
+something that actually happened.

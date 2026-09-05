@@ -71,7 +71,7 @@ SPEC_3_5_FIELDS = {
 }
 """Exactly the keys spec §3.5's example record carries."""
 
-PROBATIO_FIELDS = {"reasked"}
+PROBATIO_FIELDS = {"rows_reasked"}
 """What Probatio adds, and the only thing it may add without another DECISIONS entry."""
 
 
@@ -95,7 +95,7 @@ def test_the_record_adds_exactly_one_field_to_the_ones_spec_3_5_names() -> None:
 def test_an_old_record_written_before_the_re_ask_count_still_loads(tmp_path: Path) -> None:
     """Records committed by Phase 4 carry no ``reasked``; they read as zero, not as an error."""
     payload = record().model_dump(mode="json")
-    del payload["reasked"]
+    del payload["rows_reasked"]
     directory = tmp_path / "judges"
     directory.mkdir(parents=True)
     (directory / "faithfulness.validation.json").write_text(

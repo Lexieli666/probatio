@@ -1908,3 +1908,60 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   the whole command, which the arithmetic above rules out. Note that the assertion path never had
   this problem: `assertions/judge.py` already turns `JudgeOutputError` into a failed
   `AssertionResult` and never raises, as spec §3.5 requires; the asymmetry was in the CLI alone.
+
+## 93. The validation record's `labels_file` is rootdir-relative, like every other persisted path
+
+- **Date:** 2026-09-05 (Phase 12)
+- **Q:** DECISIONS 86 made every path a `RunReport` persists rootdir-relative, because
+  `.probatio/` and `examples/*/results/` are committed and an absolute path in a committed file is
+  a fact about the machine. It did not touch `judge/validation.py`, and
+  `.probatio/judges/<rubric>.validation.json` is committed for exactly the same reason — CI reads
+  it to decide whether a judge is validated. Phase 12's first sample-2 run duly wrote
+  `"labels_file": "/Users/<name>/code/probatio-package/data/consilium/..."`. What does the field
+  hold?
+- **A:** `display_path(labels_path, Path.cwd())`, the same helper and the same rule: a labels file
+  under the current directory is written relative to it with forward slashes, and one genuinely
+  elsewhere on the disk stays absolute. `Path.cwd()` rather than a pytest rootdir because this is
+  the console script, where the current directory *is* the root — the same assumption
+  `default_validation_dir`, `default_baseline_dir` and `default_cassette_dir` already make.
+- **Why:** DECISIONS 86's argument applies unchanged; this was simply a file it missed, and the
+  omission was invisible until a record was written against a labels file outside the repository.
+  The measurement never depended on the path — `labels_hash` is a content hash and is what
+  `rubric_is_validated` and every test compare — so the field is provenance for a human, and
+  provenance naming somebody's home directory is worse provenance than a relative path. The test
+  asserts the rule and not the instance, as DECISIONS 86's does: it writes a record under
+  `pytester` from an **absolute** labels path inside the root, then walks every string in the JSON
+  and fails on any that reads as an absolute path, so a field added later is covered without
+  anybody remembering to extend it. Both halves were provoked: with the change reverted the
+  pytester test fails, and a labels file outside the root still records absolutely.
+
+## 94. The Claude CLI's judge replies intermittently break inside the rationale string
+
+- **Date:** 2026-09-05 (Phase 12)
+- **Q:** An observation about somebody else's program, recorded because it shaped two decisions
+  and because the next person to run this will meet it.
+- **A:** Grading Consilium's forty-row samples through `ClaudeCLIProvider` on `claude-opus-5`,
+  roughly one reply in eight is not JSON. The failure is concentrated in one place: of the six
+  re-asks in the sample-2 run whose summary is in `PROGRESS.md`, five report
+  `Unterminated string starting at line 1 column 48` or `49` — the column at which the
+  `rationale` string opens — and one reports `Expecting ',' delimiter at line 1 column 493`.
+  The verdict and the score are complete; the rationale stops mid-string. One captured reply that
+  *did* parse ran to 549 characters against 1316 output tokens, so the model spends most of its
+  output budget before the object begins, which is consistent with a long rationale running out of
+  room. The same judge, same rubric and same template made 124 calls in the live suite's recording
+  and every one parsed, so the length of these samples' `sources_text` (≈23,500 characters a row,
+  against ≈10,000 for a live case) is the difference that matters.
+- **Consequences.** Two, both recorded separately: `validate-judge --run-judge` asks a row again
+  rather than scoring a non-answer or ending the run (DECISIONS 92, bounded at
+  `cli.JUDGE_ATTEMPTS = 3`), and `Judge.parse`'s error now quotes the first
+  `REPLY_EXCERPT_CHARS = 400` characters of the reply it could not parse. Before that, a failure
+  left only `Unterminated string ... column 49`, which cannot be turned back into the text that
+  caused it — so the evidence for this entry had to be reconstructed from stderr rather than read
+  off a saved reply. **No captured failing reply is committed under `tests/fixtures/` yet**: the
+  runs that produced them predate the excerpt, and manufacturing one would put invented model
+  output in a fixture directory whose whole value is that everything in it is real. The parser
+  test therefore uses a hand-written truncated object, named as such. The next unparsable reply
+  the excerpt catches should replace it.
+- **Why record it at all:** DECISIONS 14 already says these flags belong to a version of somebody
+  else's program. So does this behaviour, and it is the kind of thing that reads as a Probatio bug
+  when it is met for the first time.

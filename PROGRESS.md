@@ -649,3 +649,20 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   starts with a separator or a drive letter, and separately checks that neither the rootdir nor
   the home directory appears anywhere in the text.
   DECISIONS 84–86; `docs/DESIGN.md` Phase 11 follow-up.
+- 2026-09-05 — **Phase 12 (judge repeatability, sample 2)** — the judge was validated against
+  Consilium's sample-2 labels **twice**, with the same model, the same rubric text and the same
+  forty rows. The first run's record was not committed, because
+  its `labels_file` carried an absolute path through a home directory (fixed at the root in
+  DECISIONS 93, so no later run can); the measurement itself was sound — its `labels_hash` is
+  `54c3af834595d71c`, the same content hash the committed run records, because
+  `tests/fixtures/consilium/judge-sample-2-labeled.csv` is byte-identical to the package copy the
+  first run named. Its summary, verbatim:
+
+```
+  judge 'faithfulness': n=40 agreement=0.675 kappa=0.253 (method: run-judge, labels: supported, unsupported)
+  5 of 40 row(s) were asked again because the judge's first reply was not a verdict
+```
+
+  45 live calls (40 rows plus 5 re-asks). `docs/EVALUATION.md` reports this run beside the
+  committed one as a same-judge, same-rubric, same-labels repeatability observation.
+

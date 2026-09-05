@@ -32,7 +32,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, Final, Literal, TextIO
 
-from .artefacts import Clock, timestamp, utc_now, write_yaml
+from .artefacts import Clock, display_path, timestamp, utc_now, write_yaml
 from .case import LLMCase, load_cases
 from .cassette import IMPORT_PROVIDER, CassetteStore, import_cassettes, read_trace
 from .errors import JudgeOutputError, ProbatioConfigError, ProbatioError
@@ -230,7 +230,12 @@ def _row_case(
 
 
 JUDGE_ATTEMPTS: Final = 3
-"""How many times one row is asked before ``--run-judge`` gives up on it (DECISIONS 92)."""
+"""The bound on how many times one row is asked before ``--run-judge`` gives up (DECISIONS 92).
+
+Three attempts, counting the first. Two consecutive unparsable replies about one row is evidence
+about the rubric rather than about sampling, so the third is the last; the run then stops rather
+than reporting a comparison over fewer rows than it claims.
+"""
 
 
 def _run_judge(
@@ -264,7 +269,7 @@ def _run_judge(
 
     Returns:
         The judge's labels, the model that produced them, and the number of rows that needed
-        more than one attempt.
+        more than one attempt. That count can never exceed ``len(rows)``.
 
     Raises:
         ProbatioConfigError: A row has an empty answer.
@@ -276,7 +281,7 @@ def _run_judge(
     judge = Judge(rubric, provider)
     labels: list[str] = []
     model: str | None = None
-    reasked = 0
+    rows_reasked = 0
     for index, row in enumerate(rows, start=1):
         answer = (row.get(answer_column) or "").strip()
         if not answer:
@@ -306,11 +311,11 @@ def _run_judge(
                 )
                 continue
             if attempt > 1:
-                reasked += 1
+                rows_reasked += 1
             labels.append(label_map.get(verdict.verdict, verdict.verdict))
             model = completion.model
             break
-    return labels, model, reasked
+    return labels, model, rows_reasked
 
 
 def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) -> int:
@@ -335,7 +340,7 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         required = [args.human_column, args.answer_column]
         rows = _read_rows(labels_path, required=required)
         provider = build_provider(args.provider, args.model)
-        judge_labels, judge_model, reasked = _run_judge(
+        judge_labels, judge_model, rows_reasked = _run_judge(
             rows,
             rubric=rubric,
             provider=provider,
@@ -354,7 +359,7 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         rows = _read_rows(labels_path, required=[args.human_column, args.judge_column])
         judge_labels = _column(rows, args.judge_column, label_map)
         judge_model = None
-        reasked = 0
+        rows_reasked = 0
         method = "columns"
 
     human_labels = _column(rows, args.human_column, label_map)
@@ -365,20 +370,20 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         n=result.n,
         agreement=result.agreement,
         kappa=result.kappa,
-        labels_file=str(labels_path),
+        labels_file=display_path(labels_path, Path.cwd()),
         labels_hash=hash_labels_file(labels_path),
         method=method,
         judge_model=judge_model,
-        reasked=reasked,
+        rows_reasked=rows_reasked,
         created=timestamp(),
     )
     written = write_validation_record(record, validation_dir=Path(args.out))
 
     print(_summary_line(rubric, result, method), file=out)
-    if reasked:
+    if rows_reasked:
         print(
-            f"{reasked} of {result.n} row(s) were asked again because the judge's first reply "
-            "was not a verdict",
+            f"{rows_reasked} of {result.n} row(s) were asked again because the judge's first "
+            f"reply was not a verdict (at most {JUDGE_ATTEMPTS} attempts per row)",
             file=out,
         )
     print(f"wrote {written}", file=out)
