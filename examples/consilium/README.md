@@ -54,9 +54,12 @@ test. The stricter test is Probatio's, and where the two would disagree it is be
 was wrapped, not because it escalated differently.
 
 No `judge` assertion is present: the traces hold no judge output, and a judge needs a provider
-call. The live suite added in Phase 12 carries the judge. There are no relation decorators either:
-a metamorphic variant is a different prompt and so a different cassette key, and no answer to a
-question Consilium was never asked exists to replay.
+call. There are no relation decorators either: a metamorphic variant is a different prompt and so
+a different cassette key, and no answer to a question Consilium was never asked exists to replay.
+
+`live/` carries both, on tapes recorded against a real model in Phase 12. It is a separate suite
+answering a separate question — its system under test is a single-call grounded QA app, not
+Consilium's pipeline — and it has its own `live/README.md`.
 
 The cost ceiling exists so that the price table matters: without `--probatio-prices`, every cost
 ceiling here is reported as **unenforceable** (the traces carry tokens but no dollar cost), which
@@ -70,14 +73,21 @@ hashes of prompt, system, model and params, so the suite passes exactly what the
 from; that is what lets `--cassette=replay` (the default) find every interaction.
 
 ```bash
-pytest examples/consilium -q --cassette-dir examples/consilium/cassettes      # replay; cost ceilings unenforceable
-pytest examples/consilium -q --cassette-dir examples/consilium/cassettes \
+pytest examples/consilium -q --ignore=examples/consilium/live \
+       --cassette-dir examples/consilium/cassettes                 # replay; cost ceilings unenforceable
+pytest examples/consilium -q --ignore=examples/consilium/live \
+       --cassette-dir examples/consilium/cassettes \
        --probatio-prices examples/consilium/prices.yaml \
        --probatio-results build/consilium.json --probatio-report build/consilium.md
 ```
 
 `--cassette-dir` is needed because the default tape directory is `cassettes/` under the pytest
-rootdir, and this suite keeps its tapes beside its cases.
+rootdir, and this suite keeps its tapes beside its cases. `--ignore=examples/consilium/live` is
+needed because Phase 12's live suite is a subdirectory of this one and keeps its tapes and its
+baselines somewhere else; without it these commands would collect it and every live case would
+miss its tape (DECISIONS 87). It changes nothing about what the two commands produce for the
+thirty offline cases: run with it, both commands reproduce the committed `results/replay-*.json`
+and `results/replay-*.md` byte for byte.
 
 **Both commands exit non-zero, and that is the result.** `test_baseline` passes; `test_full` fails
 its red-flag cases, because the full pipeline's delivered answers did not escalate where the plain

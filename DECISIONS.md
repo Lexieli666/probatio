@@ -1758,3 +1758,55 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   == r` that spec §3.11 rests on and leave the in-memory report and the file disagreeing; and
   keeping `path: Path` while adding a serialiser, which puts two different values behind one name
   and leaves the JUnit and markdown reporters to remember which they hold.
+
+## 87. The live suite is a subdirectory of the offline one, so the offline commands ignore it
+
+- **Date:** 2026-09-04 (Phase 12)
+- **Q:** The runbook puts the live suite at `examples/consilium/live/`, inside the offline suite
+  Phase 11 committed. `pytest examples/consilium` therefore collects both, and the two keep their
+  tapes and their baselines in different directories, so one `--cassette-dir` cannot serve both:
+  the live cases would all raise `MissingCassetteError`. Which command moves?
+- **A:** The offline one. `examples/consilium/README.md`'s two replay commands gained
+  `--ignore=examples/consilium/live`; the live suite is always run as `pytest
+  examples/consilium/live`, which collects only itself and needs no flag. Both offline commands
+  were re-run with the flag and reproduce the committed `results/replay-unpriced.*` and
+  `results/replay-priced.*` byte for byte, so nothing the case study quotes moved.
+- **Why:** The alternative that needs no flag is a `collect_ignore` in a new
+  `examples/consilium/conftest.py`, which hides the exclusion from the reader of the command and
+  makes `pytest examples/consilium/live` from the repository root depend on a conftest above it —
+  the same implicit coupling the Phase 2 transitional conftest was created to make visible and
+  Phase 9 deleted. Moving the live suite out to `examples/consilium-live/` would work too and was
+  rejected because the two suites share `CASES.txt`, `golden-subset.jsonl` and `convert_traces.py`,
+  and separating a suite from the converter that emits it is worse than one flag in one README.
+
+## 88. `app_live.py` sits beside `test_live.py`, not beside `app.py`
+
+- **Date:** 2026-09-04 (Phase 12)
+- **Q:** Runbook §4.2 names the live system under test `examples/consilium/app_live.py`, next to
+  the offline `app.py`. `test_live.py` lives one directory down in `live/`.
+- **A:** It lives at `examples/consilium/live/app_live.py`. pytest puts a test module's own
+  directory on `sys.path` when there is no package, so `from app_live import answer` resolves
+  only from `live/`; from the parent it would need an `importlib` load by path.
+- **Why:** Both other suites in this repository keep their system under test beside their tests
+  (`examples/demo_suite/app.py`, `examples/consilium/app.py`), and a suite meant to be read as
+  "the API as a user writes it" cannot open with six lines of import machinery. The rejected
+  alternative — honouring the runbook's path and loading the module by file path from the test —
+  buys nothing: the file is not shared, since `app.py` replays Consilium's answers and
+  `app_live.py` makes one grounded call, and the two have no line in common.
+
+## 89. The replay test was written with the suite and committed with the tapes
+
+- **Date:** 2026-09-04 (Phase 12)
+- **Q:** Phase 12's block 1 asks for a `pytester` replay of the live suite against committed
+  tapes, written before block 3 records them. Until block 3 lands there are no tapes and the test
+  cannot pass, but `CLAUDE.md` forbids committing a broken tree and the gate forbids a skip.
+- **A:** It was written in block 1 as its own module, `tests/test_consilium_live_replay.py`, and
+  committed in block 3 alongside the tapes and baselines it reads.
+  `tests/test_consilium_live_suite.py`, which needs only files that existed before any model was
+  called, was committed in block 1.
+- **Why:** Splitting the module is what lets both rules hold at once: the test exists from block 1,
+  written against the tapes' contract rather than against whatever they turned out to contain, and
+  no commit in between is red. Rejected alternatives: an `xfail` marker, which the gate counts and
+  which would have to be removed in block 3 anyway; and holding block 1's commit until block 3,
+  which would put the emitter, the app, the suite and 360 live calls in one commit and leave the
+  REVIEW STOP of block 2 with nothing committed to review against.

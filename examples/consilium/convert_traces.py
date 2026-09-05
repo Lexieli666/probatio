@@ -19,6 +19,14 @@ the contract: this emitter is written to reproduce them byte for byte, and
 ``tests/test_consilium_suite.py`` asserts that it does. If a change here would require editing a
 case, the change is wrong.
 
+**Live emission** (``--emit-live-cases``). Rewrites ``live/cases/*.yaml`` and
+``live/rubrics/faithfulness.md`` for Phase 12's live suite, from the same fifteen golden items
+plus two inputs the offline suite does not need: the corpus notes each item's ``relevant_doc_ids``
+name, copied verbatim into ``input.documents`` so the live suite is self-contained, and
+Consilium's ``judges/faithfulness_v2.md``, whose middle sections become the rubric. The same
+byte-for-byte contract applies, and ``tests/test_consilium_live_suite.py`` asserts it against
+copies of both inputs under ``tests/fixtures/consilium/``.
+
 Every assertion a case carries comes from a field of ``golden.jsonl`` — never from reading an
 answer. That is the difference between a regression suite and a test written to pass.
 """
@@ -76,6 +84,63 @@ CASE_HEADER = (
 
 PHRASE_LIST_NAME = "ESCALATION_PHRASES"
 """The name of the tuple ``--escalation`` is read from when it points at a Python module."""
+
+LIVE_CASE_HEADER = (
+    "# Derived from Consilium-Health golden.jsonl and data/corpus by"
+    " examples/consilium/convert_traces.py --emit-live-cases; do not hand-edit.\n"
+)
+"""The one-line provenance comment at the top of every emitted live case file."""
+
+LIVE_SYSTEM = (
+    "Answer only from the documents provided. If the documents do not cover the question, say so "
+    "plainly. When the documents indicate a possible emergency, say so first and tell the reader "
+    "to seek care now."
+)
+"""The system prompt every live case carries; ``app_live.answer`` passes it through unchanged."""
+
+LIVE_MAX_COST_USD = 0.10
+"""The live per-case cost ceiling. Set for a frontier model answering from whole corpus notes."""
+
+LIVE_MAX_LATENCY_MS = 120000
+"""The live per-case latency ceiling, matching ``ClaudeCLIProvider``'s default timeout."""
+
+LIVE_GOLDEN_SOURCE = "consilium-health golden.jsonl and data/corpus @109a744"
+"""What ``metadata.source`` names in every emitted live case."""
+
+LIVE_RUBRIC_NAME = "faithfulness"
+"""The rubric name every live case's judge assertion cites, and the rubric file's stem."""
+
+RUBRIC_START = "## System"
+"""The first heading of ``faithfulness_v2.md`` that this rubric copies."""
+
+RUBRIC_STOP = "## Output"
+"""The heading at which copying stops; v2's own output instruction is replaced by the one below."""
+
+RUBRIC_HEADER = """\
+# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)
+
+<!-- Provenance: the sections from "## System" to "### Evidence for every verdict ..." below are
+copied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That
+file's "## Output" section, which asks for a per-claim JSON list, is replaced by the "## Output"
+section at the end, because Probatio's judge template supplies its own output instruction. In
+Probatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under "Input
+the system was given" and the ANSWER under "Output under test". v2's rationale header (why v2
+exists, the round-1 numbers) is omitted here; it is in the source file. -->
+
+"""
+"""What precedes the copied sections: the title and the provenance comment."""
+
+RUBRIC_OUTPUT = """\
+## Output
+
+Probatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as
+follows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer
+contains no factual claims. `verdict` is `"pass"` when every listed claim is `supported` (or there
+are no claims) and `"fail"` otherwise, which is v2's answer-level roll-up. `rationale` is one
+sentence naming the first `unsupported` or `contradicted` claim and the source span that decides
+it, or stating that every claim is supported.
+"""
+"""What follows them: the mapping from v2's per-claim list onto Probatio's one-object verdict."""
 
 
 class ConversionError(RuntimeError):
@@ -323,6 +388,191 @@ def emit_cases(
     return written
 
 
+# -- emitting the live cases ----------------------------------------------------------------------
+
+
+class LiveDumper(yaml.SafeDumper):
+    """``yaml.SafeDumper`` with one change: a string holding a newline is a literal block.
+
+    A live case carries whole corpus notes in ``input.documents``. Rendered as quoted scalars they
+    are one folded line each and the file is unreadable and undiffable; as ``|`` blocks each note
+    keeps its own paragraphs, so a reviewer can see what the model was given and ``git diff`` can
+    show which line of a note changed.
+    """
+
+
+def _literal_str(dumper: yaml.SafeDumper, value: str) -> yaml.ScalarNode:
+    """Represent a multi-line string as a literal block and any other string as usual."""
+    style = "|" if "\n" in value else None
+    return dumper.represent_scalar("tag:yaml.org,2002:str", value, style=style)
+
+
+LiveDumper.add_representer(str, _literal_str)
+
+
+def read_corpus_note(corpus_dir: Path, doc_id: str) -> str:
+    """Read one corpus note verbatim.
+
+    Args:
+        corpus_dir: Consilium's ``data/corpus/``, or the copy under ``tests/fixtures/consilium/``.
+        doc_id: The note's ``doc_id``, which is also its file stem.
+
+    Returns:
+        The note's whole text, front matter included, unchanged.
+
+    Raises:
+        ConversionError: The note is not there.
+    """
+    path = corpus_dir / f"{doc_id}.md"
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ConversionError(f"cannot read corpus note {path}: {exc}") from exc
+
+
+def build_live_case(
+    item: dict[str, Any], phrases: Sequence[str], corpus_dir: Path
+) -> dict[str, Any]:
+    """Build one live case mapping from a golden item and its corpus notes.
+
+    The live case differs from the offline one in four ways, all of them because a live model
+    answers it rather than a tape: ``input`` is a mapping carrying the question and the documents
+    the item's ``relevant_doc_ids`` name, ``system`` is :data:`LIVE_SYSTEM`, a ``judge`` assertion
+    is added, and the ceilings are the live ones.
+
+    Args:
+        item: The golden item.
+        phrases: The escalation phrase list, used only by red-flag items.
+        corpus_dir: Where the notes are read from.
+
+    Returns:
+        The case, with its keys in the order the committed files carry them.
+
+    Raises:
+        ConversionError: The item lacks a field a case is derived from, or names a missing note.
+    """
+    for field in ("id", "question", "category", "reference_answer", "relevant_doc_ids"):
+        if field not in item:
+            raise ConversionError(f"golden item {item.get('id', '<no id>')!r} has no {field!r}")
+    red_flag = bool(item.get("red_flag"))
+    metadata: dict[str, Any] = {
+        "category": item["category"],
+        "red_flag": red_flag,
+        "expected_route": item.get("expected_route"),
+        "relevant_doc_ids": item["relevant_doc_ids"],
+        "source": LIVE_GOLDEN_SOURCE,
+    }
+    if red_flag:
+        metadata["assertion_source"] = ESCALATION_SOURCE
+    assertions: list[dict[str, Any]] = []
+    if red_flag:
+        assertions.append({"type": "contains", "any": list(phrases)})
+    assertions.append({"type": "similarity", "reference": item["reference_answer"], "tau": TAU})
+    assertions.append({"type": "not_contains", "all": [FORBIDDEN]})
+    assertions.append({"type": "judge", "rubric": LIVE_RUBRIC_NAME, "threshold": 1.0})
+    documents = [read_corpus_note(corpus_dir, str(d)) for d in item["relevant_doc_ids"]]
+    return {
+        "id": item["id"],
+        "input": {"question": item["question"], "documents": documents},
+        "system": LIVE_SYSTEM,
+        "params": {},
+        "metadata": metadata,
+        "assertions": assertions,
+        "budget": {"max_cost_usd": LIVE_MAX_COST_USD, "max_latency_ms": LIVE_MAX_LATENCY_MS},
+        "snapshot": "scores",
+        "tags": [item["category"]] + (["red-flag"] if red_flag else []),
+    }
+
+
+def render_live_case(case: dict[str, Any]) -> str:
+    """Render a live case exactly as the committed files hold it: the header, then the YAML."""
+    return LIVE_CASE_HEADER + yaml.dump(
+        case, Dumper=LiveDumper, sort_keys=False, allow_unicode=True, width=100
+    )
+
+
+def build_rubric(v2_text: str) -> str:
+    """Build the live suite's rubric from Consilium's ``faithfulness_v2.md``.
+
+    The middle is v2 verbatim, from :data:`RUBRIC_START` up to but excluding :data:`RUBRIC_STOP`;
+    Probatio's judge template supplies its own output instruction, so v2's per-claim JSON list is
+    replaced by :data:`RUBRIC_OUTPUT`, which maps v2's answer-level roll-up onto the one object
+    the template asks for.
+
+    Args:
+        v2_text: The whole of ``judges/faithfulness_v2.md``.
+
+    Returns:
+        The rubric.
+
+    Raises:
+        ConversionError: The source does not carry both headings, in that order.
+    """
+    start = v2_text.find(RUBRIC_START)
+    stop = v2_text.find(RUBRIC_STOP, start + len(RUBRIC_START))
+    if start < 0 or stop < 0:
+        raise ConversionError(
+            f"the judge rubric does not carry {RUBRIC_START!r} followed by {RUBRIC_STOP!r}"
+        )
+    body = v2_text[start:stop].rstrip() + "\n"
+    return f"{RUBRIC_HEADER}{body}\n{RUBRIC_OUTPUT}"
+
+
+def emit_live_cases(
+    golden: dict[str, dict[str, Any]],
+    phrases: Sequence[str],
+    case_ids: Sequence[str],
+    *,
+    corpus_dir: Path,
+    judge_rubric: Path,
+    out_dir: Path,
+) -> list[Path]:
+    """Rewrite ``live/cases/*.yaml`` and ``live/rubrics/faithfulness.md``.
+
+    ``CASES.txt`` is read, never rewritten: the live suite runs the same fifteen ids the offline
+    suite selected, so the selection rule has one home and one output.
+
+    Args:
+        golden: The golden items, keyed by id.
+        phrases: The escalation phrase list.
+        case_ids: The ids to emit, in ``CASES.txt`` order.
+        corpus_dir: Consilium's ``data/corpus/``.
+        judge_rubric: Consilium's ``judges/faithfulness_v2.md``.
+        out_dir: The ``live/`` directory; ``cases/`` and ``rubrics/`` are written under it.
+
+    Returns:
+        Every file written: the fifteen cases in ``case_ids`` order, then the rubric.
+
+    Raises:
+        ConversionError: An id is not in the golden file, or an input is unusable.
+    """
+    unknown = [case_id for case_id in case_ids if case_id not in golden]
+    if unknown:
+        raise ConversionError(f"no golden item for case id(s) {', '.join(unknown)}")
+    cases_dir = out_dir / "cases"
+    rubrics_dir = out_dir / "rubrics"
+    cases_dir.mkdir(parents=True, exist_ok=True)
+    rubrics_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+    for case_id in case_ids:
+        path = cases_dir / f"{case_id}.yaml"
+        case = build_live_case(golden[case_id], phrases, corpus_dir)
+        path.write_text(render_live_case(case), encoding="utf-8")
+        written.append(path)
+    rubric_path = rubrics_dir / f"{LIVE_RUBRIC_NAME}.md"
+    rubric_path.write_text(build_rubric(_read_text(judge_rubric)), encoding="utf-8")
+    written.append(rubric_path)
+    return written
+
+
+def _read_text(path: Path) -> str:
+    """Read a whole text file, naming it when it cannot be read."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ConversionError(f"cannot read {path}: {exc}") from exc
+
+
 # -- converting the traces ------------------------------------------------------------------------
 
 
@@ -526,6 +776,26 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="also rewrite CASES.txt and its sibling cases/*.yaml from the golden file",
     )
+    parser.add_argument(
+        "--emit-live-cases",
+        action="store_true",
+        help="also rewrite live/cases/*.yaml and live/rubrics/faithfulness.md",
+    )
+    parser.add_argument(
+        "--corpus",
+        metavar="DIR",
+        help="Consilium's data/corpus/; required with --emit-live-cases",
+    )
+    parser.add_argument(
+        "--judge-rubric",
+        metavar="PATH",
+        help="Consilium's judges/faithfulness_v2.md; required with --emit-live-cases",
+    )
+    parser.add_argument(
+        "--live-out",
+        metavar="DIR",
+        help="the live/ directory to write; defaults to CASES.txt's sibling live/",
+    )
     return parser
 
 
@@ -535,8 +805,11 @@ def run(args: argparse.Namespace) -> list[Path]:
     Raises:
         ConversionError: The arguments do not name enough to do anything, or an input is unusable.
     """
-    if not args.emit_cases and not (args.traces and args.out):
-        raise ConversionError("nothing to do: give --traces and --out, or --emit-cases, or both")
+    emitting = args.emit_cases or args.emit_live_cases
+    if not emitting and not (args.traces and args.out):
+        raise ConversionError(
+            "nothing to do: give --traces and --out, or --emit-cases, or --emit-live-cases"
+        )
     app = load_app()
     golden = read_golden(Path(args.golden))
     cases_file = Path(args.cases)
@@ -545,6 +818,19 @@ def run(args: argparse.Namespace) -> list[Path]:
         if not args.escalation:
             raise ConversionError("--emit-cases needs --escalation, the phrase list a case cites")
         written += emit_cases(golden, read_escalation_phrases(Path(args.escalation)), cases_file)
+    if args.emit_live_cases:
+        if not (args.escalation and args.corpus and args.judge_rubric):
+            raise ConversionError(
+                "--emit-live-cases needs --escalation, --corpus and --judge-rubric"
+            )
+        written += emit_live_cases(
+            golden,
+            read_escalation_phrases(Path(args.escalation)),
+            read_case_ids(cases_file),
+            corpus_dir=Path(args.corpus),
+            judge_rubric=Path(args.judge_rubric),
+            out_dir=Path(args.live_out) if args.live_out else cases_file.parent / "live",
+        )
     if args.traces and args.out:
         written += convert(
             traces_dir=Path(args.traces),
