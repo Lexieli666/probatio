@@ -424,3 +424,95 @@ def test_the_help_text_lists_every_validate_judge_flag(capsys: Any) -> None:
         "--out",
     ):
         assert flag in out
+
+
+# --- a reply that is not a verdict is asked again, not counted (DECISIONS 92) --------------------
+
+
+class _FlakyJudge:
+    """A judge provider whose reply is truncated the first time it is asked about a row.
+
+    It models what `claude-opus-5` did against the Consilium samples: a long rationale that
+    occasionally stops mid-string, so the reply is not JSON at all rather than a wrong verdict.
+    """
+
+    name = "flaky-judge"
+    model = "flaky-judge-1"
+
+    def __init__(self, *, bad_rows: set[int], attempts_per_row: int = 1) -> None:
+        """Truncate the first ``attempts_per_row`` replies for each row in ``bad_rows``."""
+        self.bad_rows = bad_rows
+        self.attempts_per_row = attempts_per_row
+        self.seen: dict[str, int] = {}
+        self.call_count = 0
+
+    def complete(self, prompt: str, *, system: str | None = None, **params: Any) -> Any:
+        """Answer with a truncated object while a row is still owed a bad reply."""
+        from probatio import Completion
+
+        answer = next(
+            a
+            for a in ("grounded one", "grounded two", "invented one", "invented two")
+            if a in prompt
+        )
+        index = ["grounded one", "grounded two", "invented one", "invented two"].index(answer) + 1
+        self.seen[answer] = self.seen.get(answer, 0) + 1
+        self.call_count += 1
+        truncated = index in self.bad_rows and self.seen[answer] <= self.attempts_per_row
+        text = (
+            '{"verdict": "pass", "score": 1.0, "rationale": "it goes on and'
+            if truncated
+            else ('{"verdict": "pass", "score": 1.0, "rationale": "fine."}')
+        )
+        return Completion(
+            text=text, model=self.model, tokens_in=1, tokens_out=1, cost_usd=None, latency_ms=1.0
+        )
+
+
+def test_a_truncated_reply_is_asked_again_and_the_record_counts_the_re_ask(
+    tmp_path: Path, rows_csv: Path, monkeypatch: Any, capsys: Any
+) -> None:
+    """One unparsable reply in four must not cost the other three gradings."""
+    provider = _FlakyJudge(bad_rows={2})
+    monkeypatch.setattr(cli_module, "build_provider", lambda name, model: provider)
+
+    out = tmp_path / "judges"
+    assert main(run_judge_argv(rows_csv, out)) == 0
+    assert provider.call_count == 5, "row 2 is asked twice and the other three once each"
+
+    record = read_record(out)
+    assert record.n == 4, "every row still has a verdict"
+    assert record.reasked == 1
+
+    captured = capsys.readouterr()
+    assert "1 of 4 row(s) were asked again" in captured.out
+    assert "row 2 attempt 1 was not a verdict" in captured.err
+
+
+def test_a_row_that_never_parses_stops_the_run_rather_than_scoring_it(
+    tmp_path: Path, rows_csv: Path, monkeypatch: Any, capsys: Any
+) -> None:
+    """A row with no verdict has no label; a comparison over three rows must not claim four."""
+    provider = _FlakyJudge(bad_rows={2}, attempts_per_row=99)
+    monkeypatch.setattr(cli_module, "build_provider", lambda name, model: provider)
+
+    assert main(run_judge_argv(rows_csv, tmp_path / "judges")) == 2
+    assert "asked row 2 3 time(s)" in capsys.readouterr().err
+    assert provider.call_count == 1 + 3, "row 1 once, then row 2 three times, then it stops"
+    assert not (tmp_path / "judges").exists(), "no record is written for a run that did not finish"
+
+
+def test_a_run_in_which_every_first_reply_parses_records_no_re_ask(
+    tmp_path: Path, rows_csv: Path, injected_provider: FakeProvider, capsys: Any
+) -> None:
+    """The count is a measurement, so it must be zero when there was nothing to measure."""
+    out = tmp_path / "judges"
+    assert main(run_judge_argv(rows_csv, out)) == 0
+    assert read_record(out).reasked == 0
+    assert "asked again" not in capsys.readouterr().out
+
+
+def test_columns_mode_records_no_re_ask_because_it_asks_nobody(tmp_path: Path) -> None:
+    """``columns`` mode makes no call, so the field is zero rather than absent."""
+    assert main(columns_argv(SAMPLE_1, tmp_path)) == 0
+    assert read_record(tmp_path).reasked == 0
