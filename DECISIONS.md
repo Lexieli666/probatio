@@ -1847,3 +1847,28 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   the original case's tape under distinct keys, and a judged suite with two relations replays with
   `call_count == 0` on both inner providers — and all three were seen to fail against the code as
   it stood before the fix.
+
+## 91. A case that names no model must be replayed under the model it was recorded against
+
+- **Date:** 2026-09-05 (Phase 12)
+- **Q:** The live suite recorded cleanly under `--probatio-provider claude-cli --probatio-model
+  claude-opus-5`, and the first offline replay raised `StaleCassetteError` on all fifteen cases.
+  The tapes were fine. Is this a defect, or the rule working?
+- **A:** The rule working, and the commands were wrong. DECISIONS 43's amendment makes the
+  cassette key's model `params["model"]` when the call names one and the adapter's constructor
+  model otherwise, and `--probatio-model` is what fills that constructor in. The live cases carry
+  `params: {}`, so the key's model on the recording side was `claude-opus-5` and on the replay
+  side was `fake-1`, the default `FakeProvider`'s own model. Every replay command for this suite
+  therefore carries `--probatio-model claude-opus-5` (and Route B's carries
+  `--probatio-model claude-haiku-4-5-20251001`), which `build_provider` passes to
+  `FakeProvider(model=...)`; `examples/consilium/live/README.md` says so beside the first command
+  and `tests/test_consilium_live_replay.py` passes it. Nothing in `src/probatio` changed.
+- **Why:** This is the failure DECISIONS 43's amendment was written to create, seen from the other
+  side, and it is the right one. Without it the replay would have answered every case from
+  `FakeProvider`'s `FAKE(<hash>)` fallback and the report would have shown fifteen ordinary
+  assertion failures with no hint that the tapes were never read. The alternative that removes the
+  flag is for the emitter to write `params: {model: claude-opus-5}` into every live case, the way
+  `examples/consilium/app.py` passes `model=MODEL` explicitly; it was rejected because the model is
+  a property of the run, not of the case, and Route B's whole point is to run these same fifteen
+  cases against a second model. A case file that named the model would have to be edited to do
+  that, and the diff would then be indistinguishable from a change to what is being tested.

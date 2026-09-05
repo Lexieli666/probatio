@@ -8,11 +8,16 @@ reproduced offline at no cost.
 
 ```bash
 pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
-       --baseline-dir .probatio/baseline-live
+       --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5
 ```
 
-That command calls no model. So does everything in CI. The recording commands below are the only
-ones that do, and a human runs them deliberately.
+That command calls no model, and neither does anything in CI. The recording commands below are the
+only ones that do, and a human runs them deliberately.
+
+`--probatio-model` is needed on a replay too, and naming the model the tapes were recorded against
+is the whole point of it: these cases name no model in their `params`, so the cassette key takes
+the one the provider was configured with, and replaying under a different name is a
+`StaleCassetteError` rather than a wrong answer (DECISIONS 91).
 
 ## This is not Consilium's pipeline
 
@@ -78,7 +83,7 @@ interactions than there are cases.
 
 ```bash
 pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
-       --baseline-dir .probatio/baseline-live --update-baseline
+       --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5 --update-baseline
 ```
 
 ### 4. Validate the judge against Consilium's blind human labels (live)
@@ -104,7 +109,7 @@ probatio validate-judge --run-judge --rubric examples/consilium/live/rubrics/fai
 
 ```bash
 pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
-       --baseline-dir .probatio/baseline-live \
+       --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5 \
        --probatio-results examples/consilium/live/results/live-baseline.json \
        --probatio-report examples/consilium/live/results/live-baseline.md
 ```
@@ -125,7 +130,7 @@ looks like in a report:
 
 ```bash
 pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes-haiku \
-       --baseline-dir .probatio/baseline-live \
+       --baseline-dir .probatio/baseline-live --probatio-model claude-haiku-4-5-20251001 \
        --probatio-results examples/consilium/live/results/live-changed.json \
        --probatio-report examples/consilium/live/results/live-changed.md
 ```
