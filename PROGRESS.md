@@ -475,3 +475,10 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   on its own `--update-baseline` commit. `tests/test_docs_stability.py` reads the `12 of 12` back
   out of `PROGRESS.md`, so the doc cannot quote a run this file does not hold.
   DECISIONS 73–77 and the amendments to 67 and 69; `docs/DESIGN.md` Phase 10.
+- 2026-09-04 — **Phase 10 (CI fix)** — gate green locally and the two CI failures fixed at the
+  root: `.github/workflows/ci.yml` now checks out with `fetch-depth: 0`, and the byte-identity
+  test fails, rather than passing with a note, on a shallow checkout. Gate condition 5 had been
+  passing vacuously in CI since Phase 1 because `--diff-filter=A` resolved to HEAD in a shallow
+  clone; Phase 9's sanctioned deletion is what finally made it speak up. The two tests that assert
+  no artefact is written or count written files now `delenv` `GITHUB_STEP_SUMMARY`, which GitHub
+  Actions sets and the markdown reporter rightly honours; the reporter is unchanged. DECISIONS 78.

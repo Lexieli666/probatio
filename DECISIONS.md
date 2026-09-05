@@ -1524,3 +1524,36 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   configuration this project's own gate or CI uses. Rejected alternative: writing the files in
   `pytest_sessionfinish` and printing the paths in the terminal hook, which splits one action
   across two hooks whose relative order pytest does not fix.
+
+## 78. Gate condition 5 needs full history, and says so instead of passing
+
+- **Date:** 2026-09-04 (Phase 10)
+- **Q:** CI failed at Gate 1 on two tests that pass locally. `actions/checkout@v4` makes a shallow
+  clone, so `git log --diff-filter=A -- examples/demo_suite` finds no commit that adds the
+  directory, resolves to HEAD, and the diff against HEAD is empty — which means gate condition 5,
+  the byte-identity check `CLAUDE.md` calls a hard constraint, **passed vacuously in CI from
+  Phase 1 to Phase 8** and only turned into a failure in Phase 9, when the sanctioned deletion
+  first made a real diff expected. Separately, GitHub Actions sets `GITHUB_STEP_SUMMARY`, so the
+  markdown reporter correctly writes a job summary and
+  `test_write_artefacts_writes_nothing_when_no_flag_names_a_file` correctly observed a written
+  file.
+- **A:** Both sides of the first are fixed. `.github/workflows/ci.yml` checks out with
+  `fetch-depth: 0`, and `test_the_demo_suite_differs_from_its_introducing_commit_by_the_deletion_alone`
+  now **fails** when `git rev-parse --is-shallow-repository` prints `true`, with a message that
+  says the gate needs full history and names `fetch-depth: 0`. The pass-with-a-note path is kept
+  for the two cases where there is genuinely nothing to compare against: git unavailable, and the
+  directory not yet committed. For the second, the two tests that assert no artefact was written
+  or count the files written — `test_write_artefacts_writes_nothing_when_no_flag_names_a_file` and
+  `test_runs_three_writes_both_report_files_with_every_property`, whose subprocess inherits the
+  environment — call `monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)`. The reporter is
+  unchanged; writing to a job summary the environment names is the behaviour Phase 9 specified.
+- **Why:** A check that cannot fail is worse than an absent one, because the run log records it as
+  green. `fetch-depth: 0` alone would fix today's CI and leave the same trap for any other
+  environment with a truncated checkout, so the test now refuses to report a result it cannot
+  compute; the shallow guard is the assertion, `fetch-depth: 0` is what satisfies it. Isolating
+  the variable in the test is right for the same reason in reverse: the environment, not the code,
+  is what changed, and a test that asserts "nothing was asked for" has to own the environment that
+  decides what was asked for. Rejected alternatives: printing a note and returning on a shallow
+  clone, which is exactly the vacuous pass being fixed; and making the reporter skip
+  `GITHUB_STEP_SUMMARY` under some test-mode flag, which would delete the one feature spec §3.11
+  exists for in order to make an unrelated assertion easier.

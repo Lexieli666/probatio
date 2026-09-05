@@ -398,9 +398,11 @@ def test_runs_three_reports_a_pass_rate_and_a_stability_score(
 
 
 def test_runs_three_writes_both_report_files_with_every_property(
-    pytester: pytest.Pytester,
+    pytester: pytest.Pytester, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Spec §3.11 and §3.12 acceptance: three cases, ``--runs 3``, both files, every property."""
+    # The subprocess inherits this environment; a job summary would add a file to the count.
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
     write_suite(pytester, case_ids=("alpha", "bravo", "charlie"))
     result = pytester.runpytest_subprocess(
         "--runs", "3", "--probatio-results", "r.json", "--probatio-junit", "j.xml"
@@ -895,9 +897,14 @@ def test_the_terminal_summary_writes_the_junit_and_results_files_too(tmp_path: P
     assert [case.case_id for case in read_results(results).cases] == ["alpha"]
 
 
-def test_write_artefacts_writes_nothing_when_no_flag_names_a_file(tmp_path: Path) -> None:
+def test_write_artefacts_writes_nothing_when_no_flag_names_a_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     from probatio.plugin import write_artefacts
 
+    # On GitHub Actions the environment names a job summary, and the markdown reporter rightly
+    # writes to it; "nothing was asked for" is only true once that destination is gone.
+    monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
     report = _state_with_one_case().report()
     assert write_artefacts(report, _Stashed(pytest.Stash())) == []  # type: ignore[arg-type]
     assert list(tmp_path.iterdir()) == []
