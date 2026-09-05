@@ -1810,3 +1810,40 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   which would have to be removed in block 3 anyway; and holding block 1's commit until block 3,
   which would put the emitter, the app, the suite and 360 live calls in one commit and leave the
   REVIEW STOP of block 2 with nothing committed to review against.
+
+## 90. The cassette's active case covers the assertions and the variants, not just the SUT
+
+- **Date:** 2026-09-05 (Phase 12)
+- **Q:** The first live recording of `examples/consilium/live/` died on its first case with
+  `a cassette call was made outside a case`, raised from the **judge**. `Probatio._call_sut` opened
+  the store's active-case context with `begin_case` and closed it with `end_case` in the same
+  `finally` that restored the completion sink, and `evaluate_case` — which is where a `judge`
+  assertion makes its provider call — ran after that block. `_call_variant` never opened the
+  context at all, so every relation variant's call was in the same position. What does the context
+  cover?
+- **A:** The system under test **and** the assertions, for the original case and for every
+  variant. `Probatio._active_case(case, run_index)` is a context manager holding
+  `begin_case`/`end_case`; `_evaluate_run` wraps the SUT call and `evaluate_case` in it, and the
+  `evaluate` closure inside `_evaluate_relations` wraps the variant's call and its assertions in
+  it too, which is why `_evaluate_relations` now takes the run index. A variant files under its
+  own id, which is the original's: `with_field` copies a case without renaming it, so one case's
+  tape holds the interactions of every variant taken from it. The **sink** is untouched and stays
+  where it was — `_call_sut` and `_call_variant` still open and close it around the call alone —
+  so DECISIONS 60 is unchanged: a judge call still reaches no per-case ceiling, and a variant's
+  calls still reach the session total under the case's id and not the case's own ceiling.
+- **Why:** A judge call and a variant call are provider calls made on behalf of a case, and spec
+  §3.8 keys an interaction on prompt, system, model, params and the judge template hash — the
+  template part exists precisely so that a judge call can share a tape with the answer it grades
+  (DECISIONS 42). A context that closes before the judge runs makes that key unreachable, so the
+  feature DECISIONS 42 was written for could never have been used. The defect survived nine
+  phases because no suite had ever combined a cassette store with a judge or a relation: the demo
+  suite has both but overrides `provider` and `judge_provider` with bare fakes (DECISIONS 66), and
+  Phase 11's Consilium suite has cassettes but neither a judge nor a relation, for the reason its
+  README gives. Rejected alternative: opening the context inside `Judge.grade_with_completion` and
+  inside `evaluate_relation`, which spreads knowledge of the cassette store into two modules that
+  deliberately do not import it (DECISIONS 42's last paragraph) and would still leave a plain
+  `contains` assertion's hypothetical call outside. Three tests in
+  `tests/test_session_check.py` pin it — the judge's call reaches the tape, a variant's calls reach
+  the original case's tape under distinct keys, and a judged suite with two relations replays with
+  `call_count == 0` on both inner providers — and all three were seen to fail against the code as
+  it stood before the fix.

@@ -706,3 +706,17 @@ it is a contiguous slice of it, starting at the right heading and stopping befor
 The alternative — writing a rubric of Probatio's own — would have made the two kappas in
 `docs/EVALUATION.md` incomparable with the GPT-4o-mini figures Consilium published on the same
 labels, which is the only reason those figures are worth quoting.
+
+**A tape belongs to a case, and so does everything the case caused.** Recording the live suite
+found the one place where that was not true: the cassette store's active case was opened just
+before the system under test ran and closed as soon as it returned, so a `judge` assertion's
+call — which happens while the case's assertions are being evaluated, after the answer is in
+hand — reached the store with no case to file it under, and a relation variant's call never had
+one opened at all (DECISIONS 90). The context now spans the assertions and every variant. What did
+*not* move is the completion sink: a judge call is still attributed to no per-case ceiling and a
+variant's calls still reach only the session total, because DECISIONS 60 is a statement about what
+a case costs to serve and this was a statement about which file an interaction is written to. The
+two had been sharing one `try/finally`, which is how a change to one silently made the other
+wrong. The alternative — teaching `Judge` and `evaluate_relation` to open the context themselves —
+would have put the cassette store inside two modules that are deliberately kept from importing it,
+and would still have left any future assertion that calls a provider outside.

@@ -516,3 +516,115 @@ def test_no_failed_assertion_produces_no_explanation_lines() -> None:
 
     passing = [AssertionResult(assertion_type="contains", passed=True, score=1.0, detail="fine")]
     assert _failed_assertion_lines([passing]) == []
+
+
+# -- the cassette context covers the judge and the variants (DECISIONS 90) -----------------------
+
+
+JUDGE_REPLY = '{"verdict": "pass", "score": 1.0, "rationale": "every claim is supported."}'
+"""A reply the strict judge parser accepts, so a graded case is graded and not a parse error."""
+
+
+def judged_case() -> LLMCase:
+    """A case with one exact assertion and one judge assertion, as the live suite's cases have."""
+    return make_case(
+        assertions=[
+            {"type": "contains", "any": [KEYWORD]},
+            {"type": "judge", "rubric": "faithfulness", "threshold": 1.0},
+        ]
+    )
+
+
+def rubric_dir(tmp_path: Path) -> Path:
+    """A directory holding one rubric, for a judge that has to resolve a name."""
+    rubrics = tmp_path / "rubrics"
+    rubrics.mkdir(parents=True, exist_ok=True)
+    (rubrics / "faithfulness.md").write_text("Grade grounding.\n", encoding="utf-8")
+    return rubrics
+
+
+def taped_probatio(
+    tmp_path: Path, mode: str, relations: Sequence[Relation] = ()
+) -> tuple[Probatio, RunState, FakeProvider, FakeProvider, CassetteProvider]:
+    """A ``Probatio`` whose system under test and judge both go through one cassette store."""
+    store = CassetteStore(tmp_path / "tapes")
+    state = RunState(store=store)
+    inner_sut = answering()
+    inner_judge = FakeProvider(default=JUDGE_REPLY)
+    sut_provider = CassetteProvider(inner_sut, store, mode)
+    judge = CassetteProvider(inner_judge, store, mode)
+    probatio = Probatio(
+        settings=settings(tmp_path),
+        state=state,
+        suite="test_suite",
+        judge_provider=judge,
+        relations=relations,
+        rubric_dirs=[rubric_dir(tmp_path)],
+    )
+    return probatio, state, inner_sut, inner_judge, sut_provider
+
+
+def tape(tmp_path: Path) -> dict[str, Any]:
+    """The one cassette file the case wrote."""
+    import json
+
+    return dict(
+        json.loads((tmp_path / "tapes" / "test_suite" / "copd.json").read_text(encoding="utf-8"))
+    )
+
+
+def test_a_judge_call_is_recorded_onto_the_cases_own_tape(tmp_path: Path) -> None:
+    """The judge is a provider call and it belongs to the case that was being graded.
+
+    Before this was fixed the cassette context was closed as soon as the system under test
+    returned, so the judge's call reached the store with no active case and every judged suite
+    under ``--cassette=record`` died on ``a cassette call was made outside a case``.
+    """
+    probatio, _, inner_sut, inner_judge, provider = taped_probatio(tmp_path, "record")
+    result = probatio.check(judged_case(), sut_for(provider))
+
+    assert [item.assertion_type for item in result.results] == ["contains", "judge"]
+    assert [item.passed for item in result.results] == [True, True]
+    assert inner_sut.call_count == 1
+    assert inner_judge.call_count == 1
+    assert len(tape(tmp_path)["interactions"]) == 2, "the judge's call is missing from the tape"
+
+
+def test_a_variants_calls_are_recorded_onto_the_original_cases_tape(tmp_path: Path) -> None:
+    """A relation's variants key differently but file under the case they were taken from."""
+    relation = OrderInvariant(field="input.documents", k=3)
+    probatio, _, inner_sut, inner_judge, provider = taped_probatio(
+        tmp_path, "record", relations=[relation]
+    )
+    result = probatio.check(judged_case(), sut_for(provider))
+
+    measured = next(item for item in result.relations if item.relation == "order_invariant")
+    assert measured.n_variants == 1, "a two-document list has exactly one non-identity ordering"
+    assert inner_sut.call_count == 1 + measured.n_variants
+    assert inner_judge.call_count == 1 + measured.n_variants
+
+    recorded = tape(tmp_path)
+    assert recorded["case_id"] == "copd"
+    assert len(recorded["interactions"]) == 2 * (1 + measured.n_variants)
+    assert len({interaction["key"] for interaction in recorded["interactions"]}) == len(
+        recorded["interactions"]
+    ), "two different calls were filed under one key"
+
+
+def test_a_judged_suite_with_relations_replays_with_no_inner_call(tmp_path: Path) -> None:
+    """The whole point: record once against a model, replay for ever at no cost."""
+    relations = [OrderInvariant(field="input.documents", k=3), FormatJitter(field="input.question")]
+    recorder, _, _, _, provider = taped_probatio(tmp_path, "record", relations=relations)
+    recorded = recorder.check(judged_case(), sut_for(provider))
+
+    player, _, inner_sut, inner_judge, replay = taped_probatio(
+        tmp_path, "replay", relations=relations
+    )
+    replayed = player.check(judged_case(), sut_for(replay))
+
+    assert inner_sut.call_count == 0
+    assert inner_judge.call_count == 0
+    assert [item.passed for item in replayed.results] == [item.passed for item in recorded.results]
+    assert {item.relation: item.violation_rate for item in replayed.relations} == {
+        item.relation: item.violation_rate for item in recorded.relations
+    }
