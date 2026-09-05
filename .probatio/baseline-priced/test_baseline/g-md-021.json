@@ -17,7 +17,7 @@
     },
     {
       "assertion_type": "budget_cost",
-      "passed": false,
+      "passed": true,
       "score": null
     },
     {
@@ -31,5 +31,5 @@
   "model": "gpt-4o-mini-2024-07-18",
   "output": null,
   "prompt_hash": "528280d46e377fe6",
-  "recorded": "2026-09-05T05:28:20Z"
+  "recorded": "2026-09-05T05:54:00Z"
 }
