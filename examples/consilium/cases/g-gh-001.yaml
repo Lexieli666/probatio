@@ -1,0 +1,33 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-gh-001
+input: What is high blood pressure, and how is it different from one high reading?
+metadata:
+  category: general_health
+  red_flag: false
+  expected_route:
+    mode: parallel
+    agents:
+    - consultation
+    - research
+  relevant_doc_ids:
+  - condition-hypertension
+  - guideline-hypertension-diagnosis-and-bp-targets
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: Hypertension is persistently raised pressure in the arteries, sustained over time rather
+    than present on a single occasion, and is written as the systolic over the diastolic value in millimeters
+    of mercury. Pressure varies continuously through the day with activity, stress, pain, caffeine and
+    sleep, which is why one high clinic reading is a measurement rather than a diagnosis. Guidance describes
+    the diagnosis as resting on an average of two or more readings taken on two or more separate occasions,
+    usually confirmed with home or ambulatory measurement.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- general_health

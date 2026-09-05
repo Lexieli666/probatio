@@ -1,0 +1,30 @@
+{
+  "case_id": "g-md-017",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 5832.400708000023,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "Your blood sugar level being over 20 and feeling sick is concerning. You are advised to seek medical advice immediately, especially if your symptoms worsen or are new and unexplained. Although this scenario was assessed as having a routine urgency, it is important to take your high blood sugar seriously.\n\n[removed: this system does not give doses or amounts.] Symptoms associated with this condition can include extreme thirst, frequent urination, nausea, and fatigue. In severe cases, it can lead to diabetic ketoacidosis (DKA), which is a life-threatening condition requiring immediate medical attention.\n\nIf you are experiencing significant high blood sugar and feeling unwell, it is crucial to seek urgent care right away. You should call emergency services or go to the nearest hospital. In the meantime, if you are able, staying hydrated by drinking water may help until help arrives. Monitor your symptoms closely and be prepared to report them to healthcare professionals.\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 4948,
+          "tokens_out": 680
+        }
+      ],
+      "key": "6aa4641db3d5889b",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "My blood sugar has been over 20 all day and I feel sick. How urgent is that, and what should I be told about diabetic emergencies?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}

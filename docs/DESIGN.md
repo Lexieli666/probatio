@@ -585,3 +585,41 @@ through Probatio's own frames, which tells a user that the plugin is broken when
 that they passed `--probatio-provider anthropic` without a model. The rejected alternative was
 leaving the exception to escape on the grounds that a traceback is louder; it is louder about the
 wrong thing (DECISIONS 67 and 69, both amended).
+
+## Phase 11
+
+**The dogfood suite's system under test is a call, not an application.** `examples/consilium/app.py`
+is four lines of body: it hands the golden question, a fixed system prompt, the configuration name
+and the model to `provider.complete`. There is no retrieval and no pipeline, because the answers
+being checked were produced in August 2026 by Consilium-Health's own multi-agent system and are
+read back off committed tapes. The alternative considered was to reimplement enough of Consilium
+to make the suite look like a real application under test — a prompt builder, a document store,
+something for the report to point at. It would have been a fiction: whatever it computed, replay
+would discard, because a cassette answers by key and the key is a hash of what was asked, not of
+how the asking was arranged. What the system under test genuinely has to do is ask the *same*
+question the tape was built from, which is why `SYSTEM` and `MODEL` are module constants shared
+with the converter and why `model` is passed explicitly on every call (DECISIONS 80).
+
+**The suite's assertions come from golden fields, and the emitter is checked against the cases
+rather than the cases against the emitter.** `convert_traces.py --emit-cases` rebuilds `CASES.txt`
+and all fifteen `cases/*.yaml` from `golden.jsonl` and the escalation phrase list, and a test
+asserts the output is byte-identical to the committed files. The direction is deliberate and is
+the same one gate condition 5 takes with the demo suite: the committed YAML is the contract, and a
+change to the emitter that would require editing a case is a wrong change. Deriving the
+assertions this way is what separates a regression suite from a test written to pass — a
+`contains` list read off Consilium's own safety module is a claim somebody else made about what
+escalation means, while a list assembled by reading the answers would only assert that the answers
+say what they say. The rejected alternative was to write the cases by hand once and delete the
+emitter, which is less code and leaves nothing able to prove the provenance sentence in the
+README.
+
+**The suite fails on purpose, and is therefore not in `testpaths`.** Five of the six red-flag cases
+in `test_full` fail their escalation assertion, reproducing the regression Consilium documented in
+its own `docs/FAILURE_CASES.md` before Probatio existed. A suite whose correct outcome is a
+non-zero exit status cannot sit in the same `pytest -q` that the quality gate requires to be
+green, so `tests/test_consilium_suite.py` runs both suites through `pytester` on a copy instead,
+with the committed baselines copied in so that snapshot drift fails rather than silently
+re-records (DECISIONS 81, 83). The rejected alternative was `xfail` markers on the five cases,
+which would make the gate green and the finding invisible: an expected failure is a claim that
+something is known-broken and tolerated, and the whole argument of the case study is that this is
+a regression a CI job should have stopped.

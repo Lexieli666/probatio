@@ -1,0 +1,30 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-gh-002
+input: Why does type 2 diabetes affect blood sugar in the first place?
+metadata:
+  category: general_health
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - condition-type-2-diabetes
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: Type 2 diabetes is a disorder of glucose regulation in which the tissues respond poorly to
+    insulin and the pancreas cannot sustain the increased output that resistance demands, so blood glucose
+    stays above the normal range. It differs from type 1 diabetes, where insulin-producing cells are destroyed
+    by an autoimmune process and insulin is absent rather than ineffective. It develops gradually over
+    years, preceded by a raised-but-not-diabetic state that has its own management.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- general_health

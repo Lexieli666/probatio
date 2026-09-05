@@ -1,0 +1,34 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-ge-024
+input: What does guidance describe for an uncomplicated urinary tract infection in a non-pregnant adult?
+metadata:
+  category: guideline_evidence
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - research
+  relevant_doc_ids:
+  - guideline-uti-uncomplicated-treatment
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: For acute cystitis in a non-pregnant adult with a normal urinary tract and normal immune
+    function, guidance describes short-course therapy with an agent that concentrates in urine and has
+    minimal effect on gut flora -- nitrofurantoin, trimethoprim-sulfamethoxazole where local resistance
+    is low, or fosfomycin -- with fluoroquinolones explicitly reserved and beta-lactams described as alternatives
+    with somewhat lower efficacy. Local resistance patterns drive the choice. Empiric treatment without
+    culture is appropriate where symptoms are typical and there is no vaginal discharge or irritation,
+    culture is reserved for cases where it changes management, and failure to improve within about 48
+    hours is a reason to reassess rather than to extend the course. Doses and durations are outside the
+    scope of this system.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- guideline_evidence

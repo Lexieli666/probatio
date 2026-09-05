@@ -1,0 +1,32 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-gh-017
+input: What sort of dietary change does guidance describe for high blood pressure?
+metadata:
+  category: general_health
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - lifestyle-hypertension-diet
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: The pattern most consistently described emphasizes vegetables, fruit, whole grains, low-fat
+    dairy, poultry, fish, beans, nuts and vegetable oils while limiting saturated fat, fatty meat, sweets
+    and sugar-sweetened drinks; it is a whole pattern rather than a single food. Sodium reduction is the
+    most-studied single change, with commonly stated targets under 2,300 mg a day and a further benefit
+    described at 1,500 mg for many adults, and the relationship is graded so any reduction helps. Most
+    dietary sodium is already in packaged and restaurant food rather than added at the table, and higher
+    dietary potassium, limiting alcohol and weight reduction each contribute.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- general_health
