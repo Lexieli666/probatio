@@ -152,7 +152,7 @@ def test_the_snapshot_state_is_shown_and_a_case_without_one_shows_a_dash() -> No
         mode="scores",
         passed=True,
         detail="baseline recorded",
-        path=Path("alpha.json"),
+        path="alpha.json",
     )
     lines = render_terminal(  # type: ignore[arg-type]
         report_with(case("alpha", snapshot=snapshot), case("bravo"))
@@ -208,6 +208,50 @@ def test_the_cost_line_says_so_when_there_is_no_ceiling() -> None:
 def test_an_unpriced_case_makes_the_total_a_lower_bound() -> None:
     lines = cost_lines(report_with(case("alpha", cost=None)))  # type: ignore[arg-type]
     assert "lower bound" in lines[1] and "alpha" in lines[1]
+
+
+def test_a_run_in_which_nothing_was_priced_says_unknown_rather_than_zero() -> None:
+    """DECISIONS 39: an unknown cost is never rendered as a zero, the total included."""
+    report = report_with(case("alpha", cost=None), case("bravo", cost=None))
+    assert report.cost_total_usd is None  # type: ignore[attr-defined]
+    line = cost_lines(report)[0]  # type: ignore[arg-type]
+    assert line == "cost: unknown (no priced calls; 2 case(s) unpriced)"
+    assert "$0.000000" not in line
+
+
+def test_a_partly_priced_run_labels_the_number_a_floor() -> None:
+    line = cost_lines(  # type: ignore[arg-type]
+        report_with(case("alpha", cost=0.0001), case("bravo", cost=None))
+    )[0]
+    assert line == "cost: at least $0.000100 (1 case(s) unpriced)"
+
+
+def test_an_unpriced_run_with_a_ceiling_still_names_the_ceiling() -> None:
+    line = cost_lines(  # type: ignore[arg-type]
+        report_with(case("alpha", cost=None), ceiling=0.01)
+    )[0]
+    assert line == "cost: unknown of a $0.010000 ceiling (no priced calls; 1 case(s) unpriced)"
+
+
+def test_a_partly_priced_run_with_a_ceiling_names_both() -> None:
+    line = cost_lines(  # type: ignore[arg-type]
+        report_with(case("alpha", cost=0.0001), case("bravo", cost=None), ceiling=0.01)
+    )[0]
+    assert line == "cost: at least $0.000100 of a $0.010000 ceiling (1 case(s) unpriced)"
+
+
+def test_a_fully_priced_run_is_unchanged() -> None:
+    """The ordinary line keeps its wording: only an unknown total gains a qualifier."""
+    assert cost_lines(report_with(case("alpha")))[0] == (  # type: ignore[arg-type]
+        "cost: $0.000100 (no --max-cost ceiling)"
+    )
+
+
+def test_a_free_run_is_not_an_unpriced_one() -> None:
+    """A case that really cost nothing keeps its zero; only an absent price reads unknown."""
+    assert cost_lines(report_with(case("alpha", cost=0.0)))[0] == (  # type: ignore[arg-type]
+        "cost: $0.000000 (no --max-cost ceiling)"
+    )
 
 
 def test_an_empty_table_is_falsey_and_draws_nothing() -> None:

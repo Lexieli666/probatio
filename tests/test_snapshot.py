@@ -39,7 +39,7 @@ PASSING = (
 
 
 def store(tmp_path: Path, *, clock: datetime = FIXED) -> BaselineStore:
-    return BaselineStore(tmp_path / "baseline", clock=lambda: clock)
+    return BaselineStore(tmp_path / "baseline", clock=lambda: clock, root=tmp_path)
 
 
 def results(*specs: tuple[str, bool, float | None]) -> list[AssertionResult]:
@@ -114,7 +114,7 @@ def test_a_first_evaluation_records_a_baseline(tmp_path: Path, demo_case: LLMCas
     assert "baseline recorded" in result.detail
 
     path = tmp_path / "baseline" / SUITE / "htn-definition.json"
-    assert result.path == path
+    assert result.path == f"baseline/{SUITE}/htn-definition.json"
     assert json.loads(path.read_text()) == {
         "case_id": "htn-definition",
         "prompt_hash": prompt_hash(demo_case),
@@ -135,8 +135,8 @@ def test_two_recordings_of_the_same_results_are_byte_identical(
     tmp_path: Path, demo_case: LLMCase
 ) -> None:
     """A baseline that did not move produces no diff in the user's repository."""
-    first = compare(store(tmp_path / "a"), demo_case).path.read_bytes()
-    second = compare(store(tmp_path / "b"), demo_case).path.read_bytes()
+    first = (tmp_path / "a" / compare(store(tmp_path / "a"), demo_case).path).read_bytes()
+    second = (tmp_path / "b" / compare(store(tmp_path / "b"), demo_case).path).read_bytes()
 
     assert first == second
     assert first.endswith(b"\n")
@@ -150,7 +150,7 @@ def test_the_recorded_instant_comes_from_the_injected_clock(
     tokyo = datetime(2026, 9, 4, 3, 0, 0, tzinfo=timezone(timedelta(hours=9)))
     result = compare(store(tmp_path, clock=tokyo), demo_case)
 
-    assert json.loads(result.path.read_text())["recorded"] == "2026-09-03T18:00:00Z"
+    assert json.loads((tmp_path / result.path).read_text())["recorded"] == "2026-09-03T18:00:00Z"
 
 
 def test_a_naive_clock_is_read_as_utc(tmp_path: Path, demo_case: LLMCase) -> None:
@@ -158,7 +158,7 @@ def test_a_naive_clock_is_read_as_utc(tmp_path: Path, demo_case: LLMCase) -> Non
     naive = datetime(2026, 9, 3, 18, 0, 0)  # noqa: DTZ001 — the point of the test
     result = compare(store(tmp_path, clock=naive), demo_case)
 
-    assert json.loads(result.path.read_text())["recorded"] == "2026-09-03T18:00:00Z"
+    assert json.loads((tmp_path / result.path).read_text())["recorded"] == "2026-09-03T18:00:00Z"
 
 
 def test_a_recorded_baseline_is_what_the_demo_suites_own_answers_produce(
@@ -178,7 +178,7 @@ def test_a_recorded_baseline_is_what_the_demo_suites_own_answers_produce(
     )
     assert result is not None and result.state == "recorded"
 
-    recorded = json.loads(result.path.read_text())["assertions"]
+    recorded = json.loads((tmp_path / result.path).read_text())["assertions"]
     assert [entry["assertion_type"] for entry in recorded] == [
         "contains",
         "not_contains",
@@ -375,7 +375,7 @@ def test_output_mode_compares_the_text_and_records_it(tmp_path: Path) -> None:
     baselines = store(tmp_path)
     recorded = compare(baselines, case, output="the first answer")
 
-    assert json.loads(recorded.path.read_text())["output"] == "the first answer"
+    assert json.loads((tmp_path / recorded.path).read_text())["output"] == "the first answer"
     assert compare(baselines, case, output="the first answer").state == "unchanged"
 
     result = compare(baselines, case, output="the second answer")
@@ -514,7 +514,7 @@ def test_update_writes_a_baseline_that_was_never_recorded(
     result = compare(store(tmp_path), demo_case, update=True)
 
     assert result.state == "updated"
-    assert result.path.exists()
+    assert (tmp_path / result.path).exists()
 
 
 def test_a_case_with_snapshot_off_is_never_read_or_written(tmp_path: Path) -> None:
@@ -566,7 +566,7 @@ def test_a_missing_baseline_loads_as_none(tmp_path: Path) -> None:
 def test_an_unparsable_baseline_is_a_config_error(tmp_path: Path, demo_case: LLMCase) -> None:
     """DECISIONS 33: re-recording over a mangled file would turn a lost signal green."""
     baselines = store(tmp_path)
-    path = compare(baselines, demo_case).path
+    path = tmp_path / compare(baselines, demo_case).path
     path.write_text('{"case_id": "htn-definition"}\n', encoding="utf-8")
 
     with pytest.raises(ProbatioConfigError) as excinfo:

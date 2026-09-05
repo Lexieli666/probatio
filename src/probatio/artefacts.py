@@ -41,6 +41,7 @@ __all__ = [
     "NAME_PATTERN",
     "Clock",
     "check_path_segment",
+    "display_path",
     "format_instant",
     "timestamp",
     "utc_now",
@@ -168,3 +169,33 @@ def write_yaml(
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(comment + body, encoding="utf-8")
     return path
+
+
+def display_path(path: Path, root: Path | None = None) -> str:
+    """Render a path for a report, relative to the run's root and with POSIX separators.
+
+    Everything a reporter persists is committed by somebody: the results JSON goes into a
+    repository, a job summary goes onto a pull request. An absolute path in one of those is a
+    fact about the machine that produced it and not about the run — it names a home directory,
+    it differs between a developer's laptop and CI, and it makes two otherwise identical runs
+    produce different bytes. So a path that lies under ``root`` is written relative to it, and
+    always with forward slashes, so a Windows run and a POSIX run of the same suite agree.
+
+    A path outside ``root`` is returned as it is, absolute. Rendering it as a chain of ``..``
+    segments would be portable-looking without being portable — it only resolves from a root the
+    reader has to guess — and the honest reading of a baseline directory somewhere else on the
+    disk is that it is somewhere else on the disk.
+
+    Args:
+        path: The path to render.
+        root: The directory to render it relative to. Defaults to the current directory, which
+            is what :func:`default_baseline_dir` and :func:`default_cassette_dir` also assume.
+
+    Returns:
+        The rendered path.
+    """
+    base = Path.cwd() if root is None else root
+    try:
+        return path.relative_to(base).as_posix()
+    except ValueError:
+        return path.as_posix()

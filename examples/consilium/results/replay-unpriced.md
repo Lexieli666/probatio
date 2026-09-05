@@ -36,7 +36,7 @@
 | g-su-003 | FAIL | 2/3 | n/a | 2864 | unchanged |
 
 - stability: not measured (no case ran more than once; --runs was 1)
-- cost: $0.000000 (no --max-cost ceiling)
+- cost: unknown (no priced calls; 15 case(s) unpriced)
 - cost is a lower bound: no price for g-cc-001, g-cc-002, g-cc-017, g-ge-001, g-ge-002, g-ge-024, g-gh-001, g-gh-002, g-gh-017, g-md-017, g-md-018, g-md-021, g-su-001, g-su-002, g-su-003
 
 **warnings (15)**

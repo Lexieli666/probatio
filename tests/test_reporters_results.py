@@ -58,7 +58,7 @@ def rich_report() -> RunReport:
                 state="unchanged",
                 passed=True,
                 detail="no drift",
-                path=Path(".probatio") / "baseline" / "test_demo" / "htn-definition.json",
+                path=".probatio/baseline/test_demo/htn-definition.json",
             ),
             stability=case_stability([True] * 5),
             relations=[
@@ -127,6 +127,24 @@ def test_an_empty_session_round_trips_too(tmp_path: Path) -> None:
     report = RunState().report()
     assert read_results(write_results(report, tmp_path / "r.json")) == report
     assert report.cases == []
+
+
+def test_a_run_with_no_priced_call_writes_a_null_total_and_reads_it_back(tmp_path: Path) -> None:
+    """The unpriced total is ``null`` in the file, so no consumer can read it as free."""
+    report = rich_report()
+    assert report.cost_total_usd is not None
+    unpriced = report.model_copy(update={"cost_total_usd": None})
+    path = write_results(unpriced, tmp_path / "r.json")
+    assert '"cost_total_usd": null' in path.read_text(encoding="utf-8")
+    assert read_results(path) == unpriced
+
+
+def test_a_partly_priced_report_keeps_its_float_total(tmp_path: Path) -> None:
+    report = rich_report()
+    assert report.cost_unknown_case_ids == ["anxiety-expected-fail"]
+    assert read_results(write_results(report, tmp_path / "r.json")).cost_total_usd == (
+        report.cost_total_usd
+    )
 
 
 def test_every_field_of_the_report_reaches_the_file() -> None:
