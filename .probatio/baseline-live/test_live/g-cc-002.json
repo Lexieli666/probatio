@@ -1,0 +1,35 @@
+{
+  "assertions": [
+    {
+      "assertion_type": "similarity",
+      "passed": true,
+      "score": 0.842232
+    },
+    {
+      "assertion_type": "not_contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "judge",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "budget_cost",
+      "passed": true,
+      "score": null
+    },
+    {
+      "assertion_type": "budget_latency",
+      "passed": true,
+      "score": null
+    }
+  ],
+  "case_id": "g-cc-002",
+  "mode": "scores",
+  "model": "claude-opus-5",
+  "output": null,
+  "prompt_hash": "c69a6c2985fa1057",
+  "recorded": "2026-09-05T08:02:31Z"
+}
