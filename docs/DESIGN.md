@@ -623,3 +623,45 @@ re-records (DECISIONS 81, 83). The rejected alternative was `xfail` markers on t
 which would make the gate green and the finding invisible: an expected failure is a claim that
 something is known-broken and tolerated, and the whole argument of the case study is that this is
 a regression a CI job should have stopped.
+
+## Phase 11 follow-up
+
+**An unknown total is a third state, not a zero and not an absent column.** The case-level cost
+column has said `n/a` since Phase 9, but the session total was a plain `float` defaulting to `0.0`,
+so a dogfood run in which not one of thirty calls was priced reported
+`cost: $0.000000 (no --max-cost ceiling)` — the strongest possible claim about the cost of a run
+that had measured nothing. `RunReport.cost_total_usd` is now `float | None` and the reporters
+render three forms: `unknown`, `at least $X`, and the unchanged `$X`. The middle form is the
+reason the field is not simply dropped when anything is unpriced: a partly priced total is a real
+measurement and a genuine floor, and throwing it away to avoid overstating it understates it
+instead. The state is decided on whether any case contributed a known cost rather than on whether
+the sum is zero, so a case that really cost nothing still reports `$0.000000` and the two are
+distinguishable — which is the whole point, since a free run and an unmeasured one had shared a
+rendering. The alternative considered was to leave the number alone and let the existing
+`cost is a lower bound: ...` line carry the correction. It fails everywhere the second line does
+not travel: the JUnit `cost_total_usd` property and the results JSON are single values read by
+machines, and a dashboard summing `0.0` across a fleet of unpriced suites reports a fleet that
+costs nothing.
+
+**The case study is tested like a doc, not like prose.** `tests/test_docs_case_study.py` re-derives
+every id, quotation and count in §1 from `CASES.txt`, the tapes and `replay-unpriced.json`
+(DECISIONS 85). This follows what `tests/test_docs_assertions.py` and `tests/test_docs_stability.py`
+already do for their documents, and extends it to quoted model output, which is the kind of claim
+a reader is least able to check and a writer most able to paraphrase by accident. Openings are
+compared as whitespace-normalised prefixes rather than by equality, because the document rewraps
+what the tape holds as one paragraph and truncates with an ellipsis. The alternative considered
+was to generate §1.3 from the tapes at build time, so the quotations could not be wrong. It would
+remove the writer's ability to choose which sentence of an answer makes the point, which is most
+of what §1.3 is doing.
+
+**A committed artefact names the repository, never the machine.** `RunReport` had one field
+holding a filesystem path, `SnapshotResult.path`, and it held whatever the baseline store had
+resolved — so the dogfood suite's committed results JSON carried thirty absolute paths through a
+home directory. Every path a report persists now goes through `artefacts.display_path`, which
+renders it relative to rootdir with forward slashes (DECISIONS 86). The rule is the one the rest
+of the repository already follows and this field had escaped: a persisted artefact is a statement
+about the run, and anything in it that varies with the machine — a wall-clock timestamp, an
+unsorted key, an absolute path — makes two identical runs produce different bytes and a diff that
+means nothing. The test that guards it does not name the field: it walks every string in a
+results file written under `pytester` and fails on any that reads as an absolute path, so the next
+path added anywhere in the report is caught by a test nobody has to remember to extend.

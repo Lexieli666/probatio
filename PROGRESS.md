@@ -579,3 +579,73 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 ```
 
   DECISIONS 79–83; `docs/DESIGN.md` Phase 11.
+- 2026-09-04 — **Phase 11 (price-table correction, cost rendering, case study)** — gate green:
+  `pytest -q` 939 passed, 0 skipped, 0 xfailed; coverage of `src/probatio` 100%
+  (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on `src tests examples`;
+  `mypy --strict src/probatio` clean (46 source files); `examples/demo_suite/` still differs from
+  8a998af by the one sanctioned Phase 9 edit and nothing else, with no untracked file inside it.
+  **The price-table history, recorded rather than rewritten.** `b0aec38` committed
+  `examples/consilium/results/replay-priced.*` and the thirty `.probatio/baseline-priced/` files as
+  a *priced* run, but the run behind them had been made against a `prices.yaml` whose rates were
+  still commented out, so every cost in them was unknown and the two "priced" files were the
+  unpriced ones under another name. `c638edd` filled the rates and re-recorded, and was wrong the
+  same way. `e4f10d3` is the correction that holds: `gpt-4o-mini-2024-07-18` at $0.15 input and
+  $0.60 output per Mtok, read off the OpenAI price page (checked 2026-09-04, the URL and the row
+  are in `prices.yaml`'s header), with the priced run re-recorded against them — which is where
+  `$0.015070` and the per-case figures in `replay-priced.md` come from. The three commits stand as
+  they are; none was amended or dropped.
+  **The two committed result files the case study quotes** are
+  `examples/consilium/results/replay-unpriced.json` / `.md`, from
+  `pytest examples/consilium -q --cassette-dir examples/consilium/cassettes` with no price table,
+  and `replay-priced.json` / `.md`, from the same command plus
+  `--probatio-prices examples/consilium/prices.yaml --baseline-dir .probatio/baseline-priced`.
+  Both exit 1 with `5 failed, 25 passed`, which is the finding, not a fault. The priced pair had
+  been recorded on the invocation that re-recorded its own baselines, so its snapshot column read
+  `updated`; it is re-recorded here from a plain replay against the committed
+  `.probatio/baseline-priced/` and now reads `unchanged`. That column is the *only* thing that
+  changed: all thirty rows match cell for cell otherwise, the `.json` is equal once
+  `snapshot.state` and `snapshot.detail` are set aside, every per-case cost is identical and the
+  total is still `$0.015070` — checked mechanically against the previous commit, not by eye.
+  **The unpriced run was re-recorded at this commit**, because this phase's one source change
+  alters the line it holds. `RunReport.cost_total_usd` is now `float | None` and is `None` when no
+  call in the session was priced, and `reporters/tables.cost_lines` renders `unknown`,
+  `at least $X` or the unchanged `$X` accordingly (DECISIONS 84), so `replay-unpriced.md` now reads
+  `cost: unknown (no priced calls; 15 case(s) unpriced)` where it had read
+  `cost: $0.000000 (no --max-cost ceiling)`, and `replay-unpriced.json` holds
+  `"cost_total_usd": null`. Those two lines are the whole diff of both files. The JUnit suite
+  property `cost_total_usd` is omitted rather than written when the total is `None`, which is
+  DECISIONS 74 applied to the last property that had been exempt from it, and the results JSON
+  round-trips the `null`. `tests/test_reporters_junit.py`'s `report_with` now records each case
+  into a `SuiteBudget`, as `tests/test_reporters.py`'s always did: a report whose cases carry costs
+  but whose budget never saw them has no total, and the helper had been building one.
+  **`docs/CASE_STUDY.md` is committed as drafted**, unedited, with `tests/test_docs_case_study.py`
+  as its provenance test (DECISIONS 85): eleven tests re-deriving §1's ids from `CASES.txt`, all
+  eight of its quoted answer openings from the tapes as whitespace-normalised prefixes, and
+  `15 of 15`, `10 of 15`, `five of the six`,
+  `Six of the fifteen`, §1.2's thirty verdicts and its six questions from `replay-unpriced.json`
+  and `cases/*.yaml`. Each check was provoked by editing the document and seen to fail.
+  **The one content edit to the case study** is in §1.3: `g-su-002` had been quoted from the
+  middle of its answer, which the test could only check as a substring; it now quotes that
+  answer's real opening, verbatim from the tape, so all eight quotations are prefix-checked
+  alike. `examples/consilium/README.md`'s provenance row for `prices.yaml` said the rates were
+  commented out, which `e4f10d3` had made stale; it now carries the rates, the date checked, and
+  which of the two committed runs predates them. What the test does not confirm, and cannot:
+  §1.3's and §1.4's characterisations of what the answers mean, and
+  every claim about Consilium's own repository — `docs/FAILURE_CASES.md` case 1, the red-flag
+  recall figures 0.500 and 0.893, the run id `20260830T170133Z` and the commits `c1436bd` and
+  `109a744` — which name files outside this repository and are labelled in the document as coming
+  from there. Phase 13 generalises the module into a provenance test over `docs/` as a whole.
+  **Every path a `RunReport` persists is now rootdir-relative with POSIX separators**
+  (DECISIONS 86), through the new `artefacts.display_path`. `SnapshotResult.path` changes type
+  from `Path` to `str`; its `baseline recorded at ...` / `updated at ...` details and the
+  missing-tape and stale-tape messages that DECISIONS 72 puts in the warnings render the same
+  way; `BaselineStore` and `CassetteStore` take a `root` that `session.py` and `plugin.py` fill
+  from rootdir. The two `ProbatioConfigError`s for an unparsable baseline or tape keep the
+  absolute path: they abort the session and are only ever read in a terminal. Both result pairs
+  were re-recorded at this commit and the diff is exactly the thirty `snapshot.path` values in
+  each JSON — everything else is equal once that field is set aside, and both `.md` files are
+  byte-identical, since neither ever printed a path. `tests/test_plugin.py` asserts the rule and
+  not the instance: it walks every string in a `pytester`-written results file, fails on any that
+  starts with a separator or a drive letter, and separately checks that neither the rootdir nor
+  the home directory appears anywhere in the text.
+  DECISIONS 84–86; `docs/DESIGN.md` Phase 11 follow-up.

@@ -111,11 +111,16 @@ def _case_properties(case: CaseResult) -> list[tuple[str, str]]:
 
 
 def _suite_properties(report: RunReport) -> list[tuple[str, str]]:
-    """Return the suite-level properties: the stability score, if measured, and the cost total."""
+    """Return the suite-level properties: the stability score and the cost total, if measured.
+
+    A session in which no call was priced has no cost total, and DECISIONS 74 omits a property it
+    did not measure rather than writing a zero a dashboard would add up.
+    """
     values: list[tuple[str, str]] = []
     if report.stability.stability_score is not None:
         values.append(("stability_score", _number(report.stability.stability_score)))
-    values.append(("cost_total_usd", _number(report.cost_total_usd)))
+    if report.cost_total_usd is not None:
+        values.append(("cost_total_usd", _number(report.cost_total_usd)))
     return values
 
 

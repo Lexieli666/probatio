@@ -1655,3 +1655,106 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   alternative: recording the baselines *with* a price table so the priced run is the compared one,
   which cannot be done, because `prices.yaml` ships with its rates commented out and the rates are
   the human's to fill in.
+
+## 84. An unknown cost total renders as `unknown`, and the report field holds `None`
+
+- **Date:** 2026-09-04 (Phase 11 follow-up)
+- **Q:** `examples/consilium/results/replay-unpriced.md` printed
+  `cost: $0.000000 (no --max-cost ceiling)` for a run in which not one of thirty calls was priced,
+  with all fifteen case ids in `cost_unknown_case_ids` and `RunReport.cost_total_usd == 0.0`.
+  DECISIONS 39 already says an unknown cost is never counted as zero. What does the line say
+  instead, and what does the field hold?
+- **A:** The field is `float | None` and is `None` unless at least one case contributed a known
+  cost; `RunState.report` decides on `SuiteBudget.known_case_ids` rather than on the sum, so a
+  case that really cost `0.0` still gives a total of `0.0`. `cost_lines` then has three forms:
+  nothing priced reads `cost: unknown (no priced calls; N case(s) unpriced)`; some priced and some
+  not reads `cost: at least $X (N case(s) unpriced)`; everything priced is unchanged,
+  `cost: $X (no --max-cost ceiling)` or `cost: $X of a $Y ceiling`. A ceiling, when there is one,
+  is still named in every form and sits between the amount and the qualifier
+  (`cost: unknown of a $0.010000 ceiling (no priced calls; 1 case(s) unpriced)`); the
+  `(no --max-cost ceiling)` clause is what the qualifier displaces, because a run with an unknown
+  total has something more urgent to say in that slot than the absence of a ceiling nobody set.
+  The `cost is a lower bound: no price for ...` line is unchanged and still follows. The JUnit
+  suite property `cost_total_usd` is omitted when the total is `None`, which is DECISIONS 74's
+  rule applied to the one property that had been exempt from it, and the results JSON writes
+  `null`, which round-trips.
+- **Why:** `$0.000000` is the strongest possible claim about a run's cost and this run had made
+  none: a reader skimming the report sees a free suite, and a pipeline reading the JSON sees a
+  number it can add up. The `at least` form exists because dropping the number when any case is
+  unpriced would throw away a real measurement, and because a floor is what a partly priced total
+  actually is. Rejected alternatives: keeping `0.0` and relying on the lower-bound line to correct
+  it, which puts the correction after the claim and loses it entirely in the JUnit and JSON
+  artefacts, where there is no second line; and rendering `n/a` as the case-level column does,
+  which is honest but says nothing about how many cases were unpriced or that a priced call would
+  have been counted.
+
+## 85. The case study gets its own provenance test, quotations included
+
+- **Date:** 2026-09-04 (Phase 11 follow-up)
+- **Q:** `docs/CASE_STUDY.md` is the evidence for the README's central claim and quotes ids,
+  answer openings and pass counts. `CLAUDE.md` forbids a number no committed run produced. What
+  does the test enforce, and how much of the document can it reach?
+- **A:** `tests/test_docs_case_study.py` re-derives §1 from the artefacts the document names and
+  compares: every `g-xx-nnn` §1 mentions is in `CASES.txt`; each of the six openings blockquoted
+  in §1.3, plus the two quoted in prose, is a whitespace-normalised prefix of the corresponding
+  tape's recorded text, with the trailing ellipsis stripped, and a test pins that all eight
+  quotations are openings so that none is dropped; and `15 of 15`, `10 of 15`,
+  `five of the six`, `Six of the fifteen`, the thirty verdicts of §1.2's table and its six
+  questions are all read back out of `examples/consilium/results/replay-unpriced.json` and
+  `cases/*.yaml`. The counts are parsed from the prose rather than hard-coded, so changing a
+  number in the document without changing the run fails the test.
+- **Why:** The quotations are the part of the document a reader cannot check without opening
+  thirty JSON files, so they are the part most worth pinning; prefix rather than equality because
+  an opening is by definition a prefix, and whitespace-normalised because a markdown blockquote
+  rewraps what the tape stores as one paragraph. Parsing the numbers out of the prose is what
+  makes the test bite in the direction that matters: a hard-coded `10` would agree with a document
+  that had drifted. §1.3 originally quoted `g-su-002` from the middle of its answer, which the
+  test would have had to check as a substring — a weaker claim in the one paragraph whose whole
+  job is to show what the answers said. The document now quotes that answer's real opening
+  instead, so all eight quotations are checked the same way; the parsers recognise the two forms
+  the document uses, so a ninth quotation written as free prose would go unchecked, which is why
+  the count of eight is asserted. What the test cannot reach is the prose that is not a quotation
+  or a count —
+  the characterisations in §1.3 and §1.4, and every claim about Consilium's own repository
+  (`docs/FAILURE_CASES.md`, the 0.500/0.893 recall figures, the commit hashes), which name files
+  outside this repository and are labelled in the document as coming from there. Phase 13
+  generalises this module into a provenance test over `docs/` as a whole; it is deliberately
+  specific to one document until then. Rejected alternative: asserting that every double-quoted
+  span in §1.3 appears in some tape, which fails on the two phrases quoted *from the escalation
+  list* rather than from an answer, and would have to special-case them anyway.
+
+## 86. Every path a report persists is rootdir-relative and POSIX; only terminal text stays absolute
+
+- **Date:** 2026-09-04 (Phase 11 follow-up)
+- **Q:** `SnapshotResult.path` was a `Path` holding whatever the store resolved, so the committed
+  `examples/consilium/results/*.json` carried thirty copies of
+  `/Users/<name>/code/probatio/.probatio/baseline/...`. A results file is committed, quoted and
+  read by CI. Which paths in a `RunReport` are rendered relative, to what, and what happens to a
+  path that lies outside it?
+- **A:** All of them, to pytest's rootdir, with forward slashes, through one helper —
+  `artefacts.display_path(path, root)`. `SnapshotResult.path` changes type from `Path` to `str`
+  and holds the rendered form; the `baseline recorded at ...` and `baseline updated at ...`
+  details render the same way, and so do the missing-tape and stale-tape messages, which
+  DECISIONS 72 puts in the report's warnings as well as raising. `BaselineStore` and
+  `CassetteStore` each take a `root`, defaulting to the current directory as
+  `default_baseline_dir` already did; `session.py` and `plugin.py` pass `settings.rootdir` and
+  `config.rootpath`. A path outside the root is returned absolute and unchanged. The two
+  `ProbatioConfigError`s for an unparsable baseline and an unparsable tape keep the absolute path,
+  because a corrupt artefact aborts the session and its message is only ever read in a terminal,
+  where the full path is the useful thing.
+- **Why:** An absolute path in a committed artefact is a fact about the machine, not about the
+  run: it names somebody's home directory, it differs between a laptop and CI, and it makes two
+  otherwise identical runs produce different bytes, which is the thing every other persisted file
+  in this repository is built to avoid — sorted keys, an injected clock, hashes rather than
+  timestamps. POSIX separators for the same reason: a Windows run and a POSIX run of one suite
+  should agree. The outside-the-root case is returned absolute rather than as a chain of `..`
+  segments, which would look portable without being portable, since it only resolves from a root
+  the reader has to guess; a baseline directory elsewhere on the disk genuinely is elsewhere on
+  the disk. `tests/test_plugin.py` asserts the rule rather than the instance: it walks every
+  string in a `pytester`-written results file and fails on any that starts with a separator or a
+  drive letter, and separately checks the rootdir and the home directory appear nowhere in the
+  text, so a path embedded mid-sentence is caught too. Rejected alternatives: relativising at
+  write time in `render_results`, which would break the round-trip `read_results(write_results(r))
+  == r` that spec §3.11 rests on and leave the in-memory report and the file disagreeing; and
+  keeping `path: Path` while adding a serialiser, which puts two different values behind one name
+  and leaves the JUnit and markdown reporters to remember which they hold.

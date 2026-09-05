@@ -18,7 +18,7 @@ is the difference between a regression suite and a test written to pass.
 | `cases/*.yaml`, `CASES.txt` | derived from the above by `convert_traces.py`; see "Case selection" |
 | `cassettes/test_full/`, `cassettes/test_baseline/` | built from the traces by `probatio import-cassettes`; a suite is named by its test module's stem |
 | `golden-subset.jsonl` | the fifteen selected items of `golden.jsonl`, verbatim and in `CASES.txt` order, so `cases/*.yaml` can be re-emitted and checked without the full file |
-| `prices.yaml` | the one model the traces name, with both rates commented out. Consilium ships `eval/pricing.yaml` empty by design and this file follows it: the rates are read off the provider's price page by a human, with the date checked written into the header |
+| `prices.yaml` | the one model the traces name, `gpt-4o-mini-2024-07-18`, at the rates a human read off the provider's price page: $0.15 input and $0.60 output per Mtok, checked 2026-09-04, with the URL and the row in the file's header. Consilium ships `eval/pricing.yaml` empty by design and this file shipped that way too, so the run recorded before `e4f10d3` is the **unpriced** one — `results/replay-unpriced.*`, where every cost ceiling is unenforceable and the total is unknown. `results/replay-priced.*` is the run against these rates |
 | `tests/fixtures/consilium/escalation_phrases.txt` | `ESCALATION_PHRASES` copied out of `safety/escalation.py`, one per line, so the re-emission test needs nothing outside this repository |
 
 The traces themselves are not committed here (they are ~9.5 MB and already public in Consilium).

@@ -35,7 +35,7 @@ from typing import Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
-from .artefacts import Clock, check_path_segment, timestamp, utc_now, write_json
+from .artefacts import Clock, check_path_segment, display_path, timestamp, utc_now, write_json
 from .assertions import AssertionResult
 from .case import LLMCase
 from .errors import BaselineDriftError, ProbatioConfigError
@@ -151,7 +151,10 @@ class SnapshotResult(BaseModel):
         passed: ``False`` for the three drift states, ``True`` for the other three.
         detail: A human-readable account: the before/after table, the unified diff, or the
             one-line note that a baseline was recorded or updated.
-        path: The baseline file the comparison read or wrote.
+        path: The baseline file the comparison read or wrote, relative to the store's root and
+            with POSIX separators (:func:`~probatio.artefacts.display_path`). It is written into
+            the results JSON, which is committed, so it names a location in the repository rather
+            than a location on the machine that ran the suite.
     """
 
     model_config = ConfigDict(extra="forbid", frozen=True)
@@ -161,7 +164,7 @@ class SnapshotResult(BaseModel):
     state: SnapshotState
     passed: bool
     detail: str
-    path: Path
+    path: str
 
 
 def default_baseline_dir() -> Path:
@@ -257,6 +260,7 @@ class BaselineStore:
         baseline_dir: Path | None = None,
         *,
         clock: Clock = utc_now,
+        root: Path | None = None,
     ) -> None:
         """Open a store over a directory.
 
@@ -266,9 +270,12 @@ class BaselineStore:
             clock: A callable returning the instant written into a baseline's ``recorded``
                 field. Defaults to the current UTC time; tests inject a fixed one, so nothing
                 in this repository's suite depends on the wall clock.
+            root: What the paths a :class:`SnapshotResult` carries are rendered relative to.
+                Defaults to the current directory; Phase 9's plugin passes rootdir.
         """
         self.baseline_dir = baseline_dir if baseline_dir is not None else default_baseline_dir()
         self.clock = clock
+        self.root = root if root is not None else Path.cwd()
 
     def path_for(self, suite: str, case_id: str) -> Path:
         """Return the file one case's baseline lives in.
@@ -386,19 +393,19 @@ class BaselineStore:
             model=model,
         )
         if update:
-            path = self.write(suite, recorded)
-            return _result(case.id, mode, "updated", path, f"baseline updated at {path}")
+            shown = display_path(self.write(suite, recorded), self.root)
+            return _result(case.id, mode, "updated", shown, f"baseline updated at {shown}")
         existing = self.load(suite, case.id)
         if existing is None:
-            path = self.write(suite, recorded)
-            return _result(case.id, mode, "recorded", path, f"baseline recorded at {path}")
-        path = self.path_for(suite, case.id)
+            shown = display_path(self.write(suite, recorded), self.root)
+            return _result(case.id, mode, "recorded", shown, f"baseline recorded at {shown}")
+        shown = display_path(self.path_for(suite, case.id), self.root)
         if existing.prompt_hash != prompt_hash:
             return _result(
                 case.id,
                 mode,
                 "prompt_changed",
-                path,
+                shown,
                 _drift(case.id, "prompt changed since baseline"),
             )
         if existing.mode != mode:
@@ -406,7 +413,7 @@ class BaselineStore:
                 case.id,
                 mode,
                 _CHANGED[mode],
-                path,
+                shown,
                 _drift(
                     case.id,
                     f"the baseline records snapshot mode {existing.mode!r} but the case now "
@@ -414,12 +421,12 @@ class BaselineStore:
                 ),
             )
         if mode == "output":
-            return _compare_output(case.id, path, existing.output or "", output)
-        return _compare_scores(case.id, path, existing.assertions, recorded.assertions)
+            return _compare_output(case.id, shown, existing.output or "", output)
+        return _compare_scores(case.id, shown, existing.assertions, recorded.assertions)
 
 
 def _result(
-    case_id: str, mode: SnapshotMode, state: SnapshotState, path: Path, detail: str
+    case_id: str, mode: SnapshotMode, state: SnapshotState, path: str, detail: str
 ) -> SnapshotResult:
     """Build a result, deriving ``passed`` from the state so the two cannot disagree."""
     return SnapshotResult(
@@ -434,7 +441,7 @@ def _result(
 
 def _compare_scores(
     case_id: str,
-    path: Path,
+    path: str,
     before: Sequence[BaselineAssertion],
     after: Sequence[BaselineAssertion],
 ) -> SnapshotResult:
@@ -494,7 +501,7 @@ def _shape_rows(
     return _table(rows)
 
 
-def _compare_output(case_id: str, path: Path, recorded: str, current: str) -> SnapshotResult:
+def _compare_output(case_id: str, path: str, recorded: str, current: str) -> SnapshotResult:
     """Compare two runs' output text, reporting a capped unified diff when it moved."""
     if recorded == current:
         return _result(case_id, "output", "unchanged", path, "baseline unchanged")
