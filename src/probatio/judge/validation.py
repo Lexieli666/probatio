@@ -52,10 +52,12 @@ class ValidationRecord(BaseModel):
             judge was run over each row.
         judge_model: The model that produced the verdicts, when this run produced them;
             ``None`` in ``columns`` mode, where the judge column came from somewhere else.
-        reasked: How many rows had to be asked again because the judge's first reply was not a
+        rows_reasked: How many rows had to be asked again because the judge's first reply was not a
             verdict at all (DECISIONS 92). ``0`` in ``columns`` mode and in any run where every
-            first reply parsed. A record with a high count measured a judge that is hard to get
-            an answer out of, which is a fact about the judge and belongs beside its kappa.
+            first reply parsed. A row is asked at most
+            :data:`~probatio.cli.JUDGE_ATTEMPTS` times before the run stops, so this can never
+            exceed ``n``. A record with a high count measured a judge that is hard to get an
+            answer out of, which is a fact about the judge and belongs beside its kappa.
         created: When the record was written, as an ISO 8601 instant in UTC.
     """
 
@@ -70,7 +72,7 @@ class ValidationRecord(BaseModel):
     labels_hash: str
     method: Literal["columns", "run-judge"]
     judge_model: str | None = None
-    reasked: int = 0
+    rows_reasked: int = 0
     created: str
 
 

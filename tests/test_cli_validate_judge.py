@@ -18,6 +18,7 @@ import pytest
 
 from probatio import FakeProvider, ProbatioConfigError
 from probatio import cli as cli_module
+from probatio.artefacts import display_path
 from probatio.cli import DEFAULT_LABEL_MAP, build_provider, main, parse_label_map
 from probatio.judge import ValidationRecord
 
@@ -109,7 +110,7 @@ def test_sample_1_prints_and_records_the_published_numbers(tmp_path: Path, capsy
     assert round(record.kappa, 3) == 0.350
     assert record.method == "columns"
     assert record.judge_model is None
-    assert record.labels_file == str(SAMPLE_1)
+    assert record.labels_file == display_path(SAMPLE_1, Path.cwd())
 
 
 def test_sample_2_records_the_published_numbers(tmp_path: Path, capsys: Any) -> None:
@@ -482,7 +483,7 @@ def test_a_truncated_reply_is_asked_again_and_the_record_counts_the_re_ask(
 
     record = read_record(out)
     assert record.n == 4, "every row still has a verdict"
-    assert record.reasked == 1
+    assert record.rows_reasked == 1
 
     captured = capsys.readouterr()
     assert "1 of 4 row(s) were asked again" in captured.out
@@ -508,11 +509,120 @@ def test_a_run_in_which_every_first_reply_parses_records_no_re_ask(
     """The count is a measurement, so it must be zero when there was nothing to measure."""
     out = tmp_path / "judges"
     assert main(run_judge_argv(rows_csv, out)) == 0
-    assert read_record(out).reasked == 0
+    assert read_record(out).rows_reasked == 0
     assert "asked again" not in capsys.readouterr().out
 
 
 def test_columns_mode_records_no_re_ask_because_it_asks_nobody(tmp_path: Path) -> None:
     """``columns`` mode makes no call, so the field is zero rather than absent."""
     assert main(columns_argv(SAMPLE_1, tmp_path)) == 0
-    assert read_record(tmp_path).reasked == 0
+    assert read_record(tmp_path).rows_reasked == 0
+
+
+# --- a committed record names the repository, never the machine (DECISIONS 93) -------------------
+
+
+def test_a_record_written_under_pytester_holds_no_absolute_path(
+    pytester: pytest.Pytester, monkeypatch: Any, rows_csv: Path, injected_provider: FakeProvider
+) -> None:
+    """``.probatio/judges/`` is committed, so a home directory must not reach it.
+
+    The check is the rule and not the instance: every string in the record is walked, and any one
+    that reads as an absolute path fails, so a field added later is covered by a test nobody has
+    to remember to extend.
+    """
+    labels = pytester.path / "labels.csv"
+    labels.write_text(rows_csv.read_text(encoding="utf-8"), encoding="utf-8")
+    # Given absolutely, and under the root: this is exactly the case display_path converts.
+    rubric = pytester.path / "rubrics" / "faithfulness.md"
+    rubric.parent.mkdir(parents=True)
+    rubric.write_text(RUBRIC.read_text(encoding="utf-8"), encoding="utf-8")
+    monkeypatch.chdir(pytester.path)
+
+    assert (
+        main(
+            [
+                "validate-judge",
+                "--labels",
+                str(labels),
+                "--human-column",
+                "human_label",
+                "--rubric",
+                "faithfulness",
+                "--run-judge",
+                "--answer-column",
+                "answer",
+                "--context-column",
+                "sources_text",
+                "--out",
+                ".probatio/judges",
+            ]
+        )
+        == 0
+    )
+    text = (pytester.path / ".probatio" / "judges" / "faithfulness.validation.json").read_text(
+        encoding="utf-8"
+    )
+    payload = json.loads(text)
+    assert payload["labels_file"] == "labels.csv"
+    for key, value in payload.items():
+        if isinstance(value, str):
+            assert not value.startswith(("/", "\\\\")), (key, value)
+            assert not (len(value) > 1 and value[1] == ":"), (key, value)
+    assert str(pytester.path) not in text
+    assert str(Path.home()) not in text
+
+
+def test_a_labels_file_outside_the_root_stays_absolute(
+    pytester: pytest.Pytester,
+    monkeypatch: Any,
+    tmp_path: Path,
+    rows_csv: Path,
+    injected_provider: FakeProvider,
+) -> None:
+    """DECISIONS 86's other half: elsewhere on the disk is honestly elsewhere on the disk."""
+    rubric = pytester.path / "rubrics" / "faithfulness.md"
+    rubric.parent.mkdir(parents=True)
+    rubric.write_text(RUBRIC.read_text(encoding="utf-8"), encoding="utf-8")
+    monkeypatch.chdir(pytester.path)
+
+    assert (
+        main(
+            [
+                "validate-judge",
+                "--labels",
+                str(rows_csv),
+                "--human-column",
+                "human_label",
+                "--rubric",
+                "faithfulness",
+                "--run-judge",
+                "--answer-column",
+                "answer",
+                "--context-column",
+                "sources_text",
+                "--out",
+                ".probatio/judges",
+            ]
+        )
+        == 0
+    )
+    record = read_record(pytester.path / ".probatio" / "judges")
+    assert record.labels_file == str(rows_csv)
+
+
+# --- an unparsable reply is quoted back, so it can become a fixture (DECISIONS 94) ---------------
+
+
+def test_an_unparsable_reply_is_quoted_in_the_error(tmp_path: Path) -> None:
+    """A parse error alone cannot be turned back into the text that caused it."""
+    from probatio import JudgeOutputError
+    from probatio.judge import Judge, resolve_rubric
+
+    rubric = resolve_rubric(str(RUBRIC))
+    truncated = '{"verdict": "fail", "score": 0.67, "rationale": "The claim that R00 is for'
+    with pytest.raises(JudgeOutputError) as excinfo:
+        Judge(rubric, FakeProvider()).parse(truncated, case_id="row-10")
+    message = str(excinfo.value)
+    assert "Unterminated string" in message
+    assert repr(truncated) in message

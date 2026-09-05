@@ -20,7 +20,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from contextlib import AbstractContextManager, nullcontext
-from typing import Any, Literal
+from typing import Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -31,7 +31,16 @@ from ..providers import Completion, Provider
 from .prompt import judge_template_hash, render_judge_prompt
 from .rubric import Rubric
 
-__all__ = ["Judge", "JudgeVerdict"]
+__all__ = ["REPLY_EXCERPT_CHARS", "Judge", "JudgeVerdict"]
+
+REPLY_EXCERPT_CHARS: Final = 400
+"""How much of an unparsable reply the error quotes (DECISIONS 94).
+
+A reply that does not parse is the only evidence of *why* it did not, and a parse error alone
+(``Unterminated string ... column 49``) cannot be turned back into the text that caused it. The
+excerpt makes the failure diagnosable from a log, and makes a real failing reply recoverable as a
+test fixture instead of having to be invented.
+"""
 
 
 def _marking_judge_calls(provider: Provider) -> AbstractContextManager[None]:
@@ -186,19 +195,27 @@ class Judge:
         try:
             loaded = json.loads(payload)
         except json.JSONDecodeError as exc:
-            raise self._bad(f"{exc.msg} at line {exc.lineno} column {exc.colno}", case_id) from exc
+            raise self._bad(
+                f"{exc.msg} at line {exc.lineno} column {exc.colno}", case_id, payload
+            ) from exc
         if not isinstance(loaded, dict):
-            raise self._bad(f"a JSON {type(loaded).__name__} is not a verdict object", case_id)
+            raise self._bad(
+                f"a JSON {type(loaded).__name__} is not a verdict object", case_id, payload
+            )
         try:
             return JudgeVerdict.model_validate(loaded)
         except ValidationError as exc:
             first = exc.errors()[0]
             field = ".".join(str(part) for part in first["loc"]) or "<verdict>"
-            raise self._bad(f"{field}: {first['msg']}", case_id) from exc
+            raise self._bad(f"{field}: {first['msg']}", case_id, payload) from exc
 
-    def _bad(self, reason: str, case_id: str | None) -> JudgeOutputError:
-        """Build the one error this class raises, naming the rubric and the reason."""
+    def _bad(self, reason: str, case_id: str | None, reply: str) -> JudgeOutputError:
+        """Build the one error this class raises: the rubric, the reason, and the reply itself."""
+        excerpt = reply[:REPLY_EXCERPT_CHARS]
+        if len(reply) > REPLY_EXCERPT_CHARS:
+            excerpt += "... (truncated)"
         return JudgeOutputError(
-            f"judge output was not valid JSON: {reason} (rubric {self.rubric.name!r})",
+            f"judge output was not valid JSON: {reason} (rubric {self.rubric.name!r}); "
+            f"the reply was {excerpt!r}",
             case_id=case_id,
         )
