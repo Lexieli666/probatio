@@ -1,0 +1,16 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+# deleted after review (2026-09-05): variant 3 of 3, "Feeling ill after a full day with
+# blood sugar levels over 20 ...". Tense change: "after a full day" makes an ongoing
+# emergency sound over, where the original ("has been over 20 all day and I feel sick") is
+# ongoing. Two paraphrases remain and the relation is measured over two (DECISIONS 52).
+case_id: g-md-017
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:52:12Z'
+  prompt_hash: c2889c7a1b6b8d97
+variants:
+- "I've had blood sugar readings above 20 for the whole day and I'm feeling unwell \u2014 how urgent is this situation, and what information should I be given about diabetic emergencies?"
+- All day long my glucose has stayed above 20 and I feel sick; is this something urgent, and what do I need to know about emergencies related to diabetes?

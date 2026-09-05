@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-md-018
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:52:34Z'
+  prompt_hash: 3258be57fa3b86a7
+variants:
+- At 34 weeks of pregnancy, I have swelling in my hands along with a headache that won't go away. How urgent is my situation, and what questions should I be asking?
+- I'm pregnant, currently at 34 weeks, and I've got hand swelling plus a persistent headache that isn't going away. Is this something urgent, and what should I be asking about?
+- Being 34 weeks along in my pregnancy, I'm experiencing swollen hands and a headache that refuses to lift. How urgently does this need attention, and what should I be raising questions about?

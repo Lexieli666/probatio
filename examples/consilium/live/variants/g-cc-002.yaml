@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-cc-002
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:51:40Z'
+  prompt_hash: edf9fa2fcf5195e3
+variants:
+- Does a situation exist in which two conditions that are documented together must not be linked by the coder?
+- Can there be an instance where the coder is required to refrain from linking two conditions that appear documented together?
+- Is it ever the case that a coder must avoid linking two conditions even though they are documented together?

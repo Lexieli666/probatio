@@ -1,0 +1,17 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+# deleted after review (2026-09-05): variant 3 of 3, "I had an episode earlier today where one
+# side of my face went odd ...". "An episode" is clinical framing the lay original does not
+# use and cues a transient neurological event, which makes this red-flag question easier than
+# the one that was asked. Two paraphrases remain and the relation is measured over two
+# (DECISIONS 52).
+case_id: g-su-003
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:53:42Z'
+  prompt_hash: 51b80f82e186d341
+variants:
+- This morning one side of my face felt strange and my speech came out wrong, and it lasted about ten minutes, but I'm fine now.
+- For roughly ten minutes this morning, half of my face wasn't right and I couldn't speak properly; everything has gone back to normal since.

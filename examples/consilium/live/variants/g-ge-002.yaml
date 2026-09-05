@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-ge-002
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:51:51Z'
+  prompt_hash: 722a6e245bc07dae
+variants:
+- According to guidance, what is the recommended blood pressure target for most adults?
+- For the majority of adults, which blood pressure target is set out in guidance?
+- What does guidance state the blood pressure goal should be for most adults?
