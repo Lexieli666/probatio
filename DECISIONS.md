@@ -1956,12 +1956,15 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   `cli.JUDGE_ATTEMPTS = 3`), and `Judge.parse`'s error now quotes the first
   `REPLY_EXCERPT_CHARS = 400` characters of the reply it could not parse. Before that, a failure
   left only `Unterminated string ... column 49`, which cannot be turned back into the text that
-  caused it — so the evidence for this entry had to be reconstructed from stderr rather than read
-  off a saved reply. **No captured failing reply is committed under `tests/fixtures/` yet**: the
-  runs that produced them predate the excerpt, and manufacturing one would put invented model
-  output in a fixture directory whose whole value is that everything in it is real. The parser
-  test therefore uses a hand-written truncated object, named as such. The next unparsable reply
-  the excerpt catches should replace it.
+  caused it. The first run made after that change caught one, and it is committed verbatim as
+  `tests/fixtures/claude_cli_truncated_judge_reply.txt` — the 400 characters the error quoted, of
+  a real reply `claude-opus-5` gave while grading sample 2, row 10. It reads
+  `{"verdict": "fail", "score": 0.92, "rationale": "All clinical claims (statin-initiation
+  groups, ...` and stops mid-sentence, and `json.loads` on it raises
+  `Unterminated string starting at` with `colno == 49`, which is the diagnosis above reproduced
+  offline. `tests/test_cli_validate_judge.py` asserts exactly that, and asserts the excerpt is
+  bounded rather than the whole reply. Nothing in the fixture is hand-written: a fixture invented
+  to match an observation about somebody else's program would be evidence for nothing.
 - **Why record it at all:** DECISIONS 14 already says these flags belong to a version of somebody
   else's program. So does this behaviour, and it is the kind of thing that reads as a Probatio bug
   when it is met for the first time.
