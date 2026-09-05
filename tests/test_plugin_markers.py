@@ -1,4 +1,4 @@
-"""Phase 8: the plugin registers the relation marker, and does nothing else yet."""
+"""Phase 8, kept through Phase 9: a marked test warns about nothing and survives strict markers."""
 
 from __future__ import annotations
 
@@ -17,9 +17,9 @@ def test_marked():
 """
 
 
-def test_the_plugin_still_exposes_only_the_marker_hook() -> None:
-    assert plugin.__all__ == ["RELATION_MARKER", "pytest_configure"]
+def test_the_plugin_exports_the_marker_name_it_registers() -> None:
     assert plugin.RELATION_MARKER == RELATION_MARKER
+    assert "RELATION_MARKER" in plugin.__all__
 
 
 def test_the_marker_is_listed_by_pytest_markers(pytester: pytest.Pytester) -> None:

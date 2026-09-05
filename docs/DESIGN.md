@@ -468,3 +468,70 @@ error (DECISIONS 54): the flag exists so the command's shape can be seen and exe
 naming a fake provider in a committed artefact's provenance would defeat the point of having
 provenance. The model path is tested by replacing `cli.build_provider`, which is the seam
 `validate-judge --run-judge` already uses, so the path a test exercises is the path a person runs.
+
+## Phase 9
+
+**A verdict is the exact assertions, and everything else fails the case beside it.** Spec §0
+defines a verdict as the boolean result of a case's exact assertions taken together, and Phase 9
+is where that definition either holds or quietly stops holding, because this is the phase that
+also has budgets, snapshots and relations to fold in. It holds: `CaseResult.verdict` is the
+assertions, `CaseResult.passed` is the verdict floor plus the ceilings plus the snapshot, and
+`check` raises on `passed`. The reason is not tidiness. A relation compares a variant's verdict
+with the original's, and a verdict that included the latency ceiling would report a variant that
+ran four milliseconds slower as a metamorphic violation — a claim about the model's semantics
+drawn from the machine's clock. Pass rates, and therefore the stability score, would move when the
+CI runner was busy. The rejected alternative, one boolean covering everything, is easier to explain
+and makes both headline features measure the harness instead of the application (DECISIONS 63).
+
+**The Wilson bound is reported and decides nothing.** With the default floor of 1.0, no finite
+number of runs puts the lower bound at the floor, so a rule that failed a case on its bound would
+fail every case for having been run too few times — a fact about the invocation, not about the
+application. The observed pass rate decides; the bound is printed beside it so a reader can see
+how much the rate is worth. The same reasoning made `n_below_floor` count only the cases that ran
+more than once and print its denominator (DECISIONS 65): a statistic whose value is "all of them"
+in the default invocation is not a statistic, and it would sit two lines under a stability score
+that correctly says "not measured". The rejected alternative was the literal reading of spec
+§3.10, which is defensible and prints noise in every run that did not use `--runs`.
+
+**Probatio budgets the calls it can see, and says so.** Spec §3.7 assumes the `CassetteProvider`
+records every call, but DECISIONS 9 lets a suite override the `provider` fixture — the demo suite
+does, and must, so that the same file records live tapes and runs offline. So the accounting comes
+from two sources unioned: an observing wrapper on the fixtures Probatio built, and the `Completion`
+a system under test returns, de-duplicated by object identity (DECISIONS 66). The gap that remains
+— a suite with its own provider whose system under test returns plain text — reports no calls, and
+DECISIONS 36 already renders that as two unenforceable ceilings and a warning rather than as a
+pass, which is the failure mode you want an accounting gap to have. The rejected alternative,
+requiring the system under test to use the fixture, would forbid testing an application that
+builds its own client and would have meant editing the frozen example.
+
+**Judge and variant calls are the harness, not the case.** A judged case calls the model twice and
+a case with three relations calls it once per variant per run; folding either into
+`budget.max_cost_usd` would mean that adding a relation to a test changes what the application is
+reported to cost, and that a suite could be brought under budget by grading less. They are still
+real money, so they reach the session total that `--max-cost` bounds. Ceilings are also checked
+per run rather than over the sum of runs, because `max_cost_usd: 0.01` is a claim about answering
+the question once and does not become a different claim because somebody passed `--runs 5` —
+otherwise the two features would be mutually exclusive (DECISIONS 59, 60).
+
+**The run state is a stack because pytester nests sessions.** Spec §3.12 asks for this and the
+gate needs it: `tests/test_demo_spec.py` runs the demo suite inside this repository's own suite,
+and without the stack the inner session's twelve cases would land in the outer session's report.
+`pytest_configure` pushes and `pytest_unconfigure` pops; the state also lives in the config's
+stash, so a fixture reads the state of the session that built it rather than whichever one is
+innermost at the moment it is called. The two together are one line each and cover the two
+different questions "which session is running" and "which session does this config belong to".
+
+**Two options are registered and refused.** `--probatio-junit` and `--probatio-results` are in
+spec §3.12's list and their reporters are Phase 10's, so they appear in `--help` and raise at
+configure time. A flag that is accepted and writes nothing is how a pipeline ends up green against
+a report that was never produced, because the pipeline's own `if [ -f results.json ]` is the check
+that silently stops firing. This is DECISIONS 33's rule about an unparsable baseline applied to a
+flag: a promise the tool cannot honour is said out loud (DECISIONS 67).
+
+**`check` is testable without pytest.** The class lives in `session.py` and takes a
+`ProbatioSettings` and a `RunState`, so budgets, snapshots, relations, repeated runs and the
+failure summary are exercised by ordinary unit tests with no fixture and no subprocess anywhere;
+`plugin.py` keeps the fifteen options, the two markers, the three fixtures and the four hooks, and
+is the file a reader opens to find out what the flags are. Spec §3.12's section heading puts the
+class in `plugin.py`; the surface it describes is unchanged, and the rejected alternative costs a
+`pytester` subprocess per behaviour tested (DECISIONS 70).
