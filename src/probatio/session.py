@@ -123,6 +123,8 @@ class Probatio:
         settings: The resolved command-line options.
         state: The session's collector state.
         suite: The test module's stem, which names the baseline and cassette directories.
+        node_id: The requesting test's node id, which pairs with a case's id to identify one
+            entry in the report (DECISIONS 73).
         relations: The relations marked on the requesting test, in application order.
         tolerance: The test's ``@flaky_tolerant`` declaration, or ``None``.
         rubric_dirs: Where a judge's rubric name is looked for, in order (DECISIONS 23).
@@ -134,6 +136,7 @@ class Probatio:
         settings: ProbatioSettings,
         state: RunState,
         suite: str,
+        node_id: str | None = None,
         judge_provider: Provider | None = None,
         relations: Sequence[Relation] = (),
         tolerance: FlakyTolerance | None = None,
@@ -145,6 +148,9 @@ class Probatio:
             settings: The resolved options.
             state: The session's collector state.
             suite: The test module's stem.
+            node_id: The requesting test's node id. Defaults to ``suite``, which is what a
+                :class:`Probatio` built outside a pytest session — as every test of ``check``
+                builds one — has to identify itself by.
             judge_provider: The provider ``judge`` assertions grade through, or ``None`` to leave
                 every judge assertion unenforceable.
             relations: The relations marked on the requesting test.
@@ -155,6 +161,7 @@ class Probatio:
         self.settings = settings
         self.state = state
         self.suite = suite
+        self.node_id = node_id if node_id is not None else suite
         self.judge_provider = judge_provider
         self.relations = list(relations)
         self.tolerance = tolerance
@@ -225,6 +232,7 @@ class Probatio:
         shown = _representative(verdicts, stability.majority_verdict)
         result = CaseResult(
             case_id=case.id,
+            node_id=self.node_id,
             suite=self.suite,
             verdict=stability.majority_verdict,
             passed=failure is None,

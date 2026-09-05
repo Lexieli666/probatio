@@ -10,8 +10,10 @@ own README says it does.
 from __future__ import annotations
 
 import ast
+import json
 import shutil
 import subprocess
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +21,8 @@ import pytest
 import yaml
 
 import probatio
+from probatio.collector import RunReport, case_key
+from probatio.reporters import read_results
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEMO = REPO_ROOT / "examples" / "demo_suite"
@@ -34,6 +38,13 @@ SANCTIONED_DELETION = (
 
 GUARDED_FILE = "examples/demo_suite/conftest.py"
 """The only file the sanctioned deletion touches."""
+
+
+def _demo_properties(element: ET.Element) -> dict[str, str]:
+    """Read one ``<testcase>``'s ``<properties>`` block back as a mapping."""
+    block = element.find("properties")
+    assert block is not None
+    return {child.attrib["name"]: child.attrib["value"] for child in block.findall("property")}
 
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
@@ -264,3 +275,84 @@ def test_the_demo_writes_its_baselines_under_rootdir_and_not_into_itself(
     )
     assert recorded == ["htn-definition.json", "htn-first-line.json", "t2d-metformin.json"]
     assert not (demo_copy / ".probatio").exists()
+
+
+# -- the two report files, from the frozen suite --------------------------------------------------
+
+
+def test_the_demo_under_runs_five_fills_both_report_files(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """Spec §3.11 and §3.12 acceptance, on the example rather than on a synthetic suite."""
+    result = pytester.runpytest_subprocess(
+        "demo_suite",
+        "--runs",
+        "5",
+        "--probatio-junit",
+        "j.xml",
+        "--probatio-results",
+        "r.json",
+    )
+    result.assert_outcomes(passed=12)
+
+    report = read_results(pytester.path / "r.json")
+    assert (
+        RunReport.model_validate(json.loads((pytester.path / "r.json").read_text(encoding="utf-8")))
+        == report
+    )
+    assert len(report.cases) == 12
+
+    suite = ET.parse(pytester.path / "j.xml").getroot().find("testsuite")
+    assert suite is not None
+    assert suite.attrib["name"] == "probatio"
+    assert suite.attrib["tests"] == "12"
+    assert suite.attrib["failures"] == "1", "only the expected-fail case fails its verdict"
+
+    entries = {
+        (element.attrib["classname"], element.attrib["name"]): element
+        for element in suite.findall("testcase")
+    }
+    assert len(entries) == 12, "no two entries share a (node id, case id) key"
+
+
+def test_the_expected_fail_case_carries_a_failure_and_the_flaky_one_reads_point_eight(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """Requirement 3, on the two cases the demo suite exists to demonstrate."""
+    pytester.runpytest_subprocess(
+        "demo_suite", "--runs", "5", "--probatio-junit", "j.xml"
+    ).assert_outcomes(passed=12)
+    suite = ET.parse(pytester.path / "j.xml").getroot().find("testsuite")
+    assert suite is not None
+    by_name = {element.attrib["name"]: element for element in suite.findall("testcase")}
+
+    failing = by_name["anxiety-expected-fail"]
+    failure = failing.find("failure")
+    assert failure is not None and failure.text is not None
+    assert "contains" in failure.text and "not_contains" in failure.text
+
+    flaky = by_name["flu-antivirals-flaky"]
+    assert _demo_properties(flaky)["pass_rate"] == "0.8"
+
+
+def test_a_case_checked_by_two_of_the_demos_tests_appears_twice(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """Requirement 2: ``htn-definition`` and ``t2d-metformin`` each run under two test functions."""
+    pytester.runpytest_subprocess(
+        "demo_suite", "--probatio-junit", "j.xml", "--probatio-results", "r.json"
+    ).assert_outcomes(passed=12)
+    suite = ET.parse(pytester.path / "j.xml").getroot().find("testsuite")
+    assert suite is not None
+    for case_id in ("htn-definition", "t2d-metformin"):
+        classnames = sorted(
+            element.attrib["classname"]
+            for element in suite.findall("testcase")
+            if element.attrib["name"] == case_id
+        )
+        assert len(classnames) == 2, case_id
+        assert classnames[0].endswith(f"test_case[{case_id}]")
+        assert classnames[1].endswith(f"test_paraphrase[{case_id}]")
+
+    keys = [case_key(case) for case in read_results(pytester.path / "r.json").cases]
+    assert len(set(keys)) == len(keys)

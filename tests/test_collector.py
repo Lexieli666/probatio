@@ -10,6 +10,7 @@ from probatio.cassette import CassetteStore
 from probatio.collector import (
     CaseResult,
     RunState,
+    case_key,
     current_state,
     merge_relation_results,
     pop_state,
@@ -38,6 +39,7 @@ def case(
 ) -> CaseResult:
     return CaseResult(
         case_id=case_id,
+        node_id=f"test_demo.py::test_case[{case_id}]",
         suite="test_demo",
         verdict=all(verdicts),
         passed=all(verdicts),
@@ -237,6 +239,7 @@ def test_popping_an_empty_stack_is_not_an_error() -> None:
 def test_an_assertion_result_list_survives_the_round_trip() -> None:
     result = CaseResult(
         case_id="alpha",
+        node_id="test_demo.py::test_case[alpha]",
         suite="test_demo",
         verdict=True,
         passed=True,
@@ -244,3 +247,25 @@ def test_an_assertion_result_list_survives_the_round_trip() -> None:
         stability=case_stability([True]),
     )
     assert CaseResult.model_validate(result.model_dump()) == result
+
+
+# -- the identity of one per-case entry ----------------------------------------------------------
+
+
+def test_a_case_key_pairs_the_node_id_with_the_case_id() -> None:
+    """Requirement 2, DECISIONS 73: a case id alone does not identify a report entry."""
+    entry = case("htn-definition")
+    assert case_key(entry) == ("test_demo.py::test_case[htn-definition]", "htn-definition")
+
+
+def test_two_tests_checking_one_case_get_two_keys() -> None:
+    first = case("htn-definition")
+    second = first.model_copy(update={"node_id": "test_demo.py::test_paraphrase[htn-definition]"})
+    assert first.case_id == second.case_id
+    assert case_key(first) != case_key(second)
+    state = RunState()
+    state.record(first)
+    state.record(second)
+    report = state.report()
+    assert len(report.cases) == 2
+    assert len({case_key(entry) for entry in report.cases}) == 2

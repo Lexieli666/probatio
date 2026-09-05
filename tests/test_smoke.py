@@ -19,11 +19,13 @@ def test_plugin_module_imports_cleanly() -> None:
         "RELATION_MARKER",
         "RUNS_DEST",
         "Probatio",
+        "as_usage_error",
         "pytest_addoption",
         "pytest_configure",
         "pytest_sessionfinish",
         "pytest_terminal_summary",
         "pytest_unconfigure",
+        "write_artefacts",
     ]
     for name in plugin.__all__:
         assert hasattr(plugin, name), name

@@ -9,23 +9,25 @@ default provider is ``fake``.
 from __future__ import annotations
 
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
 import pytest
 
 from probatio import Completion
-from probatio.collector import RunState
+from probatio.collector import RunReport, RunState
+from probatio.errors import ProbatioConfigError
 from probatio.plugin import (
-    PHASE_10_OPTIONS,
     PROVIDER_CHOICES,
     RUNS_DEST,
     _add_runs_option,
     _ObservingProvider,
     _session,
+    as_usage_error,
     check_model_is_named,
-    check_unimplemented_options,
 )
+from probatio.reporters import read_results
 from probatio.stability import FLAKY_MARKER
 
 CASE_YAML = """\
@@ -68,6 +70,14 @@ CASES = load_cases("cases")
 def test_case(case, probatio, provider):
     probatio.check(case, sut=lambda c: provider.complete(str(c.input)))
 """
+
+
+def _properties(element: ET.Element) -> dict[str, str]:
+    """Read a ``<properties>`` block back as a mapping, or an empty one when there is none."""
+    block = element.find("properties")
+    if block is None:
+        return {}
+    return {child.attrib["name"]: child.attrib["value"] for child in block.findall("property")}
 
 
 def write_suite(
@@ -148,7 +158,7 @@ def test_both_run_flags_being_taken_is_a_configuration_error() -> None:
         def addoption(self, flag: str, **kwargs: object) -> None:
             raise ValueError("already added")
 
-    with pytest.raises(Exception, match="another plugin has taken both"):
+    with pytest.raises(ProbatioConfigError, match="another plugin has taken both"):
         _add_runs_option(Taken())
 
 
@@ -163,7 +173,7 @@ def test_the_runs_option_stores_under_a_stable_destination(pytester: pytest.Pyte
     pytester.runpytest_subprocess("test_dest.py", "--runs", "3").assert_outcomes(passed=1)
 
 
-# -- options that are registered but not implemented ---------------------------------------------
+# -- a refused configuration is a usage error, not an INTERNALERROR ------------------------------
 
 
 class _Config:
@@ -174,24 +184,35 @@ class _Config:
         return self.options.get(name.replace("--", "").replace("-", "_"))
 
 
-@pytest.mark.parametrize("flag", PHASE_10_OPTIONS)
-def test_a_phase_10_option_is_refused_at_configure_time(flag: str) -> None:
-    """Requirement 3: registered so ``--help`` is complete, refused until its reporter exists."""
-    dest = flag.replace("--", "").replace("-", "_")
-    with pytest.raises(Exception, match="Phase 10") as excinfo:
-        check_unimplemented_options(_Config(**{dest: "out.txt"}))  # type: ignore[arg-type]
-    assert flag in str(excinfo.value)
+def test_a_configuration_error_becomes_a_usage_error_with_the_same_text() -> None:
+    """Requirement 5: the message is unchanged and the original error is the cause."""
+    original = ProbatioConfigError("the flag is wrong")
+    with pytest.raises(pytest.UsageError) as excinfo:
+        with as_usage_error():
+            raise original
+    assert str(excinfo.value) == "the flag is wrong"
+    assert excinfo.value.__cause__ is original
 
 
-def test_neither_phase_10_option_given_is_fine() -> None:
-    check_unimplemented_options(_Config())  # type: ignore[arg-type]
+def test_anything_that_is_not_a_configuration_error_passes_through() -> None:
+    with pytest.raises(RuntimeError, match="not mine"):
+        with as_usage_error():
+            raise RuntimeError("not mine")
 
 
-def test_the_junit_flag_fails_a_real_session(pytester: pytest.Pytester) -> None:
+def test_a_block_that_raises_nothing_is_left_alone() -> None:
+    with as_usage_error():
+        pass
+
+
+def test_a_refused_session_prints_no_internal_error(pytester: pytest.Pytester) -> None:
+    """Requirement 5: an INTERNALERROR traceback reads as a bug in the plugin, not a bad flag."""
     write_suite(pytester)
-    result = pytester.runpytest_subprocess("--probatio-junit", "j.xml")
+    result = pytester.runpytest_subprocess("--probatio-provider", "anthropic")
+    output = result.stdout.str() + result.stderr.str()
     assert result.ret != 0
-    assert "Phase 10" in result.stdout.str() + result.stderr.str()
+    assert "INTERNALERROR" not in output
+    assert "needs --probatio-model" in output
 
 
 # -- a live provider must be told its model -------------------------------------------------------
@@ -374,6 +395,119 @@ def test_runs_three_reports_a_pass_rate_and_a_stability_score(
     output = result.stdout.str()
     assert "pass rate" in output and "95% Wilson" in output
     assert "stability score: 1.00 over 3 repeated case(s)" in output
+
+
+def test_runs_three_writes_both_report_files_with_every_property(
+    pytester: pytest.Pytester,
+) -> None:
+    """Spec §3.11 and §3.12 acceptance: three cases, ``--runs 3``, both files, every property."""
+    write_suite(pytester, case_ids=("alpha", "bravo", "charlie"))
+    result = pytester.runpytest_subprocess(
+        "--runs", "3", "--probatio-results", "r.json", "--probatio-junit", "j.xml"
+    )
+    result.assert_outcomes(passed=3)
+
+    junit = pytester.path / "j.xml"
+    results = pytester.path / "r.json"
+    assert junit.exists() and results.exists()
+    assert result.stdout.str().count("probatio: wrote ") >= 2
+
+    root = ET.parse(junit).getroot()
+    assert root.tag == "testsuites"
+    suite = root.find("testsuite")
+    assert suite is not None
+    for name in ("name", "tests", "failures", "errors", "time"):
+        assert name in suite.attrib, name
+    assert suite.attrib["tests"] == "3"
+    assert _properties(suite).keys() >= {"stability_score", "cost_total_usd"}
+
+    cases = suite.findall("testcase")
+    assert [element.attrib["name"] for element in cases] == ["alpha", "bravo", "charlie"]
+    for element in cases:
+        for name in ("classname", "name", "time"):
+            assert name in element.attrib, name
+        assert element.attrib["classname"].startswith("test_suite.py::test_case[")
+        assert _properties(element).keys() >= {
+            "pass_rate",
+            "wilson_low",
+            "wilson_high",
+            "cost_usd",
+            "latency_ms",
+        }
+
+    report = read_results(results)
+    assert RunReport.model_validate(json.loads(results.read_text(encoding="utf-8"))) == report
+    assert [case.case_id for case in report.cases] == ["alpha", "bravo", "charlie"]
+    assert report.runs == 3
+    assert all(case.stability.runs == 3 for case in report.cases)
+
+
+RELATION_MODULE = """
+import pytest
+from probatio import format_jitter, load_cases
+
+CASES = load_cases("cases")
+
+
+@pytest.mark.parametrize("case", CASES, ids=lambda c: c.id)
+@format_jitter(field="input.question")
+def test_case(case, probatio, provider):
+    probatio.check(case, sut=lambda c: provider.complete(str(c.input)))
+"""
+
+EXPECTED_FAIL_MODULE = """
+import pytest
+from probatio import load_cases
+
+CASES = load_cases("cases")
+
+
+@pytest.mark.parametrize("case", CASES, ids=lambda c: c.id)
+def test_case(case, probatio, provider):
+    with pytest.raises(AssertionError):
+        probatio.check(case, sut=lambda c: "I do not know.")
+"""
+
+
+def test_a_relation_reaches_the_junit_properties(pytester: pytest.Pytester) -> None:
+    write_suite(pytester, module=RELATION_MODULE)
+    pytester.runpytest_subprocess("--probatio-junit", "j.xml").assert_outcomes(passed=1)
+    suite = ET.parse(pytester.path / "j.xml").getroot().find("testsuite")
+    assert suite is not None
+    values = _properties(suite.findall("testcase")[0])
+    assert values["relation.format_jitter.violation_rate"] == "0.0"
+
+
+def test_both_files_are_written_even_when_no_case_ran(pytester: pytest.Pytester) -> None:
+    """DECISIONS 67's argument, kept: a pipeline told to collect a file has to find it."""
+    pytester.makepyfile(test_plain="def test_plain():\n    assert True\n")
+    pytester.runpytest_subprocess(
+        "test_plain.py", "--probatio-results", "r.json", "--probatio-junit", "j.xml"
+    ).assert_outcomes(passed=1)
+    suite = ET.parse(pytester.path / "j.xml").getroot().find("testsuite")
+    assert suite is not None and suite.attrib["tests"] == "0"
+    assert read_results(pytester.path / "r.json").cases == []
+
+
+def test_a_failing_case_reaches_the_junit_file_as_a_failure(pytester: pytest.Pytester) -> None:
+    """The demo's shape: the test passes because it expected the failure; the report shows it."""
+    write_suite(pytester, module=EXPECTED_FAIL_MODULE)
+    pytester.runpytest_subprocess("--probatio-junit", "j.xml").assert_outcomes(passed=1)
+    suite = ET.parse(pytester.path / "j.xml").getroot().find("testsuite")
+    assert suite is not None
+    assert suite.attrib["failures"] == "1"
+    failure = suite.findall("testcase")[0].find("failure")
+    assert failure is not None and failure.text is not None
+    assert "contains" in failure.text
+
+
+def test_the_report_paths_are_resolved_against_rootdir(pytester: pytest.Pytester) -> None:
+    write_suite(pytester)
+    pytester.runpytest_subprocess(
+        "--probatio-results", "build/deep/r.json", "--probatio-junit", "build/deep/j.xml"
+    )
+    assert (pytester.path / "build" / "deep" / "r.json").exists()
+    assert (pytester.path / "build" / "deep" / "j.xml").exists()
 
 
 def test_the_markdown_report_is_written_where_it_is_asked_for(
@@ -704,6 +838,7 @@ def _state_with_one_case() -> RunState:
     state.record(
         CaseResult(
             case_id="alpha",
+            node_id="test_suite.py::test_case[alpha]",
             suite="test_suite",
             verdict=True,
             passed=True,
@@ -736,6 +871,36 @@ def test_the_terminal_summary_writes_the_section_and_names_the_file(tmp_path: Pa
     assert "probatio" in text and "cases:" in text and "alpha" in text
     assert f"probatio: wrote {target}" in text
     assert target.exists()
+
+
+def test_the_terminal_summary_writes_the_junit_and_results_files_too(tmp_path: Path) -> None:
+    """Requirement 1 and 3, called directly: a subprocess run cannot report its own coverage."""
+    from probatio.plugin import _STATE, pytest_terminal_summary
+
+    stash = pytest.Stash()
+    stash[_STATE] = _state_with_one_case()
+    junit = tmp_path / "j.xml"
+    results = tmp_path / "r.json"
+    reporter = _Reporter()
+    pytest_terminal_summary(  # type: ignore[arg-type]
+        reporter,
+        0,
+        _Stashed(stash, probatio_junit=str(junit), probatio_results=str(results)),
+    )
+
+    text = "\n".join(reporter.lines)
+    assert f"probatio: wrote {junit}" in text
+    assert f"probatio: wrote {results}" in text
+    assert ET.parse(junit).getroot().find("testsuite") is not None
+    assert [case.case_id for case in read_results(results).cases] == ["alpha"]
+
+
+def test_write_artefacts_writes_nothing_when_no_flag_names_a_file(tmp_path: Path) -> None:
+    from probatio.plugin import write_artefacts
+
+    report = _state_with_one_case().report()
+    assert write_artefacts(report, _Stashed(pytest.Stash())) == []  # type: ignore[arg-type]
+    assert list(tmp_path.iterdir()) == []
 
 
 def test_the_session_finish_of_an_unconfigured_session_changes_nothing() -> None:

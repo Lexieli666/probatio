@@ -18,7 +18,7 @@ with phase N's code.
 - [x] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
   also deletes the `collect_ignore` guard in the demo suite's `conftest.py` **and** the
   repository-level `conftest.py` that repeats it (DECISIONS 16)
-- [ ] **Phase 10** — JUnit XML and results JSON reporters (spec §3.11)
+- [x] **Phase 10** — JUnit XML and results JSON reporters (spec §3.11)
 - [ ] **Phase 11** — Consilium dogfood, offline, from published traces
 - [ ] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
 - [ ] **Phase 13** — Prior-art table, docs, README final (spec §7)
@@ -404,3 +404,74 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 ```
 
   DECISIONS 59–72; `docs/DESIGN.md` Phase 9; new `docs/stability.md`.
+
+- 2026-09-04 — **Phase 10** — gate green: `pytest -q` 906 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples`; `mypy --strict src/probatio` clean (46 source files);
+  `examples/demo_suite/` still differs from 8a998af by the one sanctioned Phase 9 edit and nothing
+  else, with no untracked file inside it, and `pytest examples/demo_suite --runs 5` reproduces the
+  Phase 9 run above **line for line**, tables, rates, warnings and total alike. Shipped
+  `reporters/results.py` (`render_results`, `write_results`, `read_results`) and
+  `reporters/junit.py` (`render_junit`, `write_junit`); `plugin.write_artefacts` writes all three
+  optional files from `pytest_terminal_summary` and names each one (DECISIONS 77).
+  **The results JSON is the report itself**: `report.model_dump(mode="json")` through
+  `artefacts.write_json`, so sorted keys, indent 2 and one trailing newline, and
+  `RunReport.model_validate(json.loads(text)) == report` for a report carrying a failing case, a
+  flaky one, a snapshot, budget results, relation flips, warnings and a cost ceiling — a
+  projection would be a second schema to keep in step, which is what it is not (`docs/DESIGN.md`
+  Phase 10). Writing the same report twice is byte-identical, and the derived `n_failed` is a
+  property rather than a stored field.
+  **A report entry is keyed on `(test node id, case id)`** (DECISIONS 73): `CaseResult` gained a
+  required `node_id`, `collector.case_key` returns the pair, the `probatio` fixture passes
+  `request.node.nodeid`, and a `Probatio` built outside a session falls back to the suite name.
+  The demo's `htn-definition` and `t2d-metformin` are each checked by `test_case` and again by
+  `test_paraphrase`; both now carry two distinct keys, and the JUnit file's twelve
+  `(classname, name)` pairs are twelve distinct pairs. One test checking one case twice gets a
+  ` #2` suffix rather than a merge.
+  **The JUnit file** is a `<testsuites>` root over one `<testsuite name="probatio">` with `tests`,
+  `failures`, `errors`, `skipped` and `time`; `classname` is the node id and `name` is the case
+  id. Per-case `<properties>` carry `pass_rate`, `wilson_low`, `wilson_high`, `cost_usd`,
+  `latency_ms` and one `relation.<name>.violation_rate` per relation that measured something;
+  suite properties carry `stability_score` and `cost_total_usd`. A rate that was not measured is
+  **omitted**, never written `"n/a"`, because every consumer parses a property value as a number
+  the moment it recognises the name and the two things a string can do there — raise, or coerce to
+  zero — are both the lie DECISIONS 8 refuses (DECISIONS 74). Numbers are `repr(round(v, 6))`, so
+  the flaky case's `pass_rate` reads `0.8` and a third reads `0.333333` (DECISIONS 75).
+  Unenforceable results are neither a failure nor a pass: they are listed in the case's
+  `<system-out>` under `unenforceable (N):` (DECISIONS 76). Structure is checked with `xml.etree`
+  against the attributes common CI tools require; `junitparser` is not a dependency and the one
+  test that uses it returns without asserting when it is absent, so the gate still sees zero skips.
+  Run on the frozen demo suite at this commit, `pytest examples/demo_suite --runs 5
+  --probatio-junit j.xml --probatio-results r.json` writes 12 testcases, 1 failure, suite
+  properties `stability_score="0.9"` and `cost_total_usd="0.0315"`, and:
+
+```xml
+      <testcase classname="examples/demo_suite/test_demo.py::test_flaky[flu-antivirals-flaky]" name="flu-antivirals-flaky" time="0.1">
+        <properties>
+          <property name="pass_rate" value="0.8" />
+          <property name="wilson_low" value="0.375535" />
+          <property name="wilson_high" value="0.963776" />
+          <property name="cost_usd" value="0.0005" />
+          <property name="latency_ms" value="100.0" />
+        </properties>
+      </testcase>
+```
+
+  with `anxiety-expected-fail` carrying a `<failure>` whose text is the pass-rate line and both
+  failed assertions, and a `<system-out>` naming its one unvalidated judge verdict.
+  **DECISIONS 67 closes and 69 is amended**: `check_unimplemented_options` is gone, both flags
+  write their files, and every configure-time refusal — a live provider with no
+  `--probatio-model`, an unloadable `--probatio-prices`, both `--runs` names taken — now travels
+  through `plugin.as_usage_error`, which re-raises `ProbatioConfigError` as `pytest.UsageError`
+  with the original as `__cause__` and the message unchanged. A `pytester` test asserts a refused
+  session prints the sentence and does **not** print `INTERNALERROR`. The rule the refusal
+  expressed survives in a different form: a file a flag asked for is written even when the session
+  checked no case, so a pipeline's `if [ -f results.json ]` never silently stops firing.
+  `docs/stability.md` gained two paragraphs, both backed by the committed Phase 9 run above: that
+  the below-floor count needs `n` large enough to be informative, since at `n = 5` no case can
+  clear a floor of 1.0 and the committed run therefore reads `12 of 12`; and that adding a price
+  table flips an unenforceable ceiling to an enforceable one, changes the budget result a `scores`
+  baseline holds, and re-records every such baseline once (DECISIONS 68), so a price table belongs
+  on its own `--update-baseline` commit. `tests/test_docs_stability.py` reads the `12 of 12` back
+  out of `PROGRESS.md`, so the doc cannot quote a run this file does not hold.
+  DECISIONS 73–77 and the amendments to 67 and 69; `docs/DESIGN.md` Phase 10.

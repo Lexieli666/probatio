@@ -1320,6 +1320,19 @@ different things, which is the one thing a cassette key may never do.
   arguments` instead of a sentence naming the phase; and accepting them with a warning, which
   is only read by somebody already looking.
 
+**Amended, Phase 10.** Both reporters now exist, so the refusal and `check_unimplemented_options`
+are gone; the flags write the files they name. What survives is the reason they were registered at
+all — `--help` is spec §3.12's whole surface — and the rule that produced the refusal, which
+Phase 10 keeps in a different form: a file a flag asked for is written even when the session
+checked no case, because a pipeline told to collect `results.json` has to find one saying "nothing
+ran" rather than nothing at all. The refusal's other flaw is fixed here too. A `ProbatioConfigError`
+escaping `pytest_configure` was reported as `INTERNALERROR` with a traceback through Probatio's own
+frames, which reads as a bug in the plugin rather than as a flag the user got wrong. Every
+configure-time check is now wrapped in `plugin.as_usage_error`, which re-raises it as
+`pytest.UsageError` with the original as `__cause__` and the message text unchanged. Rejected
+alternative: leaving the raise as it was, on the grounds that a traceback is louder — it is louder
+about the wrong thing.
+
 ## 68. Budget results are recorded into the snapshot baseline
 
 - **Date:** 2026-09-04 (Phase 9)
@@ -1354,6 +1367,14 @@ different things, which is the one thing a cassette key may never do.
   `AnthropicProvider` would additionally fail at call time with an SDK error halfway through a
   session, which is a worse place to learn it. Rejected alternative: refusing only the provider
   the brief names, which leaves the identical hole one flag away.
+
+**Amended, Phase 10.** `check_model_is_named` still raises `ProbatioConfigError` with the same
+sentence, and `pytest_configure` now converts it to `pytest.UsageError` through
+`plugin.as_usage_error` (see the amendment to DECISIONS 67). The user sees the same words with no
+`INTERNALERROR` banner and no traceback above them; a unit test still asserts the
+`ProbatioConfigError`, and a `pytester` test asserts that a real session refusing the flag prints
+the sentence and does not print `INTERNALERROR`. The same wrapper covers the `--runs` collision of
+DECISIONS 61, which is raised from `pytest_addoption`.
 
 ## 70. `Probatio` lives in `session.py`, and `plugin.py` holds only the pytest surface
 
@@ -1406,3 +1427,100 @@ different things, which is the one thing a cassette key may never do.
   true and keeps the failure attributable to the case that caused it. Rejected alternative:
   swallowing the error and failing the case through the report, which would make a suite with no
   tapes at all report twelve ordinary assertion failures and bury the one fact that explains them.
+
+## 73. A report entry is keyed on the test's node id and the case's id, not on the case id
+
+- **Date:** 2026-09-04 (Phase 10)
+- **Q:** The demo suite routes `htn-definition` to `test_case`, which carries three relations, and
+  again to `test_paraphrase`, which carries a fourth; `t2d-metformin` is the same. Both already
+  appear twice in the terminal's cases table, where two identical labels are merely confusing. In
+  the results JSON and the JUnit file they would collide: a CI tool keyed on `(classname, name)`
+  shows one row, and whichever it kept would carry one test's relations and not the other's.
+- **A:** `CaseResult` gained a required `node_id`, `collector.case_key(case)` returns
+  `(node_id, case_id)`, and that pair is what a per-case entry is identified by. The JUnit file
+  writes `classname` = the node id and `name` = the case id. The results JSON is a list and
+  carries `node_id` on every entry, so a consumer can key on the same pair. Where one test checks
+  one case more than once, the second and later JUnit entries have ` #2`, ` #3` appended to their
+  `name` rather than being merged or dropped.
+- **Why:** A case id is unique within the directory it was loaded from and nowhere else, which is
+  exactly what makes routing one case to several tests a normal thing to do — it is how the demo
+  suite says "these three relations apply to every case, and this fourth one only where frozen
+  paraphrases exist". The node id is the one string pytest already guarantees is unique within a
+  session, it is what a developer clicks in a CI report, and it costs one field. Rejected
+  alternatives: keying on `(suite, case_id)`, which is the baseline and cassette key and collides
+  for exactly this reason, since both entries are in `test_demo`; and synthesising an index —
+  `htn-definition-1`, `htn-definition-2` — which is unique but tells the reader nothing about
+  which test produced it and changes when a test is added above it.
+
+## 74. A property that was not measured is omitted from the JUnit file, never written "n/a"
+
+- **Date:** 2026-09-04 (Phase 10)
+- **Q:** Spec §3.11 puts one `relation.<name>.violation_rate` property on each case per relation,
+  but a relation that is not applicable to a case has no rate at all (spec §3.9, DECISIONS 8), and
+  a case whose calls were never priced has no `cost_usd`. A suite in which nothing ran more than
+  once has no `stability_score`. Write the property with the value `"n/a"`, or leave it out?
+- **A:** Leave it out. The JUnit file carries `pass_rate`, `wilson_low`, `wilson_high` and
+  `latency_ms` always; `cost_usd` only where a cost is known; `stability_score` only where
+  stability was measured; and one relation property per relation that measured something on that
+  case. A reader who needs to tell "not applicable" from "not run" reads the results JSON, where
+  `violation_rate: null` sits beside `n_variants: 0`.
+- **Why:** Every consumer of this format parses a property value as a number the moment it
+  recognises the name, and the two things a string in that position can do are both bad: raise on
+  a dashboard that expected a float, or coerce to zero. Zero is the specific lie this project has
+  refused since DECISIONS 8 — a relation with no variants has not been shown to hold. An absent
+  property is unambiguous in a format that has no null. Rejected alternative: writing `"n/a"`,
+  which keeps the property list the same width for every case and hands a parser a value it cannot
+  use.
+
+## 75. Numbers in the JUnit file are the shortest string that reads back as the same number
+
+- **Date:** 2026-09-04 (Phase 10)
+- **Q:** A pass rate of four in five is 0.8 exactly; a violation rate of one in three is not. What
+  goes in a `value=` attribute — a fixed number of decimals, or the float itself?
+- **A:** `repr(round(value, 6))`. Four in five writes `0.8`, one in three writes `0.333333`, a
+  cost of five hundredths of a cent writes `0.0005`, and a latency writes `100.0`. Six decimals is
+  the precision `budget.py` already prints money to.
+- **Why:** A fixed `%.2f` would write a pass rate of 0.8 as `0.80`, which is fine to read and
+  wrong to compare, and would round a cost of `0.0005` to `0.00` — a ceiling reported as free.
+  Full `repr` goes the other way and writes seventeen digits of a third into a dashboard column.
+  Rounding first and letting `repr` shorten what is left gives a value that parses back to what
+  was rounded and reads like a number a person wrote. Rejected alternative: `%.6f` everywhere,
+  which is one character shorter in the source and writes `0.800000` where the acceptance
+  criterion asks for `0.8`.
+
+## 76. An unenforceable result goes in the case's `<system-out>`, not its `<failure>`
+
+- **Date:** 2026-09-04 (Phase 10)
+- **Q:** Spec §3.7 says an unenforceable cost ceiling is `passed=False` and is **not** a passing
+  budget check. A JUnit file has two states for a test case. Which one does it get?
+- **A:** Neither. `failures` counts the cases `check` failed, which never includes an
+  unenforceable result (`session._summarise_failure` skips them by construction). Every
+  unenforceable assertion and ceiling on a case is listed in that case's `<system-out>` block
+  under a `unenforceable (N):` heading, so a CI run whose price table is missing shows the reason
+  next to each case rather than nowhere.
+- **Why:** Failing the build for an unpriced model would make `--probatio-prices` mandatory in
+  practice, and the rule exists so that a missing price is visible rather than fatal. Passing
+  silently is the failure mode the rule was written against. `<system-out>` is the one place in
+  the format for "here is something that happened that is not a verdict", it is displayed by
+  every consumer that shows a case's detail, and it leaves the `failures` count meaning what a
+  reader assumes it means. Rejected alternatives: a `<skipped>` element, which claims the case did
+  not run when it did; and a suite-level property counting them, which loses which case each
+  belongs to.
+
+## 77. The two files are written from `pytest_terminal_summary`, beside the markdown one
+
+- **Date:** 2026-09-04 (Phase 10)
+- **Q:** `pytest_sessionfinish` is where a session's artefacts would conventionally be written, and
+  Probatio already implements it for the `--max-cost` overrun.
+- **A:** `write_artefacts` is called from `pytest_terminal_summary`, which is where the markdown
+  reporter has been written since Phase 9, and it prints one `probatio: wrote <path>` line per
+  file.
+- **Why:** All four reporters render the same `RunReport`, and rendering it in two hooks would
+  mean two calls to `RunState.report()` at two points in the session, which is one place for the
+  numbers in the JUnit file to disagree with the numbers in the terminal — the exact failure the
+  shared-report design exists to prevent. The `--max-cost` hook stays where it is because it sets
+  an exit status rather than writing a file. The cost is that a run with the terminal reporter
+  disabled writes no files; that is also true of Phase 9's markdown reporter, and it is not a
+  configuration this project's own gate or CI uses. Rejected alternative: writing the files in
+  `pytest_sessionfinish` and printing the paths in the terminal hook, which splits one action
+  across two hooks whose relative order pytest does not fix.
