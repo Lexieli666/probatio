@@ -1,0 +1,168 @@
+# Derived from Consilium-Health golden.jsonl and data/corpus by examples/consilium/convert_traces.py --emit-live-cases; do not hand-edit.
+id: g-cc-002
+input:
+  question: Is there a case where two conditions documented together must NOT be linked by the coder?
+  documents:
+  - |
+    ---
+    doc_id: coding-hypertension-i10
+    category: coding
+    title: "Coding hypertension: I10 and the hypertensive disease family"
+    source: "US clinical modification of ICD-10 maintained by NCHS and CMS (educational summary)"
+    last_reviewed: 2026-08-17
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## The code
+
+    Essential, or primary, hypertension is I10 in ICD-10-CM. It sits in Chapter 9, diseases of the
+    circulatory system, in the hypertensive-disease block that runs from I10 to I16.
+
+    I10 is unusual in being a complete code at three characters. Most ICD-10-CM categories require a
+    fourth, fifth or sixth character before the code is billable; I10 takes none, so a request to
+    "add more specificity to I10" is a request the classification cannot satisfy. What the category
+    includes is broad: high blood pressure described as arterial, essential, primary or systemic all map
+    to the same code. The benign-versus-malignant split that the previous US classification carried was
+    not brought forward, which is why searching for a "malignant hypertension" code returns nothing
+    separate.
+
+    ## What I10 is not used for
+
+    A single raised reading, or a series of readings, in someone who has not been given a diagnosis of
+    hypertension is a finding rather than a disease, and it is classified with the abnormal findings in
+    Chapter 18 instead. The distinction is documentation-driven: the diagnosis in the record, not the
+    number, is what moves a case to I10. The same chapter holds the code for low blood pressure.
+
+    Hypertension complicating pregnancy, childbirth or the period after delivery is excluded outright
+    and is classified in the obstetric chapter; the pregnancy code is used in place of I10, not
+    alongside it. Hypertension affecting the vessels of the brain or of the eye is handled differently
+    again — those are separate conditions that may be coded in addition to the hypertension rather than
+    instead of it.
+
+    ## When hypertension stops being I10
+
+    I10 applies when hypertension stands alone. Once organ involvement is in the picture, the
+    classification prefers a combination code:
+
+    - Documented hypertensive heart disease moves the case to I11, subdivided by whether heart failure
+      is present. When it is, the type of heart failure is added from I50 as a second code.
+    - Hypertension with chronic kidney disease moves to I12, with a second code identifying the stage of
+      kidney disease.
+    - Both together move to I13.
+    - Hypertension attributed to an identifiable underlying cause — renal, endocrine, or another — is
+      secondary hypertension in I15, coded together with the cause.
+    - Hypertensive urgency and hypertensive emergency are distinguished within I16.
+
+    The heart and kidney rules differ in an important way. The classification presumes a causal link
+    between hypertension and chronic kidney disease and pairs them without being told to. It makes no
+    such presumption for heart disease: unless the record states that the heart condition is
+    hypertensive or due to the hypertension, the two are coded separately and I11 is not used.
+
+    ## Related codes that appear on the same encounter
+
+    Screening for cardiovascular disorders in someone without symptoms has its own encounter code in the
+    factors-influencing-health chapter, as does a personal history of, or long-term drug therapy for, a
+    circulatory condition. Tobacco use or dependence is frequently added, because many categories in
+    Chapter 9 carry an explicit instruction to identify it.
+  - |
+    ---
+    doc_id: coding-icd10-cm-code-structure-and-conventions
+    category: coding
+    title: "ICD-10-CM code structure and the conventions that govern selection"
+    source: "US clinical modification of ICD-10 maintained by NCHS and CMS (educational summary)"
+    last_reviewed: 2026-08-17
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## What a code looks like
+
+    An ICD-10-CM code is three to seven characters long. The first character is a letter, the second is
+    a digit, and the remaining characters may be either. A decimal point follows the first three
+    characters when more follow, so I10 has no decimal and E11.9 has one.
+
+    The three-character form is the category. Characters four and five add detail — cause, anatomical
+    site, severity — and character six frequently carries laterality, where right, left and unspecified
+    are three different codes rather than one code with a note. A seventh character, where a category
+    uses one, records something about the encounter rather than about the disease: for injuries it
+    distinguishes initial treatment, subsequent treatment and sequela.
+
+    Most categories are not valid at three characters. A code has to be carried to its full length for
+    the category it belongs to, and a category that requires a seventh character requires it even when
+    the intervening characters are empty — which is what the placeholder X exists for, holding a
+    position open so the seventh character lands in the seventh place.
+
+    ## The two-step lookup
+
+    A code is found in the Alphabetic Index and then verified in the Tabular List. Skipping the second
+    step is the most common way to arrive at a wrong code, because the index does not carry the
+    instructional notes and the tabular list does. The tabular list governs.
+
+    ## The instructional notes
+
+    **Excludes1** means "not coded here" in the strong sense: the two conditions cannot both be present,
+    and the codes are never reported together. **Excludes2** is the weaker one: the excluded condition
+    is not part of the code above it, but a person can have both, and both may be reported. The two look
+    alike on the page and mean opposite things about whether a second code is permitted.
+
+    **Code first** and **use additional code** appear as a pair and fix sequencing: an underlying
+    condition is reported before its manifestation. **Code also** signals that two codes are needed
+    without dictating which comes first.
+
+    **Combination codes** carry two conditions, or a condition and a complication, in one code. Where a
+    combination code exists it is used instead of the separate codes, which is why a family such as
+    diabetes appears so large.
+
+    ## "With", and the presumption it creates
+
+    Where the Alphabetic Index links two conditions with the word "with", the classification reads it as
+    "associated with" or "due to" and presumes the relationship without requiring the record to state
+    it. The presumption holds only for the pairings the index actually lists, and it is overridden when
+    the documentation says the two are unrelated.
+
+    ## Unspecified codes, NEC and NOS
+
+    **NEC**, not elsewhere classifiable, means the condition is specified but the classification has no
+    distinct code for it. **NOS**, not otherwise specified, means the documentation was not specific.
+    The distinction matters because an unspecified code is a statement about the record rather than
+    about the person, and it remains a valid code: where the documentation genuinely does not support
+    more detail, the unspecified code is the correct one, and inferring detail the record does not
+    contain is the error the convention exists to prevent.
+system: Answer only from the documents provided. If the documents do not cover the question, say so plainly.
+  When the documents indicate a possible emergency, say so first and tell the reader to seek care now.
+params: {}
+metadata:
+  category: condition_coding
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - coding-hypertension-i10
+  - coding-icd10-cm-code-structure-and-conventions
+  source: consilium-health golden.jsonl and data/corpus @109a744
+assertions:
+- type: similarity
+  reference: 'Yes -- hypertension and heart disease. The classification presumes a causal link between
+    hypertension and chronic kidney disease and pairs them without being told to, but it makes no such
+    presumption for heart disease: unless the record states that the heart condition is hypertensive or
+    due to the hypertension, the two are coded separately and the hypertensive heart disease combination
+    code is not used. More generally the "with" presumption holds only for the pairings the index lists
+    and is overridden when the documentation says the two are unrelated.'
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+- type: judge
+  rubric: faithfulness
+  threshold: 1.0
+budget:
+  max_cost_usd: 0.1
+  max_latency_ms: 120000
+snapshot: scores
+tags:
+- condition_coding

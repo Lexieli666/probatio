@@ -1,0 +1,165 @@
+# Derived from Consilium-Health golden.jsonl and data/corpus by examples/consilium/convert_traces.py --emit-live-cases; do not hand-edit.
+id: g-cc-001
+input:
+  question: If a record says "diabetes with neuropathy", does the coder need a statement that the diabetes
+    caused the neuropathy?
+  documents:
+  - |
+    ---
+    doc_id: coding-type-2-diabetes-e11
+    category: coding
+    title: "Coding type 2 diabetes: E11 and its complication subcategories"
+    source: "US clinical modification of ICD-10 maintained by NCHS and CMS (educational summary)"
+    last_reviewed: 2026-08-17
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## The category
+
+    Type 2 diabetes mellitus is E11 in ICD-10-CM, in Chapter 4, endocrine, nutritional and metabolic
+    diseases. The chapter separates diabetes by cause rather than by treatment: diabetes due to an
+    underlying condition, drug- or chemical-induced diabetes, type 1, type 2, and other specified
+    diabetes each have their own three-character category. Where the record says only "diabetes
+    mellitus" with no type stated, the classification defaults to type 2.
+
+    That default is worth knowing in both directions. It means an unqualified diagnosis does not stall
+    the coding, and it means a record that meant type 1 but did not say so is classified as the wrong
+    disease. Insulin use does not change the category — a person with type 2 diabetes taking insulin is
+    still coded to E11, with long-term insulin use recorded as a separate status code.
+
+    ## E11 is a family, not a single code
+
+    E11 is never used at three characters. The fourth and subsequent characters name the complication,
+    which is what makes this one of the larger combination-code families in the classification. The
+    subcategories cover kidney involvement, retinal involvement subdivided by severity and by whether
+    macular edema is present, neuropathy including the polyneuropathy and autonomic forms, circulatory
+    involvement of the limbs with or without gangrene, skin, oral and joint complications, and the
+    metabolic states of hyperglycemia and hypoglycemia, the latter distinguished by whether coma
+    occurred. Diabetes documented without complications has its own code ending in the digit 9, which is
+    the source of the frequently quoted E11.9.
+
+    Several of these still require a second code. Diabetic chronic kidney disease is paired with a code
+    for the stage of kidney disease; a diabetic foot ulcer is paired with a code giving its site and
+    depth. The combination code names the association, and the additional code carries the detail.
+
+    ## The "with" convention
+
+    The reason this family works the way it does is a general convention rather than a diabetes rule.
+    Where the alphabetic index links two conditions with the word "with", the classification reads that
+    as "associated with" or "due to" and presumes the relationship, without requiring the record to
+    state it explicitly. A record listing type 2 diabetes and chronic kidney disease is therefore coded
+    as diabetic kidney disease unless the documentation says the two are unrelated.
+
+    This presumption is the single most consequential detail in coding diabetes, and it is also the one
+    most often applied too enthusiastically. It holds only for the pairings the index actually lists,
+    and a condition merely appearing on the same problem list is not automatically a diabetic
+    complication.
+
+    ## Codes that commonly accompany E11
+
+    Long-term use of insulin, of injectable non-insulin agents, and of oral glucose-lowering drugs each
+    have distinct status codes, and body mass index has its own set. Screening for diabetes in someone
+    without symptoms is an encounter code rather than a diagnosis. Prediabetes and abnormal glucose
+    findings that fall short of a diabetes diagnosis are not coded to E11 at all; they sit with the
+    abnormal laboratory findings in the symptoms and abnormal findings chapter.
+  - |
+    ---
+    doc_id: coding-icd10-cm-code-structure-and-conventions
+    category: coding
+    title: "ICD-10-CM code structure and the conventions that govern selection"
+    source: "US clinical modification of ICD-10 maintained by NCHS and CMS (educational summary)"
+    last_reviewed: 2026-08-17
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## What a code looks like
+
+    An ICD-10-CM code is three to seven characters long. The first character is a letter, the second is
+    a digit, and the remaining characters may be either. A decimal point follows the first three
+    characters when more follow, so I10 has no decimal and E11.9 has one.
+
+    The three-character form is the category. Characters four and five add detail — cause, anatomical
+    site, severity — and character six frequently carries laterality, where right, left and unspecified
+    are three different codes rather than one code with a note. A seventh character, where a category
+    uses one, records something about the encounter rather than about the disease: for injuries it
+    distinguishes initial treatment, subsequent treatment and sequela.
+
+    Most categories are not valid at three characters. A code has to be carried to its full length for
+    the category it belongs to, and a category that requires a seventh character requires it even when
+    the intervening characters are empty — which is what the placeholder X exists for, holding a
+    position open so the seventh character lands in the seventh place.
+
+    ## The two-step lookup
+
+    A code is found in the Alphabetic Index and then verified in the Tabular List. Skipping the second
+    step is the most common way to arrive at a wrong code, because the index does not carry the
+    instructional notes and the tabular list does. The tabular list governs.
+
+    ## The instructional notes
+
+    **Excludes1** means "not coded here" in the strong sense: the two conditions cannot both be present,
+    and the codes are never reported together. **Excludes2** is the weaker one: the excluded condition
+    is not part of the code above it, but a person can have both, and both may be reported. The two look
+    alike on the page and mean opposite things about whether a second code is permitted.
+
+    **Code first** and **use additional code** appear as a pair and fix sequencing: an underlying
+    condition is reported before its manifestation. **Code also** signals that two codes are needed
+    without dictating which comes first.
+
+    **Combination codes** carry two conditions, or a condition and a complication, in one code. Where a
+    combination code exists it is used instead of the separate codes, which is why a family such as
+    diabetes appears so large.
+
+    ## "With", and the presumption it creates
+
+    Where the Alphabetic Index links two conditions with the word "with", the classification reads it as
+    "associated with" or "due to" and presumes the relationship without requiring the record to state
+    it. The presumption holds only for the pairings the index actually lists, and it is overridden when
+    the documentation says the two are unrelated.
+
+    ## Unspecified codes, NEC and NOS
+
+    **NEC**, not elsewhere classifiable, means the condition is specified but the classification has no
+    distinct code for it. **NOS**, not otherwise specified, means the documentation was not specific.
+    The distinction matters because an unspecified code is a statement about the record rather than
+    about the person, and it remains a valid code: where the documentation genuinely does not support
+    more detail, the unspecified code is the correct one, and inferring detail the record does not
+    contain is the error the convention exists to prevent.
+system: Answer only from the documents provided. If the documents do not cover the question, say so plainly.
+  When the documents indicate a possible emergency, say so first and tell the reader to seek care now.
+params: {}
+metadata:
+  category: condition_coding
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - coding-type-2-diabetes-e11
+  - coding-icd10-cm-code-structure-and-conventions
+  source: consilium-health golden.jsonl and data/corpus @109a744
+assertions:
+- type: similarity
+  reference: No. Where the Alphabetic Index links two conditions with the word "with", the classification
+    reads that as "associated with" or "due to" and presumes the relationship without requiring the record
+    to state it, so documented diabetes and neuropathy are coded as diabetic neuropathy from the combination
+    family. The presumption is overridden where the documentation says the two are unrelated, and it holds
+    only for the pairings the index actually lists.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+- type: judge
+  rubric: faithfulness
+  threshold: 1.0
+budget:
+  max_cost_usd: 0.1
+  max_latency_ms: 120000
+snapshot: scores
+tags:
+- condition_coding

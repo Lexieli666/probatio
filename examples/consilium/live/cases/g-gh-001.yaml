@@ -1,0 +1,177 @@
+# Derived from Consilium-Health golden.jsonl and data/corpus by examples/consilium/convert_traces.py --emit-live-cases; do not hand-edit.
+id: g-gh-001
+input:
+  question: What is high blood pressure, and how is it different from one high reading?
+  documents:
+  - |
+    ---
+    doc_id: condition-hypertension
+    category: condition
+    title: "Hypertension (high blood pressure)"
+    source: "General clinical reference (educational summary)"
+    last_reviewed: 2026-08-09
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## What it is
+
+    Hypertension is persistently raised pressure in the arteries, sustained over time rather than on a
+    single occasion. Blood pressure is written as two numbers: the systolic pressure, generated when the
+    heart contracts, over the diastolic pressure, present between beats. Both are measured in
+    millimeters of mercury.
+
+    Pressure varies continuously through the day — with activity, stress, pain, caffeine, sleep and time
+    of day, typically lowest during sleep and rising before waking. That variation is why a diagnosis
+    rests on repeated measurements rather than one reading, and why a single high reading in a clinic is
+    not itself a diagnosis.
+
+    ## How it is usually recognized
+
+    Hypertension is typically without symptoms and is most often found on routine measurement rather
+    than because someone felt unwell. That is the main reason screening for it exists at all. Where
+    symptoms such as headache, visual disturbance or nosebleed are attributed to raised blood pressure,
+    they usually reflect either a very high pressure or an unrelated cause — the belief that ordinary
+    hypertension can be felt leads people to treat by symptom rather than by measurement, which does not
+    work.
+
+    ## What contributes to it
+
+    Most cases have no single identifiable cause and reflect a combination of age, genetic
+    predisposition, excess body weight, high dietary sodium, low potassium intake, physical inactivity,
+    alcohol intake, poor sleep including untreated sleep apnea (apnoea), and chronic stress. Arterial
+    stiffening with age is why systolic pressure tends to rise across the lifespan while diastolic
+    pressure often falls after middle age.
+
+    A minority of cases have an identifiable secondary cause — kidney disease, renal artery narrowing,
+    primary aldosteronism, thyroid or adrenal disorders, obstructive sleep apnea, and certain medications
+    including combined oral contraceptives, decongestants, non-steroidal anti-inflammatory drugs and
+    some stimulants. Investigation for a secondary cause is usually considered when hypertension appears
+    at a young age, is unusually severe, responds poorly to treatment, or worsens abruptly after a period
+    of stability.
+
+    ## Why it is treated
+
+    Sustained high pressure damages arteries over years, and the conditions that follow are the reason
+    for treating a symptomless number: stroke, heart attack, heart failure, chronic kidney disease,
+    retinal damage, and cognitive decline. The benefit of treatment is measured in reduced rates of those
+    events, not in how the person feels — which is also why adherence is difficult, since a treatment
+    that produces no felt improvement and occasional side effects is easy to stop.
+
+    ## How it is generally managed
+
+    Lifestyle measures — dietary sodium reduction, a diet pattern high in vegetables, fruit and whole
+    grains, regular activity, weight management, limiting alcohol, and stopping smoking — apply to
+    everyone. Drug treatment is added according to the level of risk. Diagnostic thresholds, treatment
+    targets, drug classes and follow-up intervals are covered by the hypertension guideline notes in
+    this corpus.
+
+    ## When urgent assessment is advised
+
+    A very high reading accompanied by chest pain, breathlessness, severe headache, visual loss,
+    confusion, weakness or numbness on one side, or difficulty speaking is an emergency and requires
+    immediate medical attention rather than a routine appointment. The emergency-symptom notes in this
+    corpus govern those situations.
+  - |
+    ---
+    doc_id: guideline-hypertension-diagnosis-and-bp-targets
+    category: guideline
+    title: "Hypertension: diagnostic thresholds and blood-pressure targets"
+    source: "Major cardiology society consensus guidance (educational summary)"
+    last_reviewed: 2026-08-09
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## What this guidance covers
+
+    How adult office blood pressure is classified, what is required before a diagnosis of hypertension
+    is made, and the treatment target most bodies set once treatment has begun.
+
+    ## Classification of office blood pressure in adults
+
+    United States society guidance classifies adult office readings as:
+
+    - **Normal** — systolic below 120 mm Hg *and* diastolic below 80 mm Hg.
+    - **Elevated** — systolic 120 to 129 mm Hg *and* diastolic below 80 mm Hg.
+    - **Stage 1 hypertension** — systolic 130 to 139 mm Hg *or* diastolic 80 to 89 mm Hg.
+    - **Stage 2 hypertension** — systolic at least 140 mm Hg *or* diastolic at least 90 mm Hg.
+
+    When the systolic and diastolic values fall into different categories, the higher category applies.
+    "Elevated" is not a stage of hypertension: it marks a group at raised future risk in whom lifestyle
+    measures are advised and drug treatment is not.
+
+    ## Measurement technique, which changes the number
+
+    A reading taken carelessly is not a milder version of a correct reading — it is a different
+    measurement. The technique that the classification above assumes is a validated device, a cuff
+    sized to the arm, the person seated with back supported and feet flat, arm supported at heart
+    level, no caffeine, exercise or smoking in the preceding 30 minutes, five minutes of rest
+    beforehand, and no talking during the measurement. An undersized cuff and an unsupported arm both
+    push the reading up, each by an amount comparable to the width of a whole stage.
+
+    ## Confirming the diagnosis
+
+    A diagnosis is not made from a single reading. The standard is an average of two or more readings
+    taken on two or more separate occasions. Out-of-office measurement — home readings or 24-hour
+    ambulatory monitoring — confirms the diagnosis and identifies two patterns that office readings
+    alone cannot: white-coat hypertension, where office readings are raised but out-of-office readings
+    are not, and masked hypertension, where the reverse holds and the risk is underestimated.
+
+    ## Treatment target
+
+    For most treated adults, United States guidance describes a target below 130/80 mm Hg. The target is
+    individualized for older adults with frailty, limited life expectancy, or a heavy burden of other
+    conditions, where the balance of benefit and harm differs and where postural drops matter more.
+
+    ## Where guidance differs
+
+    The 130/80 mm Hg diagnostic threshold is a United States position. European guidance describes office
+    hypertension as beginning at 140/90 mm Hg, and treats the 130 to 139 / 80 to 89 band as high-normal
+    blood pressure rather than as stage 1 disease. The same reading is therefore labeled differently
+    depending on which body's guidance is applied, and the size of the population called hypertensive
+    changes substantially between the two. Any answer that quotes a threshold should say which
+    convention it is using.
+
+    ## Follow-up interval
+
+    After treatment starts or changes, reassessment at roughly monthly intervals until the target is
+    reached, then review every three to six months once readings are stable.
+system: Answer only from the documents provided. If the documents do not cover the question, say so plainly.
+  When the documents indicate a possible emergency, say so first and tell the reader to seek care now.
+params: {}
+metadata:
+  category: general_health
+  red_flag: false
+  expected_route:
+    mode: parallel
+    agents:
+    - consultation
+    - research
+  relevant_doc_ids:
+  - condition-hypertension
+  - guideline-hypertension-diagnosis-and-bp-targets
+  source: consilium-health golden.jsonl and data/corpus @109a744
+assertions:
+- type: similarity
+  reference: Hypertension is persistently raised pressure in the arteries, sustained over time rather
+    than present on a single occasion, and is written as the systolic over the diastolic value in millimeters
+    of mercury. Pressure varies continuously through the day with activity, stress, pain, caffeine and
+    sleep, which is why one high clinic reading is a measurement rather than a diagnosis. Guidance describes
+    the diagnosis as resting on an average of two or more readings taken on two or more separate occasions,
+    usually confirmed with home or ambulatory measurement.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+- type: judge
+  rubric: faithfulness
+  threshold: 1.0
+budget:
+  max_cost_usd: 0.1
+  max_latency_ms: 120000
+snapshot: scores
+tags:
+- general_health
