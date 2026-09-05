@@ -1,0 +1,40 @@
+{
+  "assertions": [
+    {
+      "assertion_type": "contains",
+      "passed": true,
+      "score": 0.5
+    },
+    {
+      "assertion_type": "not_contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "similarity",
+      "passed": true,
+      "score": 0.684829
+    },
+    {
+      "assertion_type": "judge",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "budget_cost",
+      "passed": true,
+      "score": null
+    },
+    {
+      "assertion_type": "budget_latency",
+      "passed": true,
+      "score": null
+    }
+  ],
+  "case_id": "htn-definition",
+  "mode": "scores",
+  "model": "fake-1",
+  "output": null,
+  "prompt_hash": "f6a7d2bb40a4c256",
+  "recorded": "2026-09-05T01:35:52Z"
+}

@@ -731,3 +731,36 @@ def test_iterating_a_trace_from_a_generator_is_accepted(tmp_path: Path) -> None:
         yield from trace_lines()
 
     assert len(import_cassettes(lines(), suite=SUITE, store=store(tmp_path))) == 2
+
+
+# -- Phase 9: the record command names the provider that would answer -------------------------
+
+
+def test_the_record_command_is_the_bare_flag_for_a_fake_or_unnamed_provider() -> None:
+    from probatio.cassette import RECORD_COMMAND, record_command
+
+    assert record_command() == RECORD_COMMAND
+    assert record_command("fake") == RECORD_COMMAND
+    assert record_command("fake", "fake-1") == RECORD_COMMAND
+
+
+def test_the_record_command_names_a_live_provider_and_its_model() -> None:
+    """Requirement 5: re-recording against the default provider is not the instruction."""
+    from probatio.cassette import record_command
+
+    assert record_command("claude-cli") == "pytest --cassette=record --probatio-provider claude-cli"
+    assert record_command("claude-cli", "claude-x") == (
+        "pytest --cassette=record --probatio-provider claude-cli --probatio-model claude-x"
+    )
+
+
+def test_a_store_uses_whichever_record_command_it_was_given(tmp_path: Path) -> None:
+    from probatio.cassette import record_command
+
+    store = CassetteStore(tmp_path)
+    store.record_command = record_command("claude-cli", "claude-x")
+    store.begin_case("suite", "alpha")
+    with pytest.raises(MissingCassetteError) as excinfo:
+        store.replay(prompt="ask", system=None, params={})
+    assert "--probatio-provider claude-cli" in str(excinfo.value)
+    assert "--probatio-model claude-x" in str(excinfo.value)

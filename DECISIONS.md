@@ -1136,3 +1136,273 @@ different things, which is the one thing a cassette key may never do.
   them, would drop the one check that keeps a phase from exporting a name early. This is the same
   move Phase 4 made when it deleted the test pinning the Phase 3 judge stub (DECISIONS 27's
   neighbourhood), except that here the assertion is narrowed rather than removed.
+
+## 59. Budgets are evaluated per run, and any run over the ceiling fails the case
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §3.7 evaluates a case's ceilings "on the sum over all provider calls the SUT made
+  during the case". Under `--runs 5` a case makes five sets of calls. Is the ceiling checked
+  against each run or against the total?
+- **A:** Per run. `check` calls `evaluate_budget` once per run over that run's completions, and
+  the case fails if any run exceeded a ceiling. The report still totals every run for
+  `CaseResult.cost_usd` and for the session's `--max-cost` accumulator.
+- **Why:** `budget: {max_cost_usd: 0.01}` in a case file is a statement about answering that
+  question once — the author wrote it looking at one call, and it does not become a different
+  claim because the runner was invoked with `--runs 5`. Summing across runs would make every
+  ceiling in every suite fail as soon as somebody measured stability, which would make the two
+  features mutually exclusive. Failing on *any* run rather than on the mean is the same
+  conservatism the ceiling itself expresses: a ceiling is a limit, not a target, and a case that
+  costs three cents one run in five is a case that costs three cents. Rejected alternative:
+  checking the mean per-run cost, which is arguably the fairer statistic and hides exactly the
+  outlier a ceiling exists to catch.
+
+## 60. A case's ceiling covers its own calls; judge and variant calls reach the session total only
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Phase 6 left this open (its run-log line says so). A judged case calls the model twice —
+  once to answer, once to grade — and a case with three relations calls it once per variant per
+  run. Which of those count against `budget.max_cost_usd`?
+- **A:** Only the calls the system under test made while answering the case. Judge calls and
+  variant calls are recorded against the session's `--max-cost` total under the case's id, and
+  are not part of the per-case ceiling.
+- **Why:** The ceiling answers "what does it cost to serve this request", which is a property of
+  the application the author is shipping. A judge is the harness measuring the answer, and a
+  metamorphic variant is the harness asking the same question a fourth way; folding either into
+  the case's ceiling would mean that adding a relation to a test changes what the application is
+  reported to cost, and that a suite could be brought under budget by grading less. Both are
+  nonetheless real money, which is why they reach the session total: `--max-cost` is what a CI
+  owner sets to stop a pull request spending forty dollars, and forty dollars of variants is
+  forty dollars. Rejected alternatives: counting everything against the case, which makes the
+  per-case figure unusable for capacity planning and couples it to the test's decorators; and
+  counting nothing but the case anywhere, which lets a suite of relations run up an unbounded
+  bill that no ceiling sees.
+
+## 61. `--runs` is registered with a `--probatio-runs` fallback and a fixed destination
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §3.12 says that if `--runs` collides with another installed plugin at registration,
+  fall back to `--probatio-runs` and record it here. How is a collision detected, and how does
+  the rest of the code read the value without knowing which name won?
+- **A:** `_add_runs_option` tries `--runs` and then `--probatio-runs`, catching the `ValueError`
+  pytest's option group raises for a name already added, and both register under the same
+  destination, `probatio_runs`. Everything reads `config.getoption("probatio_runs")`, so no
+  caller knows or cares. If both names are taken the plugin refuses to configure rather than
+  silently running every case once. In this repository's environment no plugin takes `--runs`, so
+  the fallback branch is exercised by a unit test against a stub option group rather than by an
+  installed collision.
+- **Why:** Reading the flag by destination is the difference between one conditional at
+  registration and a conditional at every read; it also means a message that quotes the flag can
+  quote the one that actually exists. Refusing when both are taken is the DECISIONS 33 rule for
+  a store that cannot honour its own promise: a `--runs 5` that was silently ignored reports a
+  stability score of nothing over a suite the user believes was measured. Rejected alternative:
+  detecting the collision by inspecting the parser's registered options before adding, which
+  reaches into pytest's internals to learn what its own exception already says.
+
+## 62. The sanctioned deletion, and the byte-identity gate that now allows exactly it
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** `CLAUDE.md`'s gate condition 5 sanctions one edit to `examples/demo_suite/`: the Phase 9
+  deletion of the temporary `collect_ignore` import guard at the top of its `conftest.py`. How
+  does the gate keep checking everything else?
+- **A:** The five lines were deleted, and the repository-level `conftest.py` that repeated the
+  exclusion (DECISIONS 16) was deleted with them, in this commit.
+  `tests/test_demo_spec.py::test_the_demo_suite_differs_from_its_introducing_commit_by_the_deletion_alone`
+  now holds the guard text as a module constant and asserts three things against the Phase 1
+  commit: that `conftest.py` is the **only** file that differs, that the guard is present in the
+  committed original, and that the working-tree file equals the original with that exact block
+  removed once. `git status --porcelain` still has to show no untracked file inside the
+  directory. Two Phase 2 tests retired with the guard: the collection test that asserted the
+  suite failed to import on the first missing export, and the lifecycle test that asserted the
+  repository-level exclusion existed exactly while an export was missing; both were about a
+  transitional state that no longer exists, and both are replaced by tests that run the suite.
+- **Why:** Comparing a file against "the original minus this literal block" is stricter than
+  reading a diff and counting removed lines: a session that deleted the guard *and* changed a
+  scripted answer would produce a diff of the permitted shape and fail this check. Keeping the
+  guard text in the test rather than deriving it from the diff also means the sanctioned edit is
+  written down in executable form, which is what `CLAUDE.md` asks a sanctioned exception to be.
+  Rejected alternative: allowing any change to `conftest.py` and byte-comparing the other files,
+  which is two lines shorter and unfreezes the file that wires the whole example.
+
+## 63. A verdict is the exact assertions; budgets and snapshots fail the case beside it
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §0 defines a verdict as "the boolean result of a case's exact assertions taken
+  together". Spec §3.7 says a budget ceiling fails the build and §3.6 says snapshot drift is a
+  failure. Does a case whose latency ceiling was exceeded have a failing *verdict*?
+- **A:** No. `CaseResult.verdict` is the assertions and nothing else; `CaseResult.passed` is
+  the verdict floor being met **and** no budget ceiling exceeded **and** no snapshot drifted, and
+  it is `passed` that decides whether `check` raises. The pass rate, the Wilson interval and every
+  relation's violation rate are computed over the verdict.
+- **Why:** Spec §0's definition is load-bearing in two places that would otherwise quietly break.
+  A relation compares a variant's verdict with the original's, and if a verdict included the
+  latency ceiling then a variant that happened to run four milliseconds slower would be reported
+  as a metamorphic violation — a claim about the model's semantics drawn from the machine's
+  clock. A pass rate would likewise mix model nondeterminism with wall-clock noise, and the
+  stability score, which is a mean of pass rates, would move when the CI runner was busy.
+  Rejected alternative: one boolean covering everything, which is simpler to explain and makes
+  the two headline features measure the harness.
+
+## 64. The reported verdict is the majority verdict, explained by a run that agreed with it
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** A case that ran five times has five verdicts and one row in the report. Which one is
+  shown, and which run's assertion results are printed beside it?
+- **A:** The majority verdict (spec §3.10 defines one per case), and the assertion results of the
+  first run that agreed with it.
+- **Why:** The first run is the obvious choice and is wrong for exactly the case the demo suite
+  exists to show: `flu-antivirals-flaky` fails its first run and passes the other four, so a
+  report keyed on run zero would print "0 of 2 assertions passed" on a row marked `pass`. Taking
+  the results from a run that agreed with the reported verdict makes the row internally
+  consistent in both directions — a failing case is explained by a run that failed. The first run
+  is still what the snapshot compares, because spec §3.6 says so and because a baseline has to
+  be pinned to something that does not depend on how the majority happened to fall. Rejected
+  alternative: showing run zero throughout, which is one fewer concept and prints a self-
+  contradicting row.
+
+## 65. `n_below_floor` counts the repeated cases only
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §3.10 defines `n_below_floor` as "the number of cases whose Wilson lower bound
+  falls below their floor". Under `--runs 1` every case's lower bound is about 0.21 and every
+  default floor is 1.0, so the answer is "all of them", for every suite, always.
+- **A:** Count only the cases that ran more than once — the same population the stability score
+  averages — and print the count as `N of M`.
+- **Why:** A statistic whose value is "all of them" for the default invocation is not a
+  statistic, and it sits two lines under a stability score that correctly says "not measured".
+  One run supports no interval worth acting on, so counting it claims a measurement that was not
+  taken, which is the same rule DECISIONS 8 applies to a relation with no variants and
+  DECISIONS 36 to a ceiling with no calls. Printing the denominator matters too: at `--runs 5`
+  the honest answer really is "12 of 12", because no finite number of runs proves a rate of
+  exactly 1.0, and a reader needs to see what the count is out of before drawing a conclusion
+  from it. Rejected alternative: the literal reading, which is defensible and makes the line
+  noise in every default run.
+
+## 66. Probatio budgets the calls it can see: its own fixtures, and the completion a SUT returns
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §3.7 says the per-case ceiling is evaluated over "all provider calls the SUT made
+  during the case (the `CassetteProvider` records them)". But a suite may hand the system under
+  test a provider Probatio never built — the demo suite's `conftest.py` does exactly that
+  (DECISIONS 9), substituting its own `FakeProvider`. Where do the calls come from then?
+- **A:** From two places, unioned. The `provider` and `judge_provider` fixtures wrap the adapter
+  in an observing wrapper that reports every completion to the run state while a case is running;
+  and if the system under test **returns** a `Completion` rather than a `str`, that completion
+  counts too, unless it is the very object an instrumented provider already reported (compared by
+  identity, since `Completion` is frozen). A suite whose system under test uses its own provider
+  and returns plain text is reported as having made no calls, which DECISIONS 36 already renders
+  as two unenforceable ceilings and a warning rather than as a pass.
+- **Why:** The wrapper alone is not enough, because overriding the fixture is a documented and
+  necessary thing to do; the returned completion alone is not enough, because a system under test
+  that makes three calls and returns text would be budgeted at zero. Together they cover every
+  shape a real suite takes, and the failure mode of the gap that remains is loud rather than
+  silent. `docs/providers.md`'s cost section and the `check` docstring both say that returning a
+  `Completion` is what makes a ceiling enforceable. Rejected alternatives: requiring the system
+  under test to use the fixture, which would break the demo suite and forbid a user from testing
+  an application that builds its own client; and inspecting the call stack for provider objects,
+  which is guesswork dressed as instrumentation.
+
+## 67. `--probatio-junit` and `--probatio-results` are registered and refused
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §3.12 lists both flags and spec §3.12's acceptance criterion says option help text
+  lists every flag — but their reporters are Phase 10's. Register them and ignore them, or leave
+  them out until the reporters exist?
+- **A:** Register them, so `--help` is spec §3.12's whole surface, and raise
+  `ProbatioConfigError` from `pytest_configure` when either is given, naming Phase 10. pytest
+  reports that as an internal error with a non-zero exit status, which is loud, and the message
+  is in the output; a unit test asserts the error and its text directly, and a `pytester` test
+  asserts the session fails.
+- **Why:** A flag that is accepted and writes nothing is how a CI pipeline ends up green against
+  a report that was never produced — the pipeline's own `if [ -f results.json ]` is the thing
+  that silently stops firing. Refusing is the same rule as DECISIONS 33's unparsable baseline:
+  a promise the tool cannot honour is said out loud. Rejected alternatives: leaving the flags
+  unregistered until Phase 10, which fails the acceptance criterion and gives `unrecognized
+  arguments` instead of a sentence naming the phase; and accepting them with a warning, which
+  is only read by somebody already looking.
+
+## 68. Budget results are recorded into the snapshot baseline
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** DECISIONS 38 anticipated this phase putting budget results "next to a case's other
+  results", with a `scores` baseline recording `null` for them. Does the baseline's `assertions`
+  list actually include `budget_cost` and `budget_latency`?
+- **A:** Yes. `check` passes `[*assertion_results, *budget_results]` to `BaselineStore.compare`,
+  so a `scores` baseline records both with `score: null` and a `passed` flag.
+- **Why:** Because a ceiling that starts failing is drift, and it is the kind of drift a scores
+  baseline is for: the case still passes its assertions, the answer still reads fine, and the
+  application has started costing twice as much. DECISIONS 38's choice of `None` for the score is
+  what makes this safe — a latency that wobbled by two milliseconds records the same `null` it
+  recorded last week, so only a flipped verdict is drift. The cost is coupling: adding
+  `--probatio-prices` to a run flips an unenforceable ceiling to an enforceable one and re-records
+  every baseline once. Rejected alternative: recording only the case's own assertions, which
+  keeps the baseline purely about the model's answer and gives up the one mechanism that would
+  catch a ceiling silently becoming unenforceable.
+
+## 69. Any non-fake provider must be given a model, not only `claude-cli`
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** The Phase 9 brief requires `--probatio-provider claude-cli` without `--probatio-model`
+  to be refused at configure time, because a tape whose model is the literal string `claude-cli`
+  cannot tell two models apart. `anthropic` has the same shape.
+- **A:** Both live providers are refused without a model, and so is a live
+  `--probatio-judge-provider` with neither `--probatio-judge-model` nor `--probatio-model` to
+  fall back on. `fake` needs nothing.
+- **Why:** DECISIONS 43's amendment is the whole argument: the cassette key's model is
+  `params["model"] or the adapter's constructor model`, no demo case names a model in `params`,
+  and a key that resolves to `None` or to an adapter name replays one model's tape against
+  another silently. That reasoning does not mention `claude-cli` anywhere; it is about the key.
+  `AnthropicProvider` would additionally fail at call time with an SDK error halfway through a
+  session, which is a worse place to learn it. Rejected alternative: refusing only the provider
+  the brief names, which leaves the identical hole one flag away.
+
+## 70. `Probatio` lives in `session.py`, and `plugin.py` holds only the pytest surface
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** Spec §3.12 puts the `Probatio` class in its `plugin.py` section, alongside the options,
+  the markers and the fixtures.
+- **A:** The class and its resolved-settings object live in a new `src/probatio/session.py`;
+  `plugin.py` imports and re-exports `Probatio` and holds the four hooks, the fifteen options,
+  the two markers and the three fixtures. Spec §3.12's list of what the pytest surface *offers* is
+  unchanged.
+- **Why:** `check` composes six modules and is the longest function in the package; `plugin.py`
+  is loaded by pytest in every session of every project that installs Probatio and is the file a
+  reader opens to find out what the flags are. Keeping them apart also makes `check` testable
+  without a pytest session at all — `tests/test_session_check.py` builds a `Probatio` from a
+  `ProbatioSettings` and a `RunState` and exercises budgets, snapshots, relations and stability
+  with no fixture anywhere, which is thirty-eight tests that would otherwise each need a
+  `pytester` subprocess. Rejected alternative: one file, as the spec's section headings suggest,
+  which is what the spec says and costs a second of subprocess time per behaviour tested.
+
+## 71. The demo suite's three baselines are committed
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** `pytest examples/demo_suite` is part of this repository's own `testpaths`, and three of
+  its cases declare `snapshot: scores`. The first run records `.probatio/baseline/test_demo/*.json`
+  under the rootdir. `.gitignore` deliberately does not ignore `.probatio/`. Commit them or not?
+- **A:** Commit them. The demo suite is fully deterministic — a `FakeProvider` with a fixed cost,
+  a fixed latency and a scripted answer per case — so the recorded scores are reproducible, and
+  from this commit onward the gate compares against them instead of re-recording.
+- **Why:** These files are the artefact spec §5 says is committed, and a repository that ships a
+  snapshot feature and gitignores its own snapshots is not using it. Committing them turns the
+  gate into a real drift check on the example: a change to the trigram backend, to `contains`
+  scoring or to the budget results' shape now fails `pytest -q` with a per-assertion table rather
+  than passing quietly. The cost is that such a change needs `pytest --update-baseline` and a
+  reviewed diff, which is the workflow the feature is for. Rejected alternative: adding
+  `.probatio/baseline/test_demo/` to `.gitignore`, which keeps every phase's diff smaller and
+  means the one snapshot suite in the repository never actually compares anything.
+
+## 72. A missing or stale tape is warned about in the report as well as raised
+
+- **Date:** 2026-09-04 (Phase 9)
+- **Q:** The Phase 9 brief asks for "stale or missing tapes" among the report's warnings, but
+  spec §3.8 makes both of them errors that stop the case, and spec §3.12's acceptance requires
+  `MissingCassetteError` in the test output.
+- **A:** Both. `check` catches `MissingCassetteError` and `StaleCassetteError` around the system
+  under test, adds the error's own message to the run state's warnings, and re-raises unchanged.
+- **Why:** The two say different things to different readers. The exception is for the developer
+  reading the traceback of the case that stopped; the warning is for whoever reads the report of
+  a run in which nine cases failed for the same reason, and wants to see that in one block rather
+  than nine tracebacks. Re-raising unchanged is what keeps spec §3.12's acceptance criterion
+  true and keeps the failure attributable to the case that caused it. Rejected alternative:
+  swallowing the error and failing the case through the report, which would make a suite with no
+  tapes at all report twelve ordinary assertion failures and bury the one fact that explains them.

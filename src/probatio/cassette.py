@@ -59,6 +59,7 @@ __all__ = [
     "CASSETTE_MODES",
     "IMPORT_PROVIDER",
     "RECORD_COMMAND",
+    "record_command",
     "SINGLE_SAMPLE_NOTE",
     "ActiveCase",
     "Cassette",
@@ -83,6 +84,25 @@ CASSETTE_MODES: Final[tuple[CassetteMode, ...]] = ("replay", "record", "off")
 
 RECORD_COMMAND: Final = "pytest --cassette=record"
 """What every missing or stale tape tells the reader to run, with the provider of their choice."""
+
+
+def record_command(provider: str | None = None, model: str | None = None) -> str:
+    """Compose the command that records a missing tape, naming the provider that would answer.
+
+    Args:
+        provider: The configured provider's name, or ``None`` to leave the flag out. ``fake`` is
+            left out too: a tape recorded from a fake is not what a reader is being told to make.
+        model: The configured model, named alongside a live provider because Phase 9's plugin
+            refuses a live provider that has none.
+
+    Returns:
+        A runnable command line.
+    """
+    if not provider or provider == "fake":
+        return RECORD_COMMAND
+    command = f"{RECORD_COMMAND} --probatio-provider {provider}"
+    return f"{command} --probatio-model {model}" if model else command
+
 
 SINGLE_SAMPLE_NOTE: Final = "1 recorded sample"
 """The phrase spec §3.8 asks a report to carry when a tape is replayed for more runs than it has."""
@@ -267,6 +287,7 @@ class CassetteStore:
         cassette_dir: The root the tapes live under.
         clock: The clock a recording's ``recorded`` field is read from.
         notes: Observations a reporter should surface, in the order they were first made.
+        record_command: The command a missing or stale tape tells the reader to run.
     """
 
     def __init__(self, cassette_dir: Path | None = None, *, clock: Clock = utc_now) -> None:
@@ -277,9 +298,15 @@ class CassetteStore:
             clock: A callable returning the instant written into a tape's ``recorded`` field.
                 Defaults to the current UTC time; tests inject a fixed one, so nothing in this
                 repository's suite depends on the wall clock.
+
+        The store also carries a :attr:`record_command`, the fix clause every missing-tape and
+        stale-tape error names. Phase 9's plugin replaces it with one naming the configured
+        provider and model, because ``pytest --cassette=record`` alone would re-record a tape
+        from whatever provider happened to be the default.
         """
         self.cassette_dir = cassette_dir if cassette_dir is not None else default_cassette_dir()
         self.clock = clock
+        self.record_command = RECORD_COMMAND
         self.notes: list[str] = []
         self._active: ActiveCase | None = None
         self._template: str | None = None
@@ -410,7 +437,7 @@ class CassetteStore:
             raise ProbatioConfigError(
                 f"the cassette at {path} cannot be read: {exc}",
                 case_id=case_id,
-                fix=RECORD_COMMAND,
+                fix=self.record_command,
             ) from exc
         try:
             cassette = Cassette.model_validate_json(text)
@@ -418,7 +445,7 @@ class CassetteStore:
             raise ProbatioConfigError(
                 f"the cassette at {path} is not a readable cassette file: {exc.errors()[0]['msg']}",
                 case_id=case_id,
-                fix=RECORD_COMMAND,
+                fix=self.record_command,
             ) from exc
         self._cache[(suite, case_id)] = cassette
         return cassette
@@ -491,7 +518,7 @@ class CassetteStore:
             raise MissingCassetteError(
                 f"there is no cassette at {path} to replay",
                 case_id=case.case_id,
-                fix=RECORD_COMMAND,
+                fix=self.record_command,
             )
         key = self.key_for(prompt, system, params, model)
         interaction = cassette.find(key)
@@ -500,7 +527,7 @@ class CassetteStore:
                 f"the cassette at {path} has no recorded interaction {key}: the prompt, the "
                 "model or the params changed since it was recorded, so it must be re-recorded",
                 case_id=case.case_id,
-                fix=RECORD_COMMAND,
+                fix=self.record_command,
             )
         if len(interaction.completions) == 1 and case.run_index > 0:
             self._note(

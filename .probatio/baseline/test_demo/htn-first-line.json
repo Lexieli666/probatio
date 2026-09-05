@@ -1,0 +1,35 @@
+{
+  "assertions": [
+    {
+      "assertion_type": "contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "not_contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "judge",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "budget_cost",
+      "passed": true,
+      "score": null
+    },
+    {
+      "assertion_type": "budget_latency",
+      "passed": true,
+      "score": null
+    }
+  ],
+  "case_id": "htn-first-line",
+  "mode": "scores",
+  "model": "fake-1",
+  "output": null,
+  "prompt_hash": "a53729ffb2f91d43",
+  "recorded": "2026-09-05T01:35:52Z"
+}

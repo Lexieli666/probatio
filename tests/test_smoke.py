@@ -13,7 +13,20 @@ def test_version_string() -> None:
 
 def test_plugin_module_imports_cleanly() -> None:
     plugin = importlib.import_module("probatio.plugin")
-    assert callable(plugin.pytest_configure)
+    assert plugin.__all__ == [
+        "FLAKY_MARKER",
+        "PROVIDER_CHOICES",
+        "RELATION_MARKER",
+        "RUNS_DEST",
+        "Probatio",
+        "pytest_addoption",
+        "pytest_configure",
+        "pytest_sessionfinish",
+        "pytest_terminal_summary",
+        "pytest_unconfigure",
+    ]
+    for name in plugin.__all__:
+        assert hasattr(plugin, name), name
 
 
 def test_cli_module_imports_cleanly() -> None:

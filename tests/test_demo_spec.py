@@ -1,14 +1,10 @@
-"""Phase 1 checks on ``examples/demo_suite/``, the executable design specification.
+"""Phase 9: ``examples/demo_suite/`` runs, and is still the file Phase 1 committed.
 
-The demo suite is the specification the public API is written against, so every check here had to
-hold before a single line of that API existed and has to keep holding as it arrives. The three
-checks are: collection tracks the public API exactly, neither ahead of it nor behind; the
-directory is byte-identical to the commit that introduced it; and the keyword table in
-``conftest.py`` really does select one case each, which is what makes the demo's violation rates
-mean anything.
-
-The only use of Probatio here is ``hasattr`` on the module, to ask which of the names the demo
-imports exist yet. Nothing here calls the API.
+The demo suite is the specification the public API was written against, and this phase is where it
+finally runs. Three things are checked here: that the directory is byte-identical to the commit
+that introduced it apart from the one sanctioned deletion, that the keyword table in
+``conftest.py`` still selects one case each, and that the suite does through ``pytester`` what its
+own README says it does.
 """
 
 from __future__ import annotations
@@ -27,11 +23,34 @@ import probatio
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEMO = REPO_ROOT / "examples" / "demo_suite"
 
+SANCTIONED_DELETION = (
+    "try:  # Phase 9 deletes this try/except block; it is the one sanctioned edit (DECISIONS.md).\n"
+    "    from probatio import FakeProvider  # noqa: F401\n"
+    "except ImportError:\n"
+    '    collect_ignore = ["test_demo.py"]\n'
+    "\n"
+)
+"""The import guard Phase 9 removed. Gate condition 5 allows this and nothing else."""
+
+GUARDED_FILE = "examples/demo_suite/conftest.py"
+"""The only file the sanctioned deletion touches."""
+
 
 def _git(*args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=False
     )
+
+
+def _git_available() -> bool:
+    return shutil.which("git") is not None and (REPO_ROOT / ".git").exists()
+
+
+def _introducing_commit() -> str | None:
+    log = _git("log", "--diff-filter=A", "--format=%H", "--", "examples/demo_suite")
+    if log.returncode != 0 or not log.stdout.split():
+        return None
+    return log.stdout.split()[-1]
 
 
 def _literal_assignment(module: ast.Module, name: str) -> Any:
@@ -73,73 +92,58 @@ def _probatio_imports(module: ast.Module) -> list[str]:
     raise AssertionError("test_demo.py does not import from probatio")
 
 
-def test_demo_suite_collection_tracks_the_public_api(pytester: pytest.Pytester) -> None:
-    """The suite collects exactly when every name it imports exists, and errors only on those.
+@pytest.fixture
+def demo_copy(pytester: pytest.Pytester) -> Path:
+    """A copy of the frozen suite in a temporary rootdir, so a run writes nothing into it."""
+    target = pytester.path / "demo_suite"
+    shutil.copytree(DEMO, target, ignore=shutil.ignore_patterns("__pycache__", ".probatio"))
+    return target
 
-    Phase 1's guard in the demo's own ``conftest.py`` probes ``FakeProvider``, so it stopped
-    firing when Phase 2 exported it (``DECISIONS.md`` entry 16, and the repository-level
-    ``conftest.py`` that repeats the exclusion for ``pytest -q``). Until the last of the names
-    below exists, importing ``test_demo.py`` in isolation is expected to fail on the first one
-    that does not — and on nothing else, which is what this test is for. Phase 9 takes the other
-    branch: everything imports, and the suite collects and passes.
-    """
+
+# -- gate condition 5 --------------------------------------------------------------------------
+
+
+def test_the_public_api_the_demo_imports_is_complete() -> None:
+    """Every name ``test_demo.py`` imports now exists, which is what lets the guard go."""
     imported = _probatio_imports(ast.parse((DEMO / "test_demo.py").read_text(encoding="utf-8")))
     missing = [name for name in imported if not hasattr(probatio, name)]
-    shutil.copytree(
-        DEMO, pytester.path / "demo_suite", ignore=shutil.ignore_patterns("__pycache__")
-    )
-    result = pytester.runpytest_subprocess("demo_suite", "--collect-only")
+    assert missing == [], f"the demo suite still cannot be imported: {missing}"
 
-    if not missing:
-        assert result.ret == pytest.ExitCode.OK
-        assert "ERRORS" not in result.stdout.str()
-        return
 
-    assert result.ret == pytest.ExitCode.INTERRUPTED
-    result.stdout.fnmatch_lines(
-        [
-            "*collected 0 items / 1 error*",
-            "*ERROR collecting demo_suite/test_demo.py*",
-            f"*ImportError: cannot import name '{missing[0]}' from 'probatio'*",
-        ]
-    )
-    assert result.stdout.str().count("ERROR collecting") == 1, (
-        "the only thing wrong with the demo suite must be the exports it is waiting for"
+def test_the_import_guard_is_gone_and_nothing_replaced_it() -> None:
+    text = (DEMO / "conftest.py").read_text(encoding="utf-8")
+    assert "collect_ignore" not in text
+    assert "except ImportError" not in text
+    assert not (REPO_ROOT / "conftest.py").exists(), (
+        "the repository-level exclusion (DECISIONS 16) is Phase 9's to delete"
     )
 
 
-def test_demo_suite_is_byte_identical_to_its_introducing_commit() -> None:
-    """Gate condition 5: the directory never changes after the commit that added it.
-
-    The comparison is against the **working tree**, not against ``HEAD``: an edit that has not
-    been committed yet is exactly the edit this gate exists to catch, and comparing two commits
-    would pass right up until the moment the damage was recorded. ``git diff`` only sees tracked
-    files, so ``git status --porcelain`` runs alongside it to catch a new untracked file dropped
-    into the frozen directory. Both ignore ``__pycache__``, which is git-ignored.
-    """
-    if shutil.which("git") is None or not (REPO_ROOT / ".git").exists():
+def test_the_demo_suite_differs_from_its_introducing_commit_by_the_deletion_alone() -> None:
+    """Gate condition 5, with the one sanctioned exception `CLAUDE.md` names (DECISIONS 62)."""
+    if not _git_available():
         print("git is unavailable here; the byte-identity check has nothing to compare against")
         return
-
-    log = _git("log", "--diff-filter=A", "--format=%H", "--", "examples/demo_suite")
-    if log.returncode != 0 or not log.stdout.split():
+    commit = _introducing_commit()
+    if commit is None:
         print("examples/demo_suite is not committed yet; nothing to compare against")
         return
 
-    introducing_commit = log.stdout.split()[-1]
-    diff = _git("diff", "--quiet", introducing_commit, "--", "examples/demo_suite")
-    names = _git("diff", "--name-only", introducing_commit, "--", "examples/demo_suite")
-    assert diff.returncode == 0, (
-        f"examples/demo_suite has changed since {introducing_commit[:12]}, which introduced it: "
-        f"{names.stdout.split()}. The example is the specification; change the implementation "
-        "instead, or record a sanctioned exception in DECISIONS.md."
+    changed = _git("diff", "--name-only", commit, "--", "examples/demo_suite").stdout.split()
+    assert changed == [GUARDED_FILE], (
+        f"examples/demo_suite changed in {changed} since {commit[:12]}; the only permitted "
+        f"difference is the deletion of the import guard from {GUARDED_FILE}."
     )
 
-    status = _git("status", "--porcelain", "--", "examples/demo_suite")
-    assert status.stdout == "", (
-        "examples/demo_suite has uncommitted changes or untracked files: "
-        f"{status.stdout.splitlines()}. The example is frozen; nothing new belongs inside it."
-    )
+    original = _git("show", f"{commit}:{GUARDED_FILE}").stdout
+    assert SANCTIONED_DELETION in original, "the guard is not where Phase 1 put it"
+    assert (DEMO / "conftest.py").read_text(encoding="utf-8") == original.replace(
+        SANCTIONED_DELETION, "", 1
+    ), "conftest.py differs from the Phase 1 file by more than the deleted guard"
+
+    status = _git("status", "--porcelain", "--", "examples/demo_suite").stdout
+    untracked = [line for line in status.splitlines() if line.startswith("??")]
+    assert untracked == [], f"nothing new belongs inside the frozen directory: {untracked}"
 
 
 def test_every_scripted_keyword_selects_exactly_one_case() -> None:
@@ -169,21 +173,94 @@ def test_every_scripted_keyword_selects_exactly_one_case() -> None:
             )
 
 
-def test_the_repository_level_exclusion_lives_exactly_as_long_as_it_is_needed() -> None:
-    """The root ``conftest.py`` is a Phase 2-to-8 stopgap; Phase 9 has to delete it.
+# -- the suite runs -------------------------------------------------------------------------------
 
-    It exists because the frozen guard probes ``FakeProvider``, which now exists, so ``pytest -q``
-    would otherwise fail to collect ``test_demo.py``. Once every name the demo imports is
-    exported, the exclusion would silently hide the suite the gate is supposed to run, so this
-    test turns "remember to delete it" into a failure.
-    """
-    imported = _probatio_imports(ast.parse((DEMO / "test_demo.py").read_text(encoding="utf-8")))
-    missing = [name for name in imported if not hasattr(probatio, name)]
-    root_conftest = REPO_ROOT / "conftest.py"
-    excluded = root_conftest.exists() and "demo_suite/test_demo.py" in root_conftest.read_text(
-        encoding="utf-8"
+
+def test_the_demo_suite_collects_and_passes(pytester: pytest.Pytester, demo_copy: Path) -> None:
+    """Requirement 12: the frozen suite passes, unmodified, offline."""
+    collected = pytester.runpytest_subprocess("demo_suite", "--collect-only", "-q")
+    assert collected.ret == pytest.ExitCode.OK
+    assert "12 tests collected" in collected.stdout.str()
+
+    result = pytester.runpytest_subprocess("demo_suite")
+    result.assert_outcomes(passed=12)
+    output = result.stdout.str()
+    assert "cases:" in output and "relations:" in output
+
+
+def test_runs_five_prints_a_stability_section_and_the_flaky_case_passes_at_point_eight(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """Requirement 12, and the command the demo's README tells a reader to run."""
+    result = pytester.runpytest_subprocess("demo_suite", "--runs", "5")
+    result.assert_outcomes(passed=12)
+    output = result.stdout.str()
+    assert "stability score:" in output
+    assert "cases whose Wilson lower bound is below their floor:" in output
+    flaky = next(line for line in output.splitlines() if "flu-antivirals-flaky" in line)
+    assert "0.80" in flaky, flaky
+    assert "pass" in flaky and "FAIL" not in flaky
+
+
+def test_the_expected_fail_cases_report_is_readable(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """Requirement 12: the suite stays green while the report shows the failing case."""
+    result = pytester.runpytest_subprocess("demo_suite")
+    result.assert_outcomes(passed=12)
+    row = next(
+        line
+        for line in result.stdout.str().splitlines()
+        if "anxiety-expected-fail" in line and "FAIL" in line
     )
-    assert excluded is bool(missing), (
-        "the root conftest.py must exclude the demo suite while "
-        f"{missing or 'no'} exports are missing, and must not once they exist"
+    assert "1/3" in row, "one of its three assertions passes; the report says which"
+
+
+def test_the_relations_table_reports_the_demos_violation_rates(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """The two headline features, in one table, from the frozen example."""
+    output = pytester.runpytest_subprocess("demo_suite").stdout.str()
+    names = ("order_invariant", "distractor_robust", "format_jitter", "paraphrase_invariant")
+    stripped = [line.strip() for line in output.splitlines()]
+    rows = {line.split()[0]: line for line in stripped if line.startswith(names)}
+    assert set(rows) == {
+        "order_invariant",
+        "distractor_robust",
+        "format_jitter",
+        "paraphrase_invariant",
+    }
+    assert "0.00" in rows["order_invariant"] and "0.00" in rows["distractor_robust"]
+    assert "htn-definition" in rows["format_jitter"]
+    assert "htn-definition" in rows["paraphrase_invariant"]
+
+
+def test_replay_with_no_tapes_and_no_override_fails_with_a_missing_cassette_error(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """Requirement 12. The demo's fixtures step aside for a live provider (DECISIONS 9), and
+    replay never calls the adapter it wraps, so no CLI subprocess is ever started."""
+    result = pytester.runpytest_subprocess(
+        "demo_suite",
+        "--probatio-provider",
+        "claude-cli",
+        "--probatio-model",
+        "claude-x",
+        "--cassette=replay",
+        "--cassette-dir",
+        "empty-tapes",
     )
+    assert result.ret != 0
+    assert "MissingCassetteError" in result.stdout.str()
+
+
+def test_the_demo_writes_its_baselines_under_rootdir_and_not_into_itself(
+    pytester: pytest.Pytester, demo_copy: Path
+) -> None:
+    """The demo's README says so, and the frozen directory has to stay frozen while it runs."""
+    pytester.runpytest_subprocess("demo_suite").assert_outcomes(passed=12)
+    recorded = sorted(
+        path.name for path in (pytester.path / ".probatio" / "baseline" / "test_demo").glob("*")
+    )
+    assert recorded == ["htn-definition.json", "htn-first-line.json", "t2d-metformin.json"]
+    assert not (demo_copy / ".probatio").exists()

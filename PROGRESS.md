@@ -15,7 +15,7 @@ with phase N's code.
 - [x] **Phase 6** — Budgets and the unenforceable rule (spec §3.7)
 - [x] **Phase 7** — Cassettes and `import-cassettes` (spec §3.8, §3.13)
 - [x] **Phase 8** — Metamorphic layer and `freeze-variants` (spec §3.9, §3.13)
-- [ ] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
+- [x] **Phase 9** — Stability engine, collector, terminal + markdown reporters (spec §3.10–3.12);
   also deletes the `collect_ignore` guard in the demo suite's `conftest.py` **and** the
   repository-level `conftest.py` that repeats it (DECISIONS 16)
 - [ ] **Phase 10** — JUnit XML and results JSON reporters (spec §3.11)
@@ -302,3 +302,105 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   `probatio` fixture owns** — reading the marks off an item, running `evaluate_relation` after the
   original case inside `check`, and the report's relations table; `plugin.py` registers the marker
   and nothing else. DECISIONS 47–58; `docs/DESIGN.md` Phase 8; new `docs/relations.md`.
+- 2026-09-04 — **Phase 9** — gate green: `pytest -q` 856 passed, 0 skipped, 0 xfailed; coverage of
+  `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
+  `src tests examples`; `mypy --strict src/probatio` clean (44 source files);
+  `examples/demo_suite/` differs from 8a998af by **the one sanctioned edit and nothing else**, with
+  no untracked file inside it. Shipped `stability/` (`wilson`, `stats`), `collector.py`,
+  `session.py`, `reporters/` (`tables`, `terminal`, `markdown`) and the whole of `plugin.py`;
+  `probatio/__init__.py` now exports spec §6's complete list, adding `flaky_tolerant`,
+  `CaseResult` and `RunReport`. New `docs/stability.md`, enforced by `tests/test_docs_stability.py`,
+  which re-derives the two intervals it quotes from `wilson_interval`.
+  **The sanctioned edit (DECISIONS 62):** the five-line `try/except ImportError` guard is gone from
+  `examples/demo_suite/conftest.py`, and the repository-level `conftest.py` that repeated the
+  exclusion (DECISIONS 16) is deleted. `tests/test_demo_spec.py` now holds the guard text as a
+  constant and asserts that `conftest.py` is the only file that differs from the Phase 1 commit and
+  that it equals the committed original with exactly that block removed once; the two Phase 2 tests
+  about the transitional state retired with it.
+  `wilson_interval` returns exactly `(0.0, upper)` at k=0 and `(lower, 1.0)` at k=n, and (k=8,
+  n=10) is checked against the formula written out step by step in the test. `--runs N` runs
+  `check` N times with the same callable and the same fixtures; `@flaky_tolerant(p, n)`'s `n`
+  overrides `--runs` and the case passes at `pass_rate >= p`, which is why the demo's flaky case
+  runs five times even under a plain `pytest`. A verdict is the exact assertions and nothing else
+  (spec §0); budgets and snapshots fail the case beside it, so a variant four milliseconds slower
+  is never a metamorphic violation (DECISIONS 63). The reported per-case verdict is the majority
+  verdict and the row is explained by a run that agreed with it, because the flaky case fails run
+  zero (DECISIONS 64). `n_below_floor` counts the repeated cases only and prints its denominator
+  (DECISIONS 65). Budgets are per run and any run over a ceiling fails the case (DECISIONS 59);
+  a case's ceiling covers the calls its system under test made, while judge and variant calls reach
+  the `--max-cost` session total only (DECISIONS 60, closing Phase 6's open question). Probatio
+  budgets the calls it can see — its own instrumented fixtures, plus the `Completion` a system
+  under test returns, de-duplicated by identity — which is what makes the demo's own overridden
+  provider measurable at all (DECISIONS 66). Budget results are recorded into a `scores` baseline
+  with `score: null`, closing DECISIONS 38. `--runs` registers with a `--probatio-runs` fallback
+  under a fixed destination (DECISIONS 61); `--probatio-junit` and `--probatio-results` are
+  registered so `--help` is complete and refused at configure time until Phase 10 (DECISIONS 67);
+  any non-fake provider without `--probatio-model` is refused, and a missing tape's fix clause now
+  names the configured provider and model (DECISIONS 69). A missing or stale tape is added to the
+  report's warnings **and** re-raised (DECISIONS 72). `Probatio` lives in `session.py` so that
+  `check` is testable with no pytest session at all, which is what 38 of this phase's tests do
+  (DECISIONS 70).
+  **The four deferred `pytester` acceptances all landed here**: spec §3.6's snapshot lifecycle
+  (first run records, a changed output fails with a unified diff, `--update-baseline` makes the
+  next run pass, a changed `system` reports `prompt_changed`), spec §3.7's suite-level cost overrun
+  (non-zero exit plus the overrun line, with every case still passing), spec §3.8's
+  `--cassette=replay` with no tapes, and spec §3.12's three-case suite under `--runs 3`. The
+  results-JSON and JUnit halves of spec §3.12's acceptance wait for Phase 10, which is what those
+  two flags now say when given.
+  **The demo suite passes unmodified**, 12 tests, offline. Its three `snapshot: scores` baselines
+  are committed under `.probatio/baseline/test_demo/` (DECISIONS 71), so from this commit the
+  gate compares against them rather than re-recording. `pytest examples/demo_suite --runs 5`,
+  run at this commit, verbatim — **this is the first committed run the README may quote from in
+  Phase 13**:
+
+```
+  ============================= test session starts ==============================
+  platform darwin -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0
+  rootdir: /Users/yutongzhao/code/probatio
+  configfile: pyproject.toml
+  plugins: probatio-llm-0.1.0.dev0
+  collected 12 items
+
+  examples/demo_suite/test_demo.py ............                            [100%]
+
+  =================================== probatio ===================================
+  cases:
+    case                   verdict  assertions  pass rate  95% Wilson    floor  cost       latency ms  snapshot
+    ---------------------  -------  ----------  ---------  ------------  -----  ---------  ----------  ---------
+    htn-definition         pass     4/4         1.00       [0.57, 1.00]  1.00   $0.000500  100         unchanged
+    htn-first-line         pass     3/3         1.00       [0.57, 1.00]  1.00   $0.000500  100         unchanged
+    t2d-screening-json     pass     2/2         1.00       [0.57, 1.00]  1.00   $0.000500  100         -
+    t2d-metformin          pass     4/4         1.00       [0.57, 1.00]  1.00   $0.000500  100         unchanged
+    gerd-alarm-features    pass     3/3         1.00       [0.57, 1.00]  1.00   $0.000500  100         -
+    copd-spirometry        pass     2/2         1.00       [0.57, 1.00]  1.00   $0.000500  100         -
+    red-flag-chest-pain    pass     3/3         1.00       [0.57, 1.00]  1.00   $0.000500  100         -
+    insomnia-first-line    pass     4/4         1.00       [0.57, 1.00]  1.00   $0.000500  100         -
+    htn-definition         pass     4/4         1.00       [0.57, 1.00]  1.00   $0.000500  100         unchanged
+    t2d-metformin          pass     4/4         1.00       [0.57, 1.00]  1.00   $0.000500  100         unchanged
+    anxiety-expected-fail  FAIL     1/3         0.00       [0.00, 0.43]  1.00   $0.000500  100         -
+    flu-antivirals-flaky   pass     2/2         0.80       [0.38, 0.96]  0.80   $0.000500  100         -
+
+  relations:
+    relation              cases  n/a  violations  mean rate  worst case           worst rate
+    --------------------  -----  ---  ----------  ---------  -------------------  ----------
+    distractor_robust     7      1    0/70        0.00       gerd-alarm-features  0.00
+    format_jitter         7      1    15/105      0.14       htn-definition       0.33
+    order_invariant       6      2    0/50        0.00       gerd-alarm-features  0.00
+    paraphrase_invariant  2      0    5/30        0.17       htn-definition       0.33
+
+  stability score: 0.90 over 12 repeated case(s)
+  cases whose Wilson lower bound is below their floor: 12 of 12
+  cost: $0.031500 (no --max-cost ceiling)
+
+  warnings (7):
+    - htn-definition: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+    - htn-first-line: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+    - t2d-metformin: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+    - gerd-alarm-features: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+    - red-flag-chest-pain: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+    - insomnia-first-line: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+    - anxiety-expected-fail: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)
+  ============================== 12 passed in 0.09s ==============================
+```
+
+  DECISIONS 59–72; `docs/DESIGN.md` Phase 9; new `docs/stability.md`.
