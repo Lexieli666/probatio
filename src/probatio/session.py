@@ -29,7 +29,8 @@ is worth doing.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Final
@@ -220,7 +221,8 @@ class Probatio:
             if run_index == 0:
                 snapshot = self._compare_snapshot(case, results, budget_results, sut_result)
 
-            for name, measured in self._evaluate_relations(case, sut, verdict, results).items():
+            measured_relations = self._evaluate_relations(case, sut, verdict, results, run_index)
+            for name, measured in measured_relations.items():
                 relation_runs.setdefault(name, []).append(measured)
 
         stability = case_stability(verdicts, tolerance=self.tolerance)
@@ -264,23 +266,44 @@ class Probatio:
         self, case: LLMCase, sut: Callable[[LLMCase], str | Completion], run_index: int
     ) -> tuple[bool, list[AssertionResult], SutResult]:
         """Run the system under test once and evaluate the case's exact assertions."""
-        sut_result = self._call_sut(case, sut, run_index)
-        results = evaluate_case(
-            case,
-            sut_result.output,
-            judge_provider=self.judge_provider,
-            base_dir=self.settings.rootdir,
-            rubric_dirs=self.rubric_dirs,
-            validation_dir=self.settings.validation_dir,
-        )
+        with self._active_case(case, run_index):
+            sut_result = self._call_sut(case, sut)
+            results = evaluate_case(
+                case,
+                sut_result.output,
+                judge_provider=self.judge_provider,
+                base_dir=self.settings.rootdir,
+                rubric_dirs=self.rubric_dirs,
+                validation_dir=self.settings.validation_dir,
+            )
         return all(result.passed for result in results), results, sut_result
 
-    def _call_sut(
-        self, case: LLMCase, sut: Callable[[LLMCase], str | Completion], run_index: int
-    ) -> SutResult:
-        """Set the cassette context, run the system under test, and collect what it called."""
+    @contextmanager
+    def _active_case(self, case: LLMCase, run_index: int) -> Iterator[None]:
+        """Attribute every provider call made inside the block to one run of one case.
+
+        The block covers the system under test **and** the assertions, because a ``judge``
+        assertion is a provider call and a call with no active case belongs to no tape
+        (DECISIONS 90). A variant opens the block under the original case's id, which is also
+        its own: ``with_field`` copies a case without renaming it, so one case's tape holds the
+        interactions of every variant taken from it.
+
+        Args:
+            case: The case, or the variant, whose id the calls are filed under.
+            run_index: The zero-based run number; ``--runs N`` opens the block N times.
+
+        Yields:
+            Nothing; the context is held on the cassette store.
+        """
         store = self.state.store
         store.begin_case(self.suite, case.id, run_index)
+        try:
+            yield
+        finally:
+            store.end_case()
+
+    def _call_sut(self, case: LLMCase, sut: Callable[[LLMCase], str | Completion]) -> SutResult:
+        """Run the system under test and collect the calls it made, and only those."""
         sink: list[Completion] = []
         previous = self.state.sink
         self.state.sink = sink
@@ -291,7 +314,6 @@ class Probatio:
             raise
         finally:
             self.state.sink = previous
-            store.end_case()
         return _normalise(returned, sink)
 
     # -- the pieces around the run -----------------------------------------------------------
@@ -321,21 +343,23 @@ class Probatio:
         sut: Callable[[LLMCase], str | Completion],
         verdict: bool,
         results: Sequence[AssertionResult],
+        run_index: int,
     ) -> dict[str, RelationResult]:
         """Evaluate every marked relation on one run, reusing the same system under test."""
         if not self.relations:
             return {}
 
         def evaluate(variant: LLMCase) -> tuple[bool, Sequence[AssertionResult]]:
-            sut_result = self._call_variant(variant, sut)
-            variant_results = evaluate_case(
-                variant,
-                sut_result.output,
-                judge_provider=self.judge_provider,
-                base_dir=self.settings.rootdir,
-                rubric_dirs=self.rubric_dirs,
-                validation_dir=self.settings.validation_dir,
-            )
+            with self._active_case(variant, run_index):
+                sut_result = self._call_variant(variant, sut)
+                variant_results = evaluate_case(
+                    variant,
+                    sut_result.output,
+                    judge_provider=self.judge_provider,
+                    base_dir=self.settings.rootdir,
+                    rubric_dirs=self.rubric_dirs,
+                    validation_dir=self.settings.validation_dir,
+                )
             return all(item.passed for item in variant_results), variant_results
 
         return {
