@@ -1,0 +1,105 @@
+# Derived from Consilium-Health golden.jsonl and data/corpus by examples/consilium/convert_traces.py --emit-live-cases; do not hand-edit.
+id: g-gh-017
+input:
+  question: What sort of dietary change does guidance describe for high blood pressure?
+  documents:
+  - |
+    ---
+    doc_id: lifestyle-hypertension-diet
+    category: lifestyle
+    title: "Diet for high blood pressure"
+    source: "General clinical reference and dietary pattern guidance (educational summary)"
+    last_reviewed: 2026-08-09
+    ---
+
+    > **Educational summary — not medical advice.** This note is reference material for a software
+    > project. It does not diagnose or treat, and it must not be used for real medical decisions.
+
+    ## The dietary pattern with the most evidence
+
+    The dietary approach most consistently described for blood pressure emphasizes vegetables, fruit,
+    whole grains, low-fat dairy, poultry, fish, beans, nuts and vegetable oils, while limiting saturated
+    fat, full-fat dairy, fatty meat, sweets and sugar-sweetened drinks. It is a whole pattern rather
+    than a single food, and the trials that established it changed everything on the plate at once —
+    which is why substituting one "blood pressure food" into an otherwise unchanged diet does not
+    reproduce the result.
+
+    The reduction seen with the pattern alone is meaningful, and combining it with sodium reduction
+    produces a larger effect than either alone.
+
+    ## Sodium
+
+    Sodium reduction is the single most-studied dietary change for blood pressure. Commonly stated
+    targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.
+    Any reduction helps: the relationship is graded, so moving from very high intake to merely high
+    intake is worthwhile even if a target is not reached.
+
+    The practical point that surprises people: most dietary sodium does not come from the salt shaker.
+    The large majority is already in packaged and restaurant food — bread, processed meat, cheese,
+    sauces, soups, snacks and prepared meals. Cooking at home from unprocessed ingredients does more
+    than removing salt from the table, and reading labels for sodium per serving is more effective than
+    any single substitution.
+
+    Salt substitutes containing potassium chloride are described as reducing blood pressure, but they
+    are not appropriate for everyone — particularly people with chronic kidney disease or on medication
+    that raises potassium — and are a matter for the person's own clinician.
+
+    ## Potassium
+
+    Higher dietary potassium is associated with lower blood pressure, and increasing it through food —
+    vegetables, fruit, beans, dairy — is the described route rather than supplements. The same caution
+    about kidney disease and potassium-raising medication applies.
+
+    ## Alcohol
+
+    Alcohol raises blood pressure in a dose-related way, and reducing intake lowers it. Commonly stated
+    limits are up to two drinks per day for men and one for women, with less being better. For someone
+    drinking well above that, reduction is one of the more reliable non-drug interventions available.
+
+    ## Weight
+
+    Weight reduction lowers blood pressure roughly in proportion to the amount lost, and the effect
+    begins early rather than requiring a target weight to be reached. A modest, sustained reduction is
+    described as worthwhile in its own right.
+
+    ## What is not established
+
+    Specific "superfoods", vinegar, garlic supplements and similar single-ingredient remedies do not
+    have evidence comparable to the whole-pattern approach. Caffeine raises blood pressure acutely but
+    habitual intake has little sustained effect in most people. The hypertension guideline notes in this
+    corpus cover thresholds, targets and when drug treatment is added.
+system: Answer only from the documents provided. If the documents do not cover the question, say so plainly.
+  When the documents indicate a possible emergency, say so first and tell the reader to seek care now.
+params: {}
+metadata:
+  category: general_health
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - lifestyle-hypertension-diet
+  source: consilium-health golden.jsonl and data/corpus @109a744
+assertions:
+- type: similarity
+  reference: The pattern most consistently described emphasizes vegetables, fruit, whole grains, low-fat
+    dairy, poultry, fish, beans, nuts and vegetable oils while limiting saturated fat, fatty meat, sweets
+    and sugar-sweetened drinks; it is a whole pattern rather than a single food. Sodium reduction is the
+    most-studied single change, with commonly stated targets under 2,300 mg a day and a further benefit
+    described at 1,500 mg for many adults, and the relationship is graded so any reduction helps. Most
+    dietary sodium is already in packaged and restaurant food rather than added at the table, and higher
+    dietary potassium, limiting alcohol and weight reduction each contribute.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+- type: judge
+  rubric: faithfulness
+  threshold: 1.0
+budget:
+  max_cost_usd: 0.1
+  max_latency_ms: 120000
+snapshot: scores
+tags:
+- general_health
