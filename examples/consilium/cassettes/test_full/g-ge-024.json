@@ -1,0 +1,30 @@
+{
+  "case_id": "g-ge-024",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 4186.330749999797,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "According to the **Infectious Diseases and Urology Society guidance on uncomplicated urinary tract infections (UTIs)**, the treatment for uncomplicated infections means addressing acute cystitis in non-pregnant adults with a normal urinary tract and immune function. Here are the main points from the guidelines:\n\n- **Diagnosis**: If a person shows typical symptoms of a UTI, such as painful urination and a frequent urge to urinate, and there is no vaginal discharge or irritation, it is often appropriate to start treatment without a urine culture. The use of a urine dipstick test is not necessary, as it does not significantly change the management in these cases.\n\n- **Treatment options**: The guidance emphasizes using empiric antibiotics appropriate for uncomplicated UTIs, though specific medications and doses are not mentioned in this summary.\n\n- **Additional considerations**: Patients who do not fit the uncomplicated definition, such as men or those with structural abnormalities, require a different management approach.\n\nThis information is sourced from the guideline titled \"Uncomplicated urinary tract infection: treatment, culture indications and recurrence.\" If you have more specific questions about treatment options or considerations, it may be useful to discuss them directly with a healthcare provider.\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 3713,
+          "tokens_out": 313
+        }
+      ],
+      "key": "f8aba5126d461d0e",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "What does guidance describe for an uncomplicated urinary tract infection in a non-pregnant adult?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "g-ge-001",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 7369.40041600019,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "Hypertension is diagnosed based on specific blood pressure readings measured on separate occasions. According to the American Heart Association (AHA) and the U.S. Preventive Services Task Force (USPSTF), the following classifications apply:\n\n- **Normal**: Systolic < 120 mm Hg and diastolic < 80 mm Hg\n- **Elevated**: Systolic 120\u2013129 mm Hg and diastolic < 80 mm Hg\n- **Stage 1 Hypertension**: Systolic 130\u2013139 mm Hg or diastolic 80\u201389 mm Hg\n- **Stage 2 Hypertension**: Systolic \u2265 140 mm Hg or diastolic \u2265 90 mm Hg (source: \"Hypertension: diagnostic thresholds and blood-pressure targets\").\n\nHowever, there is a significant difference in classification between U.S. and European guidelines. The European Society of Cardiology (ESC) defines the threshold for hypertension starting at 140/90 mm Hg, categorizing readings from 130\u2013139 systolic and 80\u201389 diastolic as \"high-normal\" rather than stage 1 hypertension (source: \"Hypertension: diagnostic thresholds and blood-pressure targets\"). This means that the labeling of blood pressure readings can differ depending on which guidelines are being followed, leading to varying numbers of people classified as having hypertension.\n\nIn summary, the AHA and USPSTF provide more lenient thresholds for diagnosing hypertension than the ESC, reflecting different approaches to risk assessment and population management.\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 10851,
+          "tokens_out": 490
+        }
+      ],
+      "key": "5ef0c06ac381cf5d",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "At what blood pressure reading is hypertension diagnosed, and do the major bodies agree?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "g-cc-002",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 3726.2818750000406,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "In coding situations, two conditions should not be linked if they do not coexist or are specifically stated as mutually exclusive. Here are some key points based on the ICD-10 conventions:\n\n1. **Excludes1 Relationship**: This indicates that the two conditions cannot both be present at the same time, and thus should not be reported together.\n\n2. **Excludes2 Relationship**: This is a weaker relationship where the conditions can exist together; they are just not inherently linked. In these cases, both codes may be reported if appropriate.\n\n3. **Condition Pairing**: For some conditions like asthma exacerbation and status asthmaticus, they are considered alternatives and cannot be coded together since they each represent a distinct clinical scenario.\n\n4. **Documentation Requirements**: The coder must rely on the specific details provided in the documentation. If the documentation does not clearly establish a link between the two conditions, they should not be coded together.\n\nFor precise coding rules and examples, see the document titled \"ICD-10-CM code structure and the conventions that govern selection.\"\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 3475,
+          "tokens_out": 286
+        }
+      ],
+      "key": "8e5468cb7af99093",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "Is there a case where two conditions documented together must NOT be linked by the coder?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}

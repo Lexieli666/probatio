@@ -1,0 +1,35 @@
+{
+  "assertions": [
+    {
+      "assertion_type": "contains",
+      "passed": true,
+      "score": 0.078947
+    },
+    {
+      "assertion_type": "similarity",
+      "passed": true,
+      "score": 0.481916
+    },
+    {
+      "assertion_type": "not_contains",
+      "passed": true,
+      "score": 1.0
+    },
+    {
+      "assertion_type": "budget_cost",
+      "passed": false,
+      "score": null
+    },
+    {
+      "assertion_type": "budget_latency",
+      "passed": true,
+      "score": null
+    }
+  ],
+  "case_id": "g-md-017",
+  "mode": "scores",
+  "model": "gpt-4o-mini-2024-07-18",
+  "output": null,
+  "prompt_hash": "0b02389caf75b6d4",
+  "recorded": "2026-09-05T05:06:06Z"
+}

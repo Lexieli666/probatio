@@ -1,0 +1,32 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-cc-001
+input: If a record says "diabetes with neuropathy", does the coder need a statement that the diabetes
+  caused the neuropathy?
+metadata:
+  category: condition_coding
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - coding-type-2-diabetes-e11
+  - coding-icd10-cm-code-structure-and-conventions
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: No. Where the Alphabetic Index links two conditions with the word "with", the classification
+    reads that as "associated with" or "due to" and presumes the relationship without requiring the record
+    to state it, so documented diabetes and neuropathy are coded as diabetic neuropathy from the combination
+    family. The presumption is overridden where the documentation says the two are unrelated, and it holds
+    only for the pairings the index actually lists.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- condition_coding

@@ -1,0 +1,32 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-cc-017
+input: How do I know whether a three-character category can stand on its own as a usable code?
+metadata:
+  category: condition_coding
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - consultation
+  relevant_doc_ids:
+  - coding-icd10-cm-code-structure-and-conventions
+  - coding-hypertension-i10
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: 'From the tabular list: the three-character form is the category, most categories are not
+    valid at three characters, and a code has to be carried to its full length for the category it belongs
+    to. The tabular list is what shows whether further characters exist and what they record -- cause,
+    site, severity, laterality, and in some categories a seventh character about the encounter -- so verifying
+    there is the step that answers the question. I10 is the example in this reference of a category that
+    is complete at three characters.'
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- condition_coding

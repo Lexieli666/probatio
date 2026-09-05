@@ -1,0 +1,31 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-ge-001
+input: At what blood pressure reading is hypertension diagnosed, and do the major bodies agree?
+metadata:
+  category: guideline_evidence
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - research
+  relevant_doc_ids:
+  - guideline-hypertension-diagnosis-and-bp-targets
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: They do not agree, and an answer that quotes one threshold should say which convention it
+    is using. United States society guidance classifies stage 1 hypertension from 130/80 mm Hg and stage
+    2 from 140/90; European guidance describes office hypertension as beginning at 140/90 and treats the
+    band between as high-normal blood pressure rather than as stage 1 disease. Either way the diagnosis
+    is not made from a single reading but from an average of two or more readings on two or more occasions,
+    usually confirmed out of office.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- guideline_evidence

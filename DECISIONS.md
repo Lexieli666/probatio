@@ -1557,3 +1557,101 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   clone, which is exactly the vacuous pass being fixed; and making the reporter skip
   `GITHUB_STEP_SUMMARY` under some test-mode flag, which would delete the one feature spec §3.11
   exists for in order to make an unrelated assertion easier.
+
+## 79. `convert_traces.py`'s two halves are independently optional
+
+- **Date:** 2026-09-04 (Phase 11)
+- **Q:** The script's contract names `--traces DIR --golden PATH --escalation PATH --cases
+  CASES.txt --out DIR` and an optional `--emit-cases`. But the test that proves the committed
+  cases are derived rather than hand-written re-emits them into a temporary directory, and it
+  cannot pass `--traces`: the traces are 9.5 MB outside this repository and no test may depend on
+  a path a fresh clone does not have. Are all five arguments required?
+- **A:** No. `--golden` and `--cases` are always required; `--traces` and `--out` are read only by
+  the conversion and `--escalation` only by `--emit-cases`. Giving neither half is refused with
+  "nothing to do: give --traces and --out, or --emit-cases, or both", so the script never exits 0
+  having written nothing.
+- **Why:** The two halves genuinely do different work from different inputs — one reads recorded
+  answers, the other reads golden labels — and the only thing they share is the case list. Making
+  each require the other's arguments would mean either that the byte-identity test cannot run
+  offline, which is the constraint that outranks the contract, or that it passes a traces
+  directory it never reads, which is a lie in a test's arguments. Rejected alternative: a second
+  script, `emit_cases.py`, so that each has one job and every argument is required. Two files
+  would have had to share the selection rule, the header line, the phrase reader and the YAML
+  dump, and the whole value of the emitter is that exactly one piece of code decides what a
+  committed case file looks like.
+
+## 80. `app.SYSTEM` is Probatio's own constant, and `MODEL` is passed on every call
+
+- **Date:** 2026-09-04 (Phase 11)
+- **Q:** The dogfood suite's system under test needs a system prompt and a model. Consilium's
+  published traces record the model, the token counts and the delivered answer, but not the
+  prompts. What goes in `app.py`?
+- **A:** `SYSTEM` is a fixed string this repository wrote, and `app.py`'s module docstring says so
+  in as many words. `MODEL` is the model the traces name, and `convert_traces.py` refuses to
+  convert a trace naming another. Both are passed on every call: `provider.complete(case.input,
+  system=SYSTEM, config=config, model=MODEL)`.
+- **Why:** Passing `model` explicitly is what makes the replay key match the imported tape under
+  any `--probatio-provider`. The key's model is `params["model"]` when the call names one and the
+  adapter's own model otherwise (DECISIONS 43); a suite that left it out would key on whatever
+  `--probatio-model` said — nothing, by default — while the tape keyed on
+  `gpt-4o-mini-2024-07-18`, and all thirty cases would miss. `SYSTEM` is in the key for the same
+  reason and has the same requirement: it has to be *stable*, not *true*. Inventing a plausible
+  reconstruction of Consilium's real prompt and presenting it as the prompt would be a fabricated
+  provenance claim in a suite whose entire argument is that its assertions come from published
+  fields; saying "this is ours, and here is why it is here" costs a paragraph. Rejected
+  alternative: leaving `system=None`, which is honest and throws away the one place a reader of
+  `app.py` learns what kind of application the answers came from.
+
+## 81. The dogfood suite stays out of `testpaths`, and the gate reaches it through `pytester`
+
+- **Date:** 2026-09-04 (Phase 11)
+- **Q:** `examples/demo_suite` is in `pyproject.toml`'s `testpaths`, so `pytest -q` runs it.
+  Should `examples/consilium` join it?
+- **A:** No. `pyproject.toml` is unchanged, and `tests/test_consilium_suite.py` runs both suites
+  through `pytester` on a copy, against the committed tapes and the committed baselines.
+- **Why:** This suite needs `--cassette-dir examples/consilium/cassettes`, because its tapes live
+  beside its cases rather than at the rootdir default, and it exits non-zero on purpose: five
+  red-flag cases in `test_full` fail, which is the regression the suite exists to show. Adding it
+  to `testpaths` would either make `pytest -q` fail for everyone or require the suite to hide its
+  own finding. Running it through `pytester` keeps the gate covering it — the copy is a real run
+  of both suites, and the committed baselines are copied in so drift fails rather than silently
+  re-records — while `pytest -q` stays a green gate. Rejected alternative: adding the flag to
+  `addopts`, which would point every run in the repository, the demo suite included, at the
+  Consilium tape directory.
+
+## 82. The escalation phrase list is read from the syntax tree, and a flat list is accepted too
+
+- **Date:** 2026-09-04 (Phase 11)
+- **Q:** `--escalation` points at Consilium's `safety/escalation.py`, which is a Python module
+  holding `ESCALATION_PHRASES` as a tuple of string literals. How is it read?
+- **A:** Parsed with `ast`, never executed: the assignment is found by name in the syntax tree and
+  its string constants are read out. A path whose suffix is not `.py` is read as one phrase per
+  line, with blank lines and `#` comments skipped, which is the form
+  `tests/fixtures/consilium/escalation_phrases.txt` commits.
+- **Why:** Importing a module out of another project to read one constant executes whatever else
+  that file does at import time, which for a converter run against a directory the user named on
+  the command line is a larger promise than this script needs to make. The flat-list form exists
+  because the byte-identity test must run offline from committed files only (DECISIONS 79), and a
+  phrase list is the smallest committed artefact that can stand in; a test asserts that the copy
+  still equals the list the red-flag cases carry, so the two cannot drift apart quietly. Rejected
+  alternative: `importlib` on the module, which is three lines shorter and imports a stranger.
+
+## 83. The thirty snapshot baselines are committed, and the priced run gets a directory of its own
+
+- **Date:** 2026-09-04 (Phase 11)
+- **Q:** DECISIONS 71 committed the demo suite's three baselines. All fifteen Consilium cases
+  declare `snapshot: scores`, in two suites, so a replay run records thirty. Commit them?
+- **A:** Yes, recorded from `pytest examples/consilium --cassette-dir examples/consilium/cassettes`
+  with no price table, under `.probatio/baseline/test_full/` and `.probatio/baseline/test_baseline/`.
+  `tests/test_consilium_suite.py` copies them into the `pytester` rootdir and asserts every one of
+  the thirty reads `unchanged`. The one test that supplies a price table passes
+  `--baseline-dir priced-baseline` instead.
+- **Why:** Replay from a committed tape is exactly as deterministic as the demo's scripted fake,
+  so the same argument applies: a repository that ships a snapshot feature and does not snapshot
+  its own dogfood suite is not using it. The separate directory for the priced run is DECISIONS
+  68 in practice rather than in prose — pricing the model flips fifteen `budget_cost` results from
+  unenforceable to passing, a `scores` baseline holds that flag, and comparing against the
+  unpriced baselines would report drift instead of the thing that test is about. Rejected
+  alternative: recording the baselines *with* a price table so the priced run is the compared one,
+  which cannot be done, because `prices.yaml` ships with its rates commented out and the rates are
+  the human's to fill in.
