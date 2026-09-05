@@ -526,7 +526,9 @@ spec §3.12's list and their reporters are Phase 10's, so they appear in `--help
 configure time. A flag that is accepted and writes nothing is how a pipeline ends up green against
 a report that was never produced, because the pipeline's own `if [ -f results.json ]` is the check
 that silently stops firing. This is DECISIONS 33's rule about an unparsable baseline applied to a
-flag: a promise the tool cannot honour is said out loud (DECISIONS 67).
+flag: a promise the tool cannot honour is said out loud (DECISIONS 67). *Phase 10 writes both
+files and the refusal is gone; the rule it expressed survives as "a file a flag asked for is
+written even when no case ran", below.*
 
 **`check` is testable without pytest.** The class lives in `session.py` and takes a
 `ProbatioSettings` and a `RunState`, so budgets, snapshots, relations, repeated runs and the
@@ -535,3 +537,51 @@ failure summary are exercised by ordinary unit tests with no fixture and no subp
 is the file a reader opens to find out what the flags are. Spec §3.12's section heading puts the
 class in `plugin.py`; the surface it describes is unchanged, and the rejected alternative costs a
 `pytester` subprocess per behaviour tested (DECISIONS 70).
+
+## Phase 10
+
+**A report entry is a `(node id, case id)` pair.** The demo suite routes `htn-definition` through
+`test_case`, which carries three relations, and again through `test_paraphrase`, which carries a
+fourth; the case is one case, but each run of it measured different things. Two entries keyed on
+the case id alone collide the moment they leave the terminal, where a JUnit consumer keyed on
+`(classname, name)` shows one row and drops the other's relations without saying so. `CaseResult`
+therefore carries the node id of the test that checked it, `collector.case_key` returns the pair,
+and the JUnit file writes the node id as `classname` and the case id as `name`. The alternative
+considered was keying on `(suite, case_id)`, which is what the baseline and cassette stores use;
+it fails here for the same reason those stores want it — both of the demo's entries are in
+`test_demo`, and a baseline is deliberately one per case rather than one per test (DECISIONS 73).
+
+**Nothing unmeasured is written as a number.** A relation that did not apply to a case has no
+violation rate, an unpriced case has no cost, and a suite in which nothing was repeated has no
+stability score. The JUnit format has no null, and every consumer parses a property value as a
+number as soon as it recognises the name, so the choice is between omitting the property and
+writing a string like `"n/a"` into a numeric column. The property is omitted; the results JSON,
+which does have nulls, is where a reader distinguishes "not applicable" from "not run". This is
+DECISIONS 8's rule — a relation with no variants has not been shown to hold — carried into a
+format that cannot express it any other way (DECISIONS 74).
+
+**An unenforceable ceiling is neither a pass nor a failure in the XML.** Spec §3.7 makes it
+`passed=False` and not a passing check, which in a format with two outcomes would have to become
+one of them. Failing the build would make `--probatio-prices` mandatory in practice and defeat the
+rule; passing silently is what the rule was written against. Every unenforceable assertion and
+ceiling is listed in the case's `<system-out>` block instead, which is the one part of the format
+meant for something that happened and is not a verdict. The rejected alternative was `<skipped>`,
+which claims the case did not run (DECISIONS 76).
+
+**The results JSON is the report itself, not a projection of it.** `render_results` is
+`report.model_dump(mode="json")` and nothing else, written through the same
+`artefacts.write_json` the baselines and cassettes use. A hand-written projection would be a
+second schema to keep in step with the first, and the first gains a field in most phases; spec
+§3.11 says the case study and the docs quote from this file, so what it has to guarantee is that
+`RunReport.model_validate` returns an equal report, which a projection cannot promise and a dump
+gets for free. `reporters.read_results` is that round trip in one call, so the case study, the
+docs and this repository's tests all read a results file the same way.
+
+**A refused configuration is a usage error.** Every configure-time check raises
+`ProbatioConfigError`, and both hooks that run one wrap it in `plugin.as_usage_error`, which
+re-raises it as `pytest.UsageError` with the original as its cause and the message unchanged.
+pytest prints an uncaught exception from `pytest_configure` as `INTERNALERROR` above a traceback
+through Probatio's own frames, which tells a user that the plugin is broken when what happened is
+that they passed `--probatio-provider anthropic` without a model. The rejected alternative was
+leaving the exception to escape on the grounds that a traceback is louder; it is louder about the
+wrong thing (DECISIONS 67 and 69, both amended).

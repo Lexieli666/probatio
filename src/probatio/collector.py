@@ -27,10 +27,12 @@ from .snapshot import SnapshotResult
 from .stability import CaseStability, SuiteStability, suite_stability
 
 __all__ = [
+    "CaseKey",
     "CaseResult",
     "RelationSummary",
     "RunReport",
     "RunState",
+    "case_key",
     "current_state",
     "merge_relation_results",
     "pop_state",
@@ -44,6 +46,10 @@ class CaseResult(BaseModel):
 
     Attributes:
         case_id: The case's id.
+        node_id: The node id of the test function that checked it. Two test functions may check
+            the same case — the demo suite's ``htn-definition`` is checked by ``test_case`` and
+            again by ``test_paraphrase`` — so the case id alone does not identify an entry and
+            :func:`case_key` pairs the two (DECISIONS 73).
         suite: The test module's stem, which is also the baseline and cassette directory.
         verdict: The case's verdict: whether the exact assertions passed, taken over the
             majority of its runs (spec §0, §3.10). Budget ceilings and snapshot drift fail the
@@ -69,6 +75,7 @@ class CaseResult(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     case_id: str
+    node_id: str
     suite: str
     verdict: bool
     passed: bool
@@ -82,6 +89,29 @@ class CaseResult(BaseModel):
     relations: list[RelationResult] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     failure: str | None = None
+
+
+CaseKey = tuple[str, str]
+"""What identifies one per-case entry in a report: the test's node id and the case's id."""
+
+
+def case_key(case: CaseResult) -> CaseKey:
+    """Return the identity of one per-case entry.
+
+    A case id is unique within the YAML directory it was loaded from and nowhere else: a suite
+    may route the same case to two test functions, as the demo suite routes ``htn-definition``
+    to both ``test_case`` and ``test_paraphrase``, and each of those is its own entry with its
+    own relations and its own pass rate. Pairing the case id with the node id of the test that
+    checked it is what keeps the results JSON and the JUnit file from folding the two together
+    (DECISIONS 73).
+
+    Args:
+        case: The recorded case.
+
+    Returns:
+        ``(node_id, case_id)``.
+    """
+    return (case.node_id, case.case_id)
 
 
 class RelationSummary(BaseModel):

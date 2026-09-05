@@ -16,14 +16,17 @@ fills its own report and leaves the outer one alone.
 ``--probatio-model`` is refused at configure time, because a tape whose model is the literal
 string ``claude-cli`` cannot tell two models apart, and a cassette that cannot is worse than none.
 
-**An option whose reporter does not exist yet is refused, not ignored.** ``--probatio-junit`` and
-``--probatio-results`` are registered so that ``--help`` lists spec §3.12's whole surface, and
-they fail at configure time until Phase 10 writes the files. A flag that silently writes nothing
-is how a CI pipeline ends up green against a report that was never produced.
+**A configuration Probatio refuses is a usage error, not a crash.** Every check below raises
+``ProbatioConfigError``, and the two hooks that run them re-raise it as ``pytest.UsageError`` with
+the original as its cause: pytest prints a usage error as one sentence and exits 4, where an
+uncaught exception in ``pytest_configure`` prints ``INTERNALERROR`` and a traceback of Probatio's
+own frames. The message text is the same either way (DECISIONS 67, 69).
 """
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Final
 
@@ -37,11 +40,17 @@ from .cassette import (
     CassetteStore,
     record_command,
 )
-from .collector import RunState, pop_state, push_state
+from .collector import RunReport, RunState, pop_state, push_state
 from .errors import ProbatioConfigError
 from .metamorphic import RELATION_MARKER, Relation
 from .providers import Provider
-from .reporters import SECTION_TITLE, render_terminal, write_markdown
+from .reporters import (
+    SECTION_TITLE,
+    render_terminal,
+    write_junit,
+    write_markdown,
+    write_results,
+)
 from .session import Probatio, ProbatioSettings
 from .stability import FLAKY_MARKER, read_flaky_tolerance
 
@@ -51,11 +60,13 @@ __all__ = [
     "RELATION_MARKER",
     "RUNS_DEST",
     "Probatio",
+    "as_usage_error",
     "pytest_addoption",
     "pytest_configure",
     "pytest_sessionfinish",
     "pytest_terminal_summary",
     "pytest_unconfigure",
+    "write_artefacts",
 ]
 
 PROVIDER_CHOICES: Final = ("fake", "anthropic", "claude-cli")
@@ -70,9 +81,6 @@ DEFAULT_CASSETTE_DIR: Final = "cassettes"
 DEFAULT_BASELINE_DIR: Final = ".probatio/baseline"
 """Spec §3.12's default for ``--baseline-dir``, relative to rootdir."""
 
-PHASE_10_OPTIONS: Final = ("--probatio-junit", "--probatio-results")
-"""Registered so ``--help`` is complete, refused until Phase 10 writes what they name."""
-
 _MODEL_REQUIRED: Final = (
     "--probatio-provider {name} needs --probatio-model: without one every cassette this run "
     "records is keyed on the literal string {name!r} instead of a model, so a tape recorded "
@@ -82,6 +90,29 @@ _MODEL_REQUIRED: Final = (
 
 _runs_flag = "--runs"
 """Which flag name ``--runs`` was actually registered under; see :func:`_add_runs_option`."""
+
+
+@contextmanager
+def as_usage_error() -> Iterator[None]:
+    """Re-raise a configuration error as the usage error pytest knows how to print.
+
+    ``pytest_addoption`` and ``pytest_configure`` run before any test does, and an exception
+    escaping either of them is reported as ``INTERNALERROR`` with a traceback through Probatio's
+    own frames — which reads as a bug in the plugin rather than as a flag the user got wrong.
+    ``pytest.UsageError`` is the same non-zero exit with one sentence instead.
+
+    Yields:
+        Nothing; this wraps a block.
+
+    Raises:
+        pytest.UsageError: The block raised :class:`~probatio.errors.ProbatioConfigError`. Its
+            message is carried through unchanged and the original is kept as ``__cause__``, so a
+            test may assert on either.
+    """
+    try:
+        yield
+    except ProbatioConfigError as exc:
+        raise pytest.UsageError(str(exc)) from exc
 
 
 # -- options -------------------------------------------------------------------------------
@@ -149,7 +180,8 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         metavar="PATH",
         help=f"where tapes live, relative to rootdir (default: {DEFAULT_CASSETTE_DIR})",
     )
-    _runs_flag = _add_runs_option(group)
+    with as_usage_error():
+        _runs_flag = _add_runs_option(group)
     group.addoption(
         "--update-baseline",
         action="store_true",
@@ -173,11 +205,11 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     group.addoption(
         "--probatio-report", metavar="PATH", help="write the markdown report to this file"
     )
+    group.addoption("--probatio-junit", metavar="PATH", help="write JUnit XML to this file")
     group.addoption(
-        "--probatio-junit", metavar="PATH", help="write JUnit XML to this file (Phase 10)"
-    )
-    group.addoption(
-        "--probatio-results", metavar="PATH", help="write the results JSON to this file (Phase 10)"
+        "--probatio-results",
+        metavar="PATH",
+        help="write the full run report to this file as JSON",
     )
 
 
@@ -188,24 +220,6 @@ def _resolve_path(config: pytest.Config, value: str) -> Path:
     """Resolve an option's path against rootdir, as spec §0 says every relative path resolves."""
     path = Path(value)
     return path if path.is_absolute() else Path(config.rootpath) / path
-
-
-def check_unimplemented_options(config: pytest.Config) -> None:
-    """Refuse the two options whose reporters Phase 10 writes.
-
-    Args:
-        config: The session's configuration.
-
-    Raises:
-        ProbatioConfigError: One of :data:`PHASE_10_OPTIONS` was given.
-    """
-    for flag in PHASE_10_OPTIONS:
-        if config.getoption(flag.replace("--", "").replace("-", "_")) is not None:
-            raise ProbatioConfigError(
-                f"{flag} is registered but its reporter is not implemented yet; it arrives in "
-                "Phase 10, and a flag that silently wrote nothing would leave a pipeline green "
-                "against a report that was never produced"
-            )
 
 
 def check_model_is_named(config: pytest.Config) -> None:
@@ -272,14 +286,15 @@ def pytest_configure(config: pytest.Config) -> None:
         config: The session's configuration.
 
     Raises:
-        ProbatioConfigError: An option is unusable; see :func:`check_unimplemented_options` and
-            :func:`check_model_is_named`.
+        pytest.UsageError: An option is unusable; see :func:`check_model_is_named` and
+            :func:`build_settings`. The offending :class:`~probatio.errors.ProbatioConfigError`
+            is its cause and its message is unchanged.
     """
     config.addinivalue_line("markers", RELATION_MARKER_HELP)
     config.addinivalue_line("markers", FLAKY_MARKER_HELP)
-    check_unimplemented_options(config)
-    check_model_is_named(config)
-    settings = build_settings(config)
+    with as_usage_error():
+        check_model_is_named(config)
+        settings = build_settings(config)
     store = CassetteStore(_resolve_path(config, str(config.getoption("--cassette-dir"))))
     model = config.getoption("--probatio-model")
     store.record_command = record_command(settings.provider_name, str(model) if model else None)
@@ -485,6 +500,7 @@ def probatio(request: pytest.FixtureRequest, judge_provider: Provider) -> Probat
         settings=settings,
         state=state,
         suite=Path(str(request.node.path)).stem,
+        node_id=request.node.nodeid,
         judge_provider=judge_provider,
         relations=_relations(request.node),
         tolerance=read_flaky_tolerance(request.node.iter_markers(FLAKY_MARKER)),
@@ -495,8 +511,40 @@ def probatio(request: pytest.FixtureRequest, judge_provider: Provider) -> Probat
 # -- the end of the session ---------------------------------------------------------------------
 
 
+def _option_path(config: pytest.Config, flag: str) -> Path | None:
+    """Return the rootdir-resolved path an option names, or ``None`` when it was not given."""
+    value = config.getoption(flag)
+    return _resolve_path(config, str(value)) if value else None
+
+
+def write_artefacts(report: RunReport, config: pytest.Config) -> list[Path]:
+    """Write every file this session's flags asked for.
+
+    The markdown reporter also writes itself into ``$GITHUB_STEP_SUMMARY`` when the environment
+    sets one; the other two are written only where a flag names a file. A file that was asked for
+    is written even when the session checked no case at all, because a pipeline told to collect
+    it has to find it — an empty ``<testsuite tests="0">`` and a report with no cases both say
+    "nothing ran", and a missing file says nothing.
+
+    Args:
+        report: The finished run.
+        config: The session's configuration.
+
+    Returns:
+        The paths written, in the order they were written.
+    """
+    written = list(write_markdown(report, path=_option_path(config, "--probatio-report")))
+    junit = _option_path(config, "--probatio-junit")
+    if junit is not None:
+        written.append(write_junit(report, junit))
+    results = _option_path(config, "--probatio-results")
+    if results is not None:
+        written.append(write_results(report, results))
+    return written
+
+
 def pytest_terminal_summary(terminalreporter: Any, exitstatus: int, config: pytest.Config) -> None:
-    """Print the ``probatio`` section, and write the markdown report where one was asked for.
+    """Print the ``probatio`` section, and write every report file the flags asked for.
 
     Args:
         terminalreporter: pytest's reporter.
@@ -511,9 +559,7 @@ def pytest_terminal_summary(terminalreporter: Any, exitstatus: int, config: pyte
         terminalreporter.write_sep("=", SECTION_TITLE)
         for line in lines:
             terminalreporter.write_line(line)
-    report_option = config.getoption("--probatio-report")
-    path = _resolve_path(config, str(report_option)) if report_option else None
-    for written in write_markdown(report, path=path):
+    for written in write_artefacts(report, config):
         terminalreporter.write_line(f"{SECTION_TITLE}: wrote {written}")
 
 

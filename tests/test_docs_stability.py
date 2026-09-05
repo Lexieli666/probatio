@@ -56,3 +56,22 @@ def test_no_pass_rate_in_the_doc_is_quoted_from_a_run_that_is_not_committed() ->
     """The only numbers here are arithmetic; the demo's own figures live in PROGRESS.md."""
     quoted = set(re.findall(r"\b0\.\d\d\b", TEXT))
     assert quoted <= {"0.57", "0.72", "0.80", "1.00"}, quoted
+
+
+def test_the_doc_warns_that_the_below_floor_count_needs_a_long_enough_run() -> None:
+    """Phase 10: the count is `12 of 12` in the committed run, for a reason worth stating."""
+    assert "12 of 12" in TEXT
+    assert "no case can clear a floor of 1.0" in TEXT
+
+
+def test_the_below_floor_figure_is_quoted_from_a_committed_run() -> None:
+    """Spec §9: no number in a doc without a committed file behind it."""
+    progress = (Path(__file__).resolve().parents[1] / "PROGRESS.md").read_text(encoding="utf-8")
+    assert "cases whose Wilson lower bound is below their floor: 12 of 12" in progress
+
+
+def test_the_doc_says_a_price_table_re_records_the_scores_baselines() -> None:
+    """DECISIONS 68's cost, written down where a reader of `--runs` will meet it."""
+    section = TEXT.split("## Snapshots and budgets", 1)[1]
+    assert "--probatio-prices" in section
+    assert "--update-baseline" in section

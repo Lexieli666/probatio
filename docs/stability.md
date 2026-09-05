@@ -41,6 +41,12 @@ bound is reported and **the observed pass rate is what decides the case**. Decid
 would fail a case for having been run too few times, which is a fact about the invocation and not
 about the application.
 
+The "cases whose Wilson lower bound is below their floor" count is therefore only informative once
+`n` is large enough for the bound to reach the floor at all: at `n = 5`
+no case can clear a floor of 1.0, whatever it does, which is why the committed `--runs 5` run of
+the demo suite in `PROGRESS.md` reports `12 of 12`. Read it as a distance from the suite's own
+floors, and raise `--runs` before reading it as a count of problems.
+
 `probatio` also never calls anything else a "confidence": the only interval in the tool is this
 one.
 
@@ -78,6 +84,14 @@ per-run isolation builds it inside the callable it hands to `check`.
 `ScriptedProvider` relies on exactly this: it is created once, and its script advances one entry
 per call, which is how "fails the first of five calls" is modelled offline with no randomness
 anywhere.
+
+## Snapshots and budgets
+
+A `snapshot: scores` baseline records the case's budget results beside its assertion results, so a
+ceiling that starts failing is drift. That couples the two: adding `--probatio-prices` to a run
+turns an unenforceable cost ceiling into an enforceable one, which changes the budget result the
+baseline holds and re-records every `scores` baseline once. Introduce a price table on its own
+commit, with `--update-baseline` and a reviewed diff.
 
 ## Snapshots and repeated runs
 
