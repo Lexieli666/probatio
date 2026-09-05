@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Final
 
+from ..budget import COST_FLAG
 from ..collector import CaseResult, RunReport
 
 __all__ = [
@@ -160,6 +161,12 @@ def stability_lines(report: RunReport) -> list[str]:
 def cost_lines(report: RunReport) -> list[str]:
     """Build the cost summary.
 
+    The figure is a total only when every call behind it was priced. A run in which nothing was
+    priced has no total at all and says ``unknown``, because DECISIONS 39 forbids rendering an
+    unknown cost as zero, and ``$0.000000`` is exactly that lie in the place a reader trusts
+    most. A run in which some calls were priced and some were not keeps the number but labels it
+    ``at least``: the figure is real, and it is a floor rather than the spend.
+
     Args:
         report: The finished run.
 
@@ -167,12 +174,22 @@ def cost_lines(report: RunReport) -> list[str]:
         One line naming the total and the ceiling, plus a second naming the cases whose cost
         could not be totalled, so the figure is never read as complete when it is not.
     """
-    ceiling = (
-        f" of a {_money(report.cost_ceiling_usd)} ceiling"
-        if report.cost_ceiling_usd is not None
-        else " (no --max-cost ceiling)"
-    )
-    lines = [f"cost: {_money(report.cost_total_usd)}{ceiling}"]
+    n_unpriced = len(report.cost_unknown_case_ids)
+    unpriced = f"{n_unpriced} case(s) unpriced" if n_unpriced else ""
+    if report.cost_total_usd is None:
+        amount = "unknown"
+        qualifier = "; ".join(part for part in ("no priced calls", unpriced) if part)
+    elif unpriced:
+        amount = f"at least {_money(report.cost_total_usd)}"
+        qualifier = unpriced
+    else:
+        amount = _money(report.cost_total_usd)
+        qualifier = ""
+    if report.cost_ceiling_usd is not None:
+        amount += f" of a {_money(report.cost_ceiling_usd)} ceiling"
+    elif not qualifier:
+        qualifier = f"no {COST_FLAG} ceiling"
+    lines = [f"cost: {amount}" + (f" ({qualifier})" if qualifier else "")]
     if report.cost_unknown_case_ids:
         unknown = ", ".join(report.cost_unknown_case_ids)
         lines.append(f"cost is a lower bound: no price for {unknown}")

@@ -140,6 +140,26 @@ def test_the_report_carries_the_suite_totals_and_the_unknown_cases() -> None:
     assert report.cost_exceeded is False
 
 
+def test_a_report_with_no_priced_case_has_no_total_at_all() -> None:
+    """DECISIONS 39 keeps an unknown cost out of the total; the total itself is unknown too."""
+    budget = SuiteBudget(None)
+    budget.record("alpha", None)
+    budget.record("bravo", None)
+    state = RunState(budget=budget)
+    state.record(case("alpha"))
+    report = state.report()
+    assert report.cost_total_usd is None
+    assert report.cost_unknown_case_ids == ["alpha", "bravo"]
+
+
+def test_a_case_that_really_cost_nothing_still_gives_a_total() -> None:
+    budget = SuiteBudget(None)
+    budget.record("alpha", 0.0)
+    state = RunState(budget=budget)
+    state.record(case("alpha"))
+    assert state.report().cost_total_usd == 0.0
+
+
 def test_an_overrun_is_visible_in_the_report() -> None:
     budget = SuiteBudget(0.001)
     budget.record("alpha", 0.004)

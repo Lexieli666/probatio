@@ -50,7 +50,7 @@ from typing import Any, Final, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from .artefacts import Clock, check_path_segment, timestamp, utc_now, write_json
+from .artefacts import Clock, check_path_segment, display_path, timestamp, utc_now, write_json
 from .errors import MissingCassetteError, ProbatioConfigError, StaleCassetteError
 from .hashing import stable_hash
 from .providers import Completion, Provider
@@ -290,7 +290,13 @@ class CassetteStore:
         record_command: The command a missing or stale tape tells the reader to run.
     """
 
-    def __init__(self, cassette_dir: Path | None = None, *, clock: Clock = utc_now) -> None:
+    def __init__(
+        self,
+        cassette_dir: Path | None = None,
+        *,
+        clock: Clock = utc_now,
+        root: Path | None = None,
+    ) -> None:
         """Open a store over a directory.
 
         Args:
@@ -298,6 +304,11 @@ class CassetteStore:
             clock: A callable returning the instant written into a tape's ``recorded`` field.
                 Defaults to the current UTC time; tests inject a fixed one, so nothing in this
                 repository's suite depends on the wall clock.
+            root: What the paths in this store's messages are rendered relative to. A missing or
+                stale tape's message reaches the report's warnings and the case's failure text
+                (DECISIONS 72), both of which are persisted, so it names a path in the repository
+                rather than one on the machine. Defaults to the current directory; Phase 9's
+                plugin passes rootdir.
 
         The store also carries a :attr:`record_command`, the fix clause every missing-tape and
         stale-tape error names. Phase 9's plugin replaces it with one naming the configured
@@ -306,12 +317,25 @@ class CassetteStore:
         """
         self.cassette_dir = cassette_dir if cassette_dir is not None else default_cassette_dir()
         self.clock = clock
+        self.root = root if root is not None else Path.cwd()
         self.record_command = RECORD_COMMAND
         self.notes: list[str] = []
         self._active: ActiveCase | None = None
         self._template: str | None = None
         self._cache: dict[tuple[str, str], Cassette] = {}
         self._recorded: set[tuple[str, str, str]] = set()
+
+    def display(self, path: Path) -> str:
+        """Render a path for a message that will be persisted.
+
+        Args:
+            path: The path to render.
+
+        Returns:
+            It relative to :attr:`root`, with POSIX separators
+            (:func:`~probatio.artefacts.display_path`).
+        """
+        return display_path(path, self.root)
 
     # -- the active context ------------------------------------------------------------------
 
@@ -516,7 +540,7 @@ class CassetteStore:
         cassette = self.load(case.suite, case.case_id)
         if cassette is None:
             raise MissingCassetteError(
-                f"there is no cassette at {path} to replay",
+                f"there is no cassette at {self.display(path)} to replay",
                 case_id=case.case_id,
                 fix=self.record_command,
             )
@@ -524,8 +548,9 @@ class CassetteStore:
         interaction = cassette.find(key)
         if interaction is None:
             raise StaleCassetteError(
-                f"the cassette at {path} has no recorded interaction {key}: the prompt, the "
-                "model or the params changed since it was recorded, so it must be re-recorded",
+                f"the cassette at {self.display(path)} has no recorded interaction {key}: "
+                "the prompt, the model or the params changed since it was recorded, so it must "
+                "be re-recorded",
                 case_id=case.case_id,
                 fix=self.record_command,
             )

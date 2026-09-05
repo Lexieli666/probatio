@@ -43,11 +43,11 @@
       ],
       "snapshot": {
         "case_id": "g-cc-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-cc-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-cc-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-cc-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -110,11 +110,11 @@
       ],
       "snapshot": {
         "case_id": "g-cc-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-cc-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-cc-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-cc-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -177,11 +177,11 @@
       ],
       "snapshot": {
         "case_id": "g-cc-017",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-cc-017.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-cc-017.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-cc-017.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -244,11 +244,11 @@
       ],
       "snapshot": {
         "case_id": "g-ge-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-ge-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-ge-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-ge-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -311,11 +311,11 @@
       ],
       "snapshot": {
         "case_id": "g-ge-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-ge-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-ge-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-ge-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -378,11 +378,11 @@
       ],
       "snapshot": {
         "case_id": "g-ge-024",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-ge-024.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-ge-024.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-ge-024.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -445,11 +445,11 @@
       ],
       "snapshot": {
         "case_id": "g-gh-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-gh-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-gh-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-gh-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -512,11 +512,11 @@
       ],
       "snapshot": {
         "case_id": "g-gh-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-gh-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-gh-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-gh-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -579,11 +579,11 @@
       ],
       "snapshot": {
         "case_id": "g-gh-017",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-gh-017.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-gh-017.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-gh-017.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -653,11 +653,11 @@
       ],
       "snapshot": {
         "case_id": "g-md-017",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-md-017.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-md-017.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-md-017.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -728,11 +728,11 @@
       ],
       "snapshot": {
         "case_id": "g-md-018",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-md-018.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-md-018.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-md-018.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -803,11 +803,11 @@
       ],
       "snapshot": {
         "case_id": "g-md-021",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-md-021.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-md-021.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-md-021.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -878,11 +878,11 @@
       ],
       "snapshot": {
         "case_id": "g-su-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-su-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-su-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-su-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -953,11 +953,11 @@
       ],
       "snapshot": {
         "case_id": "g-su-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-su-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-su-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-su-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1028,11 +1028,11 @@
       ],
       "snapshot": {
         "case_id": "g-su-003",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-su-003.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_baseline/g-su-003.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_baseline/g-su-003.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1096,11 +1096,11 @@
       ],
       "snapshot": {
         "case_id": "g-cc-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-cc-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-cc-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-cc-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1163,11 +1163,11 @@
       ],
       "snapshot": {
         "case_id": "g-cc-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-cc-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-cc-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-cc-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1230,11 +1230,11 @@
       ],
       "snapshot": {
         "case_id": "g-cc-017",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-cc-017.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-cc-017.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-cc-017.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1297,11 +1297,11 @@
       ],
       "snapshot": {
         "case_id": "g-ge-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-ge-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-ge-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-ge-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1364,11 +1364,11 @@
       ],
       "snapshot": {
         "case_id": "g-ge-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-ge-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-ge-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-ge-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1431,11 +1431,11 @@
       ],
       "snapshot": {
         "case_id": "g-ge-024",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-ge-024.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-ge-024.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-ge-024.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1498,11 +1498,11 @@
       ],
       "snapshot": {
         "case_id": "g-gh-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-gh-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-gh-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-gh-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1565,11 +1565,11 @@
       ],
       "snapshot": {
         "case_id": "g-gh-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-gh-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-gh-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-gh-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1632,11 +1632,11 @@
       ],
       "snapshot": {
         "case_id": "g-gh-017",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-gh-017.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-gh-017.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-gh-017.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1706,11 +1706,11 @@
       ],
       "snapshot": {
         "case_id": "g-md-017",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-md-017.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-md-017.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-md-017.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1781,11 +1781,11 @@
       ],
       "snapshot": {
         "case_id": "g-md-018",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-md-018.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-md-018.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-md-018.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1856,11 +1856,11 @@
       ],
       "snapshot": {
         "case_id": "g-md-021",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-md-021.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-md-021.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-md-021.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -1931,11 +1931,11 @@
       ],
       "snapshot": {
         "case_id": "g-su-001",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-su-001.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-su-001.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-su-001.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -2006,11 +2006,11 @@
       ],
       "snapshot": {
         "case_id": "g-su-002",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-su-002.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-su-002.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-su-002.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,
@@ -2081,11 +2081,11 @@
       ],
       "snapshot": {
         "case_id": "g-su-003",
-        "detail": "baseline updated at /Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-su-003.json",
+        "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline-priced/test_full/g-su-003.json",
-        "state": "updated"
+        "path": ".probatio/baseline-priced/test_full/g-su-003.json",
+        "state": "unchanged"
       },
       "stability": {
         "below_floor": true,

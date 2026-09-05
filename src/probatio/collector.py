@@ -149,7 +149,10 @@ class RunReport(BaseModel):
         relations: One entry per relation any case used, by name.
         stability: The suite's stability score and floor count.
         runs: The ``--runs`` value the session was invoked with.
-        cost_total_usd: The total known cost across the session.
+        cost_total_usd: The total known cost across the session, or ``None`` when no call in it
+            was priced at all. Never ``0.0`` for a run that spent an unknown amount (DECISIONS
+            39): a reporter cannot tell a free run from an unpriced one once the two share a
+            number.
         cost_ceiling_usd: The ``--max-cost`` ceiling, or ``None``.
         cost_unknown_case_ids: Cases whose cost could not be totalled, so the total is a lower
             bound rather than the figure.
@@ -163,7 +166,7 @@ class RunReport(BaseModel):
     relations: list[RelationSummary] = Field(default_factory=list)
     stability: SuiteStability = Field(default_factory=SuiteStability)
     runs: int = 1
-    cost_total_usd: float = 0.0
+    cost_total_usd: float | None = None
     cost_ceiling_usd: float | None = None
     cost_unknown_case_ids: list[str] = Field(default_factory=list)
     cost_exceeded: bool = False
@@ -329,7 +332,7 @@ class RunState:
             relations=_summarise_relations(self.cases),
             stability=suite_stability(case.stability for case in self.cases),
             runs=self.runs,
-            cost_total_usd=self.budget.total_usd,
+            cost_total_usd=(self.budget.total_usd if self.budget.known_case_ids else None),
             cost_ceiling_usd=self.budget.max_cost_usd,
             cost_unknown_case_ids=list(self.budget.unknown_case_ids),
             cost_exceeded=self.budget.exceeded,

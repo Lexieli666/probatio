@@ -295,7 +295,10 @@ def pytest_configure(config: pytest.Config) -> None:
     with as_usage_error():
         check_model_is_named(config)
         settings = build_settings(config)
-    store = CassetteStore(_resolve_path(config, str(config.getoption("--cassette-dir"))))
+    store = CassetteStore(
+        _resolve_path(config, str(config.getoption("--cassette-dir"))),
+        root=Path(config.rootpath),
+    )
     model = config.getoption("--probatio-model")
     store.record_command = record_command(settings.provider_name, str(model) if model else None)
     state = RunState(

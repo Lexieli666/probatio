@@ -13,6 +13,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from probatio import AssertionResult
+from probatio.budget import SuiteBudget
 from probatio.collector import CaseResult, RunReport, RunState
 from probatio.metamorphic import RelationResult
 from probatio.reporters import SUITE_NAME, render_junit, write_junit
@@ -67,9 +68,17 @@ def case(
 
 
 def report_with(*cases: CaseResult, runs: int = 1) -> RunReport:
-    state = RunState(runs=runs)
+    """Build a report the way a session does, budget included.
+
+    The budget has to see each case: a report whose cases carry a cost but whose budget was never
+    told about them has no cost total, and the suite property that carries it is then rightly
+    omitted rather than written as a zero.
+    """
+    budget = SuiteBudget(None)
+    state = RunState(runs=runs, budget=budget)
     for item in cases:
         state.record(item)
+        budget.record(item.case_id, item.cost_usd)
     return state.report()
 
 
@@ -270,6 +279,13 @@ def test_an_unmeasured_stability_score_is_omitted_from_the_suite_properties() ->
     values = properties(suite)
     assert "stability_score" not in values
     assert "cost_total_usd" in values
+
+
+def test_a_run_with_no_priced_call_omits_the_cost_total_property() -> None:
+    """DECISIONS 74: an unmeasured property is omitted, never written as a zero to be summed."""
+    suite = parse(report_with(case("alpha", cost=None))).find("testsuite")
+    assert suite is not None
+    assert "cost_total_usd" not in properties(suite)
 
 
 # -- failures, and what is not one ---------------------------------------------------------------

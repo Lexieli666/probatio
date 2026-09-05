@@ -46,7 +46,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-cc-001.json",
+        "path": ".probatio/baseline/test_baseline/g-cc-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -113,7 +113,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-cc-002.json",
+        "path": ".probatio/baseline/test_baseline/g-cc-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -180,7 +180,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-cc-017.json",
+        "path": ".probatio/baseline/test_baseline/g-cc-017.json",
         "state": "unchanged"
       },
       "stability": {
@@ -247,7 +247,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-ge-001.json",
+        "path": ".probatio/baseline/test_baseline/g-ge-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -314,7 +314,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-ge-002.json",
+        "path": ".probatio/baseline/test_baseline/g-ge-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -381,7 +381,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-ge-024.json",
+        "path": ".probatio/baseline/test_baseline/g-ge-024.json",
         "state": "unchanged"
       },
       "stability": {
@@ -448,7 +448,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-gh-001.json",
+        "path": ".probatio/baseline/test_baseline/g-gh-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -515,7 +515,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-gh-002.json",
+        "path": ".probatio/baseline/test_baseline/g-gh-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -582,7 +582,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-gh-017.json",
+        "path": ".probatio/baseline/test_baseline/g-gh-017.json",
         "state": "unchanged"
       },
       "stability": {
@@ -656,7 +656,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-md-017.json",
+        "path": ".probatio/baseline/test_baseline/g-md-017.json",
         "state": "unchanged"
       },
       "stability": {
@@ -731,7 +731,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-md-018.json",
+        "path": ".probatio/baseline/test_baseline/g-md-018.json",
         "state": "unchanged"
       },
       "stability": {
@@ -806,7 +806,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-md-021.json",
+        "path": ".probatio/baseline/test_baseline/g-md-021.json",
         "state": "unchanged"
       },
       "stability": {
@@ -881,7 +881,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-su-001.json",
+        "path": ".probatio/baseline/test_baseline/g-su-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -956,7 +956,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-su-002.json",
+        "path": ".probatio/baseline/test_baseline/g-su-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1031,7 +1031,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_baseline/g-su-003.json",
+        "path": ".probatio/baseline/test_baseline/g-su-003.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1099,7 +1099,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-cc-001.json",
+        "path": ".probatio/baseline/test_full/g-cc-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1166,7 +1166,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-cc-002.json",
+        "path": ".probatio/baseline/test_full/g-cc-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1233,7 +1233,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-cc-017.json",
+        "path": ".probatio/baseline/test_full/g-cc-017.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1300,7 +1300,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-ge-001.json",
+        "path": ".probatio/baseline/test_full/g-ge-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1367,7 +1367,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-ge-002.json",
+        "path": ".probatio/baseline/test_full/g-ge-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1434,7 +1434,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-ge-024.json",
+        "path": ".probatio/baseline/test_full/g-ge-024.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1501,7 +1501,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-gh-001.json",
+        "path": ".probatio/baseline/test_full/g-gh-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1568,7 +1568,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-gh-002.json",
+        "path": ".probatio/baseline/test_full/g-gh-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1635,7 +1635,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-gh-017.json",
+        "path": ".probatio/baseline/test_full/g-gh-017.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1709,7 +1709,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-md-017.json",
+        "path": ".probatio/baseline/test_full/g-md-017.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1784,7 +1784,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-md-018.json",
+        "path": ".probatio/baseline/test_full/g-md-018.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1859,7 +1859,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-md-021.json",
+        "path": ".probatio/baseline/test_full/g-md-021.json",
         "state": "unchanged"
       },
       "stability": {
@@ -1934,7 +1934,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-su-001.json",
+        "path": ".probatio/baseline/test_full/g-su-001.json",
         "state": "unchanged"
       },
       "stability": {
@@ -2009,7 +2009,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-su-002.json",
+        "path": ".probatio/baseline/test_full/g-su-002.json",
         "state": "unchanged"
       },
       "stability": {
@@ -2084,7 +2084,7 @@
         "detail": "baseline unchanged",
         "mode": "scores",
         "passed": true,
-        "path": "/Users/yutongzhao/code/probatio/.probatio/baseline/test_full/g-su-003.json",
+        "path": ".probatio/baseline/test_full/g-su-003.json",
         "state": "unchanged"
       },
       "stability": {
@@ -2109,7 +2109,7 @@
   ],
   "cost_ceiling_usd": null,
   "cost_exceeded": false,
-  "cost_total_usd": 0.0,
+  "cost_total_usd": null,
   "cost_unknown_case_ids": [
     "g-cc-001",
     "g-cc-002",

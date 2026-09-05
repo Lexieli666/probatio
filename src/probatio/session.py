@@ -304,7 +304,7 @@ class Probatio:
         sut_result: SutResult,
     ) -> SnapshotResult | None:
         """Compare the first run against the baseline, recording one when there is none."""
-        store = BaselineStore(self.settings.baseline_dir)
+        store = BaselineStore(self.settings.baseline_dir, root=self.settings.rootdir)
         return store.compare(
             suite=self.suite,
             case=case,

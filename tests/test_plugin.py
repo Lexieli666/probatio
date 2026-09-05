@@ -9,6 +9,7 @@ default provider is ``fake``.
 from __future__ import annotations
 
 import json
+import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
@@ -600,6 +601,70 @@ def test_the_cassette_directory_is_resolved_against_rootdir(pytester: pytest.Pyt
     write_suite(pytester, conftest="")
     pytester.runpytest_subprocess("--cassette=record", "--cassette-dir", "build/tapes")
     assert (pytester.path / "build" / "tapes" / "test_suite" / "alpha.json").exists()
+
+
+# -- what a committed artefact may not contain ----------------------------------------------------
+
+
+def absolute_strings(payload: object) -> list[str]:
+    """Return every string anywhere in a parsed artefact that reads as an absolute path.
+
+    Args:
+        payload: The parsed JSON, at any depth.
+
+    Returns:
+        The offending strings. A POSIX absolute path starts with a separator and a Windows one
+        starts with a drive letter, so both are recognised whichever platform wrote the file.
+    """
+    if isinstance(payload, str):
+        return [payload] if re.match(r"^(/|[A-Za-z]:[\\/])", payload) else []
+    if isinstance(payload, dict):
+        return [bad for value in payload.values() for bad in absolute_strings(value)]
+    if isinstance(payload, list):
+        return [bad for item in payload for bad in absolute_strings(item)]
+    return []
+
+
+def test_the_results_json_holds_no_absolute_path(pytester: pytest.Pytester) -> None:
+    """A results file is committed, so a path in it names the repository, not the machine.
+
+    An absolute path makes the artefact machine-specific — it leaks the home directory of
+    whoever ran the suite, it differs between a laptop and CI, and it makes two otherwise
+    identical runs produce different bytes. The suite here records a baseline, so the report
+    carries a :class:`~probatio.snapshot.SnapshotResult` with a path and a detail naming it.
+    """
+    write_snapshot_suite(pytester, system="Answer briefly.", answer="Spirometry confirms COPD.")
+    pytester.runpytest_subprocess("--probatio-results", "r.json").assert_outcomes(passed=1)
+
+    text = (pytester.path / "r.json").read_text(encoding="utf-8")
+    report = json.loads(text)
+    snapshot = report["cases"][0]["snapshot"]
+    assert snapshot["state"] == "recorded"
+    assert snapshot["path"] == ".probatio/baseline/test_suite/alpha.json"
+    assert snapshot["detail"] == "baseline recorded at .probatio/baseline/test_suite/alpha.json"
+
+    assert absolute_strings(report) == []
+    assert str(pytester.path) not in text
+    assert str(Path.home()) not in text
+
+
+def test_a_missing_tape_reaches_the_report_without_an_absolute_path(
+    pytester: pytest.Pytester,
+) -> None:
+    """DECISIONS 72 puts a missing tape's message in the warnings, so it is persisted too."""
+    write_suite(pytester, conftest="")  # the plugin's own provider, so the tape is consulted
+    pytester.runpytest_subprocess(
+        "--cassette=replay", "--probatio-results", "r.json"
+    ).assert_outcomes(failed=1)
+
+    text = (pytester.path / "r.json").read_text(encoding="utf-8")
+    report = json.loads(text)
+    assert any(
+        "there is no cassette at cassettes/test_suite/alpha.json" in w for w in report["warnings"]
+    )
+    assert absolute_strings(report) == []
+    assert str(pytester.path) not in text
+    assert str(Path.home()) not in text
 
 
 # -- snapshots, end to end ------------------------------------------------------------------------
