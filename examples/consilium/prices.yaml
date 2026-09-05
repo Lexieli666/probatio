@@ -2,18 +2,17 @@
 #
 # Provenance: Consilium-Health's published run 20260830T170133Z (2026-08-30) called exactly one
 # model, named below verbatim as the tapes report it. Consilium ships eval/pricing.yaml empty by
-# design, so this file carries no rates either: verify them against the provider's price page,
-# note the date you checked, and uncomment the entry.
+# design, so the rates here were taken from the provider's price page, not from Consilium.
 #
-# Checked on: <date you read the price page>
+# Checked on: 2026-09-04, https://developers.openai.com/api/docs/pricing
+# (gpt-4o-mini row: Input $0.15, Output $0.60 per 1M tokens)
 #
-# Until then this file loads as an EMPTY table, and against an empty table every one of the
-# thirty cost ceilings in this suite is reported unenforceable rather than passed — which is the
-# rule from docs/providers.md doing its job on real data, and the state the committed snapshot
-# baselines under .probatio/baseline/ were recorded in. Filling the rates in flips those ceilings
-# to enforceable and changes what each baseline holds, so it needs its own --update-baseline
-# commit (DECISIONS 68).
-#
-# gpt-4o-mini-2024-07-18:
-#   input_per_mtok: <US dollars per million prompt tokens, from the provider's price page>
-#   output_per_mtok: <US dollars per million completion tokens, from the provider's price page>
+# Against an empty table every cost ceiling in this suite is reported unenforceable rather than
+# passed (docs/providers.md), which is the state examples/consilium/results/replay-unpriced.*
+# and the baselines under .probatio/baseline/ record. With this table the ceilings are enforced,
+# and because budget results are part of a scores baseline (DECISIONS 68) the priced run keeps
+# its own baseline directory, .probatio/baseline-priced/ (DECISIONS 83).
+
+gpt-4o-mini-2024-07-18:
+  input_per_mtok: 0.15
+  output_per_mtok: 0.60
