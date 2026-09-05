@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-ge-001
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:51:48Z'
+  prompt_hash: 6ba8e5a97b023286
+variants:
+- What blood pressure numbers define a diagnosis of hypertension, and is there agreement among the major medical organizations?
+- Hypertension is diagnosed at what blood pressure threshold, and do the leading authorities concur on it?
+- At which reading on a blood pressure measurement does someone get diagnosed with hypertension, and do the major guideline bodies see eye to eye on this?

@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-gh-017
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:52:05Z'
+  prompt_hash: cab0bf4a05429655
+variants:
+- According to guidance, what kind of change to diet is described for high blood pressure?
+- For high blood pressure, what type of dietary modification does guidance outline?
+- What kind of change in diet is set out in guidance for people with high blood pressure?

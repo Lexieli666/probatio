@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-gh-001
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:51:58Z'
+  prompt_hash: 63e26fddf46107d2
+variants:
+- Can you explain what high blood pressure is, and what distinguishes it from a single elevated reading?
+- How would you define high blood pressure, and in what way does it differ from getting one high measurement?
+- What does it mean to have high blood pressure, and how is that different from having a single reading that comes back high?

@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-gh-002
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:52:01Z'
+  prompt_hash: 4ed83f1076d5eec9
+variants:
+- What is it about type 2 diabetes that causes it to affect blood sugar at all?
+- For what underlying reason does type 2 diabetes have an effect on blood sugar levels to begin with?
+- Why is blood sugar impacted by type 2 diabetes in the first place?

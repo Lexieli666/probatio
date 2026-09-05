@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-ge-024
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:51:55Z'
+  prompt_hash: 23e40b917314b286
+variants:
+- According to guidance, what is described for an uncomplicated urinary tract infection in an adult who is not pregnant?
+- For a non-pregnant adult with an uncomplicated urinary tract infection, what does guidance describe?
+- In the case of an uncomplicated urinary tract infection occurring in a non-pregnant adult, what is it that guidance describes?

@@ -1,0 +1,13 @@
+# Written by 'probatio freeze-variants'. Read these before you trust them: a paraphrase that
+# changes a condition makes the relation measure the paraphraser, not the application.
+case_id: g-su-001
+field: input.question
+generated_by:
+  provider: claude-cli
+  model: claude-opus-5
+  created: '2026-09-05T06:52:50Z'
+  prompt_hash: cca034ea554d1d56
+variants:
+- "Something might be off with my chest \u2014 it feels as though a heavy person is pressing down on it, and this began roughly twenty minutes ago."
+- About twenty minutes ago my chest started feeling like someone heavy was sitting on top of it, and I suspect something may be wrong.
+- 'I''m wondering whether there''s a problem with my chest: for the past twenty minutes or so, it has felt like the weight of a heavy person resting on it.'
