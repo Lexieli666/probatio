@@ -1872,3 +1872,39 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   a property of the run, not of the case, and Route B's whole point is to run these same fifteen
   cases against a second model. A case file that named the model would have to be edited to do
   that, and the diff would then be indistinguishable from a change to what is being tested.
+
+## 92. A judge reply that is not a verdict is asked again, up to three times, and counted
+
+- **Date:** 2026-09-05 (Phase 12)
+- **Q:** `validate-judge --run-judge` on the Consilium samples died twice against `claude-opus-5`,
+  once at row 10 and once at row 6, both with `judge output was not valid JSON: Unterminated
+  string starting at line 1 column 49` — the column at which the `rationale` string opens. The
+  reply is not a wrong verdict; it is a long rationale that stopped mid-string, so there is no
+  JSON at all. It happens on roughly one row in eight, and one bad row ends the run, so a
+  whole-command retry of a forty-row sample succeeds about one time in sixty. What happens to the
+  row?
+- **A:** It is asked again. `cli._run_judge` takes `attempts` (`JUDGE_ATTEMPTS = 3`, the first
+  attempt being one of them), retries a row whose reply raises `JudgeOutputError`, names each
+  re-ask on standard error, and counts the rows that needed one. The count is returned, printed
+  in the summary when it is not zero, and stored in the validation record as a new
+  `reasked: int = 0` field, so a reader of `.probatio/judges/faithfulness.validation.json` can
+  see how much re-asking the kappa beside it cost. A row that is still unparsable after three
+  attempts raises, naming the row and the number of attempts: the run stops rather than reporting
+  a comparison over 39 rows as though it were over 40.
+- **Why:** An unparsable reply carries no judgement of the answer. Counting it as a fail would put
+  a formatting artefact into the kappa, which is precisely the outcome DECISIONS 29 wrote
+  `JudgeVerdict`'s leniency to avoid; dropping the row would shrink a published *n* silently; and
+  aborting throws away every grading that did work, which is what made the procedure impossible to
+  finish. Re-asking is what a person does by hand, and it is not selection: the row is asked again
+  until there is a verdict, never until the verdict agrees with the human label, and the count
+  makes the re-asking visible rather than free. Three attempts because two consecutive failures on
+  one row is evidence about the rubric rather than about sampling, and at that point stopping is
+  the honest outcome.
+  **Rejected alternatives.** Loosening the parser to accept a truncated object, which invents a
+  verdict the model did not finish stating. `--effort low` or `--json-schema`, both of which the
+  installed CLI offers: either would make the *validated* judge a different judge from the one the
+  live suite's 124 recorded judge calls actually used, so the kappa would no longer describe the
+  judge whose verdicts the suite reports — which is the whole purpose of validating it. Retrying
+  the whole command, which the arithmetic above rules out. Note that the assertion path never had
+  this problem: `assertions/judge.py` already turns `JudgeOutputError` into a failed
+  `AssertionResult` and never raises, as spec §3.5 requires; the asymmetry was in the CLI alone.

@@ -35,7 +35,7 @@ from typing import Any, Final, Literal, TextIO
 from .artefacts import Clock, timestamp, utc_now, write_yaml
 from .case import LLMCase, load_cases
 from .cassette import IMPORT_PROVIDER, CassetteStore, import_cassettes, read_trace
-from .errors import ProbatioConfigError, ProbatioError
+from .errors import JudgeOutputError, ProbatioConfigError, ProbatioError
 from .judge import (
     Judge,
     KappaResult,
@@ -229,6 +229,10 @@ def _row_case(
     )
 
 
+JUDGE_ATTEMPTS: Final = 3
+"""How many times one row is asked before ``--run-judge`` gives up on it (DECISIONS 92)."""
+
+
 def _run_judge(
     rows: Sequence[Mapping[str, str]],
     *,
@@ -238,16 +242,41 @@ def _run_judge(
     question_column: str,
     context_column: str | None,
     label_map: Mapping[str, str],
-) -> tuple[list[str], str | None]:
-    """Grade every row and return the judge's labels and the model that produced them.
+    attempts: int = JUDGE_ATTEMPTS,
+    stream: TextIO | None = None,
+) -> tuple[list[str], str | None, int]:
+    """Grade every row and return the judge's labels, the model, and how many rows were re-asked.
+
+    A reply that is not a verdict at all carries no judgement of the answer, so the row is asked
+    again rather than counted as a fail or allowed to end the run (DECISIONS 92). Each re-ask is
+    named on the stream so that the count in the validation record can be traced to its rows.
+
+    Args:
+        rows: The labelled rows, in file order.
+        rubric: The rubric to grade against.
+        provider: The judge provider.
+        answer_column: The column holding the output to grade.
+        question_column: The column holding the question.
+        context_column: The column holding the documents, when there is one.
+        label_map: How a verdict is translated into the human label space.
+        attempts: How many times one row may be asked. The first attempt is one of them.
+        stream: Where per-row re-ask notes go. Defaults to standard error.
+
+    Returns:
+        The judge's labels, the model that produced them, and the number of rows that needed
+        more than one attempt.
 
     Raises:
         ProbatioConfigError: A row has an empty answer.
-        JudgeOutputError: The judge answered something that is not a verdict.
+        JudgeOutputError: The judge answered something that is not a verdict ``attempts`` times
+            running, so this row has no verdict and the comparison would be over fewer rows than
+            it claims.
     """
+    notes = stream if stream is not None else sys.stderr
     judge = Judge(rubric, provider)
     labels: list[str] = []
     model: str | None = None
+    reasked = 0
     for index, row in enumerate(rows, start=1):
         answer = (row.get(answer_column) or "").strip()
         if not answer:
@@ -261,10 +290,27 @@ def _run_judge(
             question_column=question_column,
             context_column=context_column,
         )
-        verdict, completion = judge.grade_with_completion(case, answer)
-        labels.append(label_map.get(verdict.verdict, verdict.verdict))
-        model = completion.model
-    return labels, model
+        for attempt in range(1, attempts + 1):
+            try:
+                verdict, completion = judge.grade_with_completion(case, answer)
+            except JudgeOutputError as exc:
+                if attempt == attempts:
+                    raise JudgeOutputError(
+                        f"{exc} (asked row {index} {attempts} time(s); every reply was "
+                        "unparsable, so this row has no verdict)"
+                    ) from exc
+                print(
+                    f"probatio: row {index} attempt {attempt} was not a verdict, asking again: "
+                    f"{exc}",
+                    file=notes,
+                )
+                continue
+            if attempt > 1:
+                reasked += 1
+            labels.append(label_map.get(verdict.verdict, verdict.verdict))
+            model = completion.model
+            break
+    return labels, model, reasked
 
 
 def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) -> int:
@@ -289,7 +335,7 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         required = [args.human_column, args.answer_column]
         rows = _read_rows(labels_path, required=required)
         provider = build_provider(args.provider, args.model)
-        judge_labels, judge_model = _run_judge(
+        judge_labels, judge_model, reasked = _run_judge(
             rows,
             rubric=rubric,
             provider=provider,
@@ -308,6 +354,7 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         rows = _read_rows(labels_path, required=[args.human_column, args.judge_column])
         judge_labels = _column(rows, args.judge_column, label_map)
         judge_model = None
+        reasked = 0
         method = "columns"
 
     human_labels = _column(rows, args.human_column, label_map)
@@ -322,11 +369,18 @@ def validate_judge(args: argparse.Namespace, *, stream: TextIO | None = None) ->
         labels_hash=hash_labels_file(labels_path),
         method=method,
         judge_model=judge_model,
+        reasked=reasked,
         created=timestamp(),
     )
     written = write_validation_record(record, validation_dir=Path(args.out))
 
     print(_summary_line(rubric, result, method), file=out)
+    if reasked:
+        print(
+            f"{reasked} of {result.n} row(s) were asked again because the judge's first reply "
+            "was not a verdict",
+            file=out,
+        )
     print(f"wrote {written}", file=out)
     if args.min_kappa is not None and result.kappa < args.min_kappa:
         print(

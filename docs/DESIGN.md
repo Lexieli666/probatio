@@ -720,3 +720,15 @@ two had been sharing one `try/finally`, which is how a change to one silently ma
 wrong. The alternative — teaching `Judge` and `evaluate_relation` to open the context themselves —
 would have put the cassette store inside two modules that are deliberately kept from importing it,
 and would still have left any future assertion that calls a provider outside.
+
+**A judge that did not answer has not answered "fail".** `validate-judge --run-judge` grades forty
+rows in one go, and against a real model roughly one reply in eight came back as a rationale that
+stopped mid-string — not a wrong verdict, but no JSON at all. The command used to propagate that,
+so one bad row in forty ended the run and the other thirty-nine gradings were lost; a whole-command
+retry of a forty-row sample would have completed about one time in sixty. The row is now asked
+again, three attempts at most, and the number of rows that needed a second ask is printed and
+written into the validation record beside the kappa (DECISIONS 92). The alternative that needs no
+code — telling the CLI to think less, or to enforce a JSON schema on its output — was rejected for
+a reason worth stating separately from the entry: it would have made the judge whose kappa is
+published a different judge from the one whose 124 verdicts the live suite reports, and a
+validation record that does not describe the judge in use is worse than no record.
