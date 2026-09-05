@@ -614,15 +614,50 @@ def test_a_labels_file_outside_the_root_stays_absolute(
 # --- an unparsable reply is quoted back, so it can become a fixture (DECISIONS 94) ---------------
 
 
-def test_an_unparsable_reply_is_quoted_in_the_error(tmp_path: Path) -> None:
-    """A parse error alone cannot be turned back into the text that caused it."""
+TRUNCATED_REPLY = (
+    Path(__file__).resolve().parent / "fixtures" / "claude_cli_truncated_judge_reply.txt"
+)
+"""A real reply `claude-opus-5` gave while grading Consilium's sample 2, row 10.
+
+It is the first 400 characters of that reply, which is exactly what ``Judge.parse``'s error
+quoted; the full reply was longer and failed to parse the same way. Nothing about it is
+hand-written, which is the point: DECISIONS 94 is an observation about somebody else's program and
+a fixture that had been invented to match the observation would be evidence for nothing.
+"""
+
+
+def test_the_captured_truncated_reply_still_fails_the_way_it_failed_live() -> None:
+    """The verdict and the score are complete; the rationale stops mid-string (DECISIONS 94)."""
     from probatio import JudgeOutputError
     from probatio.judge import Judge, resolve_rubric
 
-    rubric = resolve_rubric(str(RUBRIC))
-    truncated = '{"verdict": "fail", "score": 0.67, "rationale": "The claim that R00 is for'
+    reply = TRUNCATED_REPLY.read_text(encoding="utf-8")
+    assert reply.startswith('{"verdict": "fail", "score": 0.92, "rationale": "')
+    with pytest.raises(json.JSONDecodeError) as raw:
+        json.loads(reply)
+    assert raw.value.msg == "Unterminated string starting at"
+    assert raw.value.colno == 49, "the break is where the rationale string opens"
+
     with pytest.raises(JudgeOutputError) as excinfo:
-        Judge(rubric, FakeProvider()).parse(truncated, case_id="row-10")
+        Judge(resolve_rubric(str(RUBRIC)), FakeProvider()).parse(reply, case_id="row-10")
+    assert "Unterminated string" in str(excinfo.value)
+
+
+def test_an_unparsable_reply_is_quoted_in_the_error() -> None:
+    """A parse error alone cannot be turned back into the text that caused it."""
+    from probatio import JudgeOutputError
+    from probatio.judge import Judge, resolve_rubric
+    from probatio.judge.core import REPLY_EXCERPT_CHARS
+
+    short = '{"verdict": "fail", "score": 0.67, "rationale": "The claim that R00 is for'
+    with pytest.raises(JudgeOutputError) as excinfo:
+        Judge(resolve_rubric(str(RUBRIC)), FakeProvider()).parse(short, case_id="row-10")
+    assert repr(short) in str(excinfo.value)
+
+    long_reply = TRUNCATED_REPLY.read_text(encoding="utf-8") + "x" * 200
+    with pytest.raises(JudgeOutputError) as excinfo:
+        Judge(resolve_rubric(str(RUBRIC)), FakeProvider()).parse(long_reply, case_id="row-10")
     message = str(excinfo.value)
-    assert "Unterminated string" in message
-    assert repr(truncated) in message
+    assert repr(long_reply[:REPLY_EXCERPT_CHARS])[:-1] in message
+    assert "... (truncated)" in message
+    assert long_reply not in message, "the excerpt is bounded, not the whole reply"
