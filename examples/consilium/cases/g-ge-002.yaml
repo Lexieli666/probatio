@@ -1,0 +1,30 @@
+# Derived from Consilium-Health golden.jsonl by examples/consilium/convert_traces.py; do not hand-edit.
+id: g-ge-002
+input: What blood pressure target does guidance describe for most adults?
+metadata:
+  category: guideline_evidence
+  red_flag: false
+  expected_route:
+    mode: single
+    agents:
+    - research
+  relevant_doc_ids:
+  - guideline-hypertension-diagnosis-and-bp-targets
+  source: consilium-health golden.jsonl @109a744
+assertions:
+- type: similarity
+  reference: For most treated adults, United States guidance describes a target below 130/80 mm Hg. The
+    target is individualized for older adults with frailty, limited life expectancy or a heavy burden
+    of other conditions, where the balance of benefit and harm differs and postural drops matter more.
+    After treatment starts or changes, reassessment is roughly monthly until the target is reached and
+    then every three to six months once readings are stable.
+  tau: 0.3
+- type: not_contains
+  all:
+  - As an AI language model
+budget:
+  max_cost_usd: 0.005
+  max_latency_ms: 15000
+snapshot: scores
+tags:
+- guideline_evidence

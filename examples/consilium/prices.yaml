@@ -1,0 +1,19 @@
+# Probatio price table for the Consilium dogfood suite. VERIFY EVERY NUMBER BEFORE YOU USE IT.
+#
+# Provenance: Consilium-Health's published run 20260830T170133Z (2026-08-30) called exactly one
+# model, named below verbatim as the tapes report it. Consilium ships eval/pricing.yaml empty by
+# design, so this file carries no rates either: verify them against the provider's price page,
+# note the date you checked, and uncomment the entry.
+#
+# Checked on: <date you read the price page>
+#
+# Until then this file loads as an EMPTY table, and against an empty table every one of the
+# thirty cost ceilings in this suite is reported unenforceable rather than passed — which is the
+# rule from docs/providers.md doing its job on real data, and the state the committed snapshot
+# baselines under .probatio/baseline/ were recorded in. Filling the rates in flips those ceilings
+# to enforceable and changes what each baseline holds, so it needs its own --update-baseline
+# commit (DECISIONS 68).
+#
+# gpt-4o-mini-2024-07-18:
+#   input_per_mtok: <US dollars per million prompt tokens, from the provider's price page>
+#   output_per_mtok: <US dollars per million completion tokens, from the provider's price page>

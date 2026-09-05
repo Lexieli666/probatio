@@ -1,0 +1,30 @@
+{
+  "case_id": "g-gh-001",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 3707.553292000057,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "High blood pressure, also known as hypertension, is a condition where the force of blood against the walls of the arteries is consistently too high. It often develops over many years and can lead to serious health problems, such as heart disease and stroke. Many people with high blood pressure may not feel any symptoms, which is why regular screening is important. The key issue is that having high blood pressure is defined by consistent measurements over time, not just one single reading.\n\nA single high reading might not indicate hypertension. Blood pressure can fluctuate due to various factors such as stress, physical activity, or even the time of day. A diagnosis of high blood pressure typically requires multiple readings taken at different times to confirm the condition. This distinction is crucial because treating a temporary spike in blood pressure is different from managing a chronic condition like hypertension. \n\nIf you're concerned about your blood pressure, discussing your measurements and any symptoms with a healthcare provider is important for proper assessment and guidance.\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 3280,
+          "tokens_out": 260
+        }
+      ],
+      "key": "47f5ba4b2f9d98b3",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "What is high blood pressure, and how is it different from one high reading?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}

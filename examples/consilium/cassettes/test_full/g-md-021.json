@@ -1,0 +1,30 @@
+{
+  "case_id": "g-md-021",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 4852.76708299989,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "**Urgency Level: Routine**  \nThere is no emergency pattern that matches your description, but given your father's age and symptoms, you should seek medical advice, especially since his confusion and lack of urine output could indicate something serious.\n\n### Body Systems Involved\nThe symptoms you describe, specifically confusion and absence of urine output, span multiple body systems that a clinician might consider:\n- **Neurological**: The confusion suggests a need to assess cognitive function or other neurological aspects.\n- **Renal**: The lack of urine output raises concerns about kidney function.\n  \n### Possible Conditions for Discussion\nWhen discussing with a clinician, it may be reasonable to consider conditions such as:\n- Dehydration\n- Kidney issues\n- Electrolyte imbalances\n- Infection\n- Effects of medications (if applicable)\n\nThe clinician will want to evaluate these symptoms in context, potentially including tests and assessments to understand your father's overall health status.\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 4796,
+          "tokens_out": 302
+        }
+      ],
+      "key": "744e7f42d8b2597b",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "My dad is 80, confused since this morning and has not passed water since yesterday. How urgent is this, and what would be looked for?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}

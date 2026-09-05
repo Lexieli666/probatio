@@ -1,0 +1,30 @@
+{
+  "case_id": "g-gh-017",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": null,
+          "latency_ms": 3393.7085410000236,
+          "model": "gpt-4o-mini-2024-07-18",
+          "raw": {
+            "provider": "imported"
+          },
+          "text": "For managing high blood pressure, several dietary changes are widely recommended. These guidelines emphasize lifestyle measures that can be beneficial whether medication is used or not.\n\n1. **Reduce Dietary Sodium**: Lowering salt intake is a key recommendation for individuals with high blood pressure.\n\n2. **Adopt a Healthy Dietary Pattern**: This includes consuming a diet rich in vegetables, fruits, whole grains, and low-fat dairy while limiting saturated fat intake. \n\n3. **Regular Physical Activity**: Engaging in aerobic exercise most days of the week is encouraged.\n\n4. **Weight Management**: If a person's body weight is above the healthy range, weight reduction can significantly help lower blood pressure.\n\n5. **Limit Alcohol and Stop Smoking**: Both limiting alcohol intake and quitting smoking are advised as part of an overall strategy to reduce blood pressure.\n\nThese guidelines are supported by major cardiology societies and highlight that these changes can have additive effects on blood pressure management (source: \"Hypertension: when treatment starts and which options are first-line\").\n\nNot medical advice. This is an educational software project. It does not diagnose or treat, and it must not be used for real medical decisions.",
+          "tokens_in": 3706,
+          "tokens_out": 272
+        }
+      ],
+      "key": "84468bda5ba14538",
+      "model": "gpt-4o-mini-2024-07-18",
+      "params": {
+        "config": "full"
+      },
+      "prompt": "What sort of dietary change does guidance describe for high blood pressure?",
+      "system": "You are a health information assistant. Answer the question from the retrieved clinical notes. Do not invent facts that the notes do not support, and when the question describes a possible emergency, say so plainly and tell the reader to seek care now."
+    }
+  ],
+  "model": "gpt-4o-mini-2024-07-18",
+  "provider": "imported",
+  "recorded": "2026-09-05T05:06:01Z"
+}
