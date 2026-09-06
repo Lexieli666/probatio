@@ -22,7 +22,7 @@ with phase N's code.
 - [x] **Phase 11** — Consilium dogfood, offline, from published traces
 - [x] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
 - [x] **Phase 13** — Prior-art table, docs, README final (spec §7)
-- [ ] **Phase 14** — Public repo, CI green, PyPI release, `v0.1.0`, resume bullets
+- [x] **Phase 14** — Public repo, CI green, PyPI release, `v0.1.0`, resume bullets
 - [ ] **Phase 15** — *(optional)* Variance study seed
 
 ## Run log
@@ -870,3 +870,12 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   **What is left, and it is the human's to run**: make the repository public, tag `v0.1.0` and
   push the tag, `twine upload dist/*`, then `gh release create`. Nothing in this commit does any
   of it. DECISIONS 100–102.
+
+- 2026-09-06 — **Phase 14** — published. Repository made public
+  (`gh repo edit --visibility public`, run 34059932746 green on 3.11 and 3.12 at `d958e32`); tag
+  `v0.1.0` on `d958e32` pushed; `twine check` passed on both artefacts and `twine upload` put
+  `probatio-llm 0.1.0` at <https://pypi.org/project/probatio-llm/0.1.0/>; a clean virtualenv
+  `pip install probatio-llm==0.1.0` imported `probatio` at `0.1.0` and `pytest --help` listed the
+  plugin's options; GitHub release <https://github.com/Lexieli666/probatio/releases/tag/v0.1.0>
+  carries the wheel, the sdist and CHANGELOG.md as notes. Resume bullets follow in the build
+  package (`05-RESUME-AND-INTERVIEW.md`), outside this repository.
