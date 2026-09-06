@@ -793,3 +793,32 @@ at one answer length is not a distribution and a reader who copies a threshold o
 else's domain has learnt nothing about their own. The rejected alternative was the obvious
 midpoint advice ("start around 0.35"), which would have been the first number in this repository
 with nothing behind it but a feeling.
+
+## Phase 15 — the variance study seed
+
+**Experiment B exists because experiment A cannot isolate the judge.** Experiment A answers each
+of the fifteen live cases ten times and reports a pass rate with an interval on it. When a case's
+verdict moves between runs, two things could have moved: the model produced a different answer, or
+the judge graded the same answer differently. Nothing in a repeated end-to-end run can tell those
+apart, because every run changes both halves at once — a fresh answer is a fresh input to the
+judge. Experiment B removes one half. It takes the answer Phase 12 recorded, the same bytes on
+every grading, and asks the same judge with the same rubric and the same prompt template to grade
+it ten times. Whatever varies there is the judge, because nothing else was allowed to vary. The
+two together bound the question §2 of `docs/EVALUATION.md` left open: experiment A measures how
+much a verdict moves in total, experiment B measures how much of that the judge can account for on
+its own. Neither alone would; A without B reports movement with no attribution, and B without A
+reports the judge's self-agreement with no idea whether it matters to a verdict.
+
+The rejected alternative was to run experiment A with the relations attached and read the variance
+of the relation rates. That measures something real, and it is the wrong instrument for this
+question: a variant is a different prompt, so a flip still confounds "different answer" with
+"different grade", and it costs eleven times the calls to stay confounded (DECISIONS 104). The
+other rejected alternative was to grade the ten *answers* of experiment A once each and compare —
+which is what experiment A already does, and which is the confounded measurement itself.
+
+**The study is a seed, and the documents say so in the same breath as the numbers.** Fifteen
+cases, one model, one rubric, one day. There is no claim here about evaluation runs in general,
+about other suites, or about what n a benchmark needs; `docs/EVALUATION.md` §8 states what the two
+tables show and stops. The alternative — extrapolating a rule of thumb from fifteen cases, which
+is the shape most "LLM evaluations are noisy" claims take — would be the one number in this
+repository with a population behind it that was never sampled.

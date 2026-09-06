@@ -257,3 +257,127 @@ repository rather than a home directory (DECISIONS 93, commit `ceed3f9`), and `J
 the reply it could not parse, which is what let one real truncated reply become
 `tests/fixtures/claude_cli_truncated_judge_reply.txt` instead of an invented one (DECISIONS 94,
 same commit).
+
+## 8. Repetition: what ten runs and ten gradings showed
+
+The question is the one a single evaluation run cannot answer about itself: **how much confidence
+does one run carry?** Phase 15 asks it twice of the same fifteen live cases, both times through
+`ClaudeCLIProvider` on `claude-opus-5`, both times recorded so that every figure below replays
+offline.
+
+- **Experiment A** answers each case ten times and reports a pass rate with a Wilson 95% interval:
+  300 live calls, ten answers and ten gradings a case, in
+  `examples/consilium/live/cassettes-n10/test_live_variance/` and replayed into
+  `results/live-n10.json`, `.md` and `.xml`. The suite is `test_live_variance.py`, which carries no
+  relation decorator and no `flaky_tolerant` marker (DECISIONS 104).
+- **Experiment B** holds the answer still. For each case it takes the `claude-opus-5` completion
+  Phase 12 committed in `cassettes/test_live/` and asks the same judge, with the same rubric and
+  the same prompt template, to grade those exact bytes ten times: 150 live calls, in
+  `cassettes-judge-x10/judge_repeatability/` and reduced to `results/judge-repeatability.json`.
+
+**This is a seed, not a study.** Fifteen cases, one model, one rubric, one recording session.
+Nothing below is a claim about evaluation runs in general, about other suites, or about how many
+runs a benchmark needs. It is what these fifteen cases did.
+
+### 8.1 Experiment A: the same case, ten times
+
+From `examples/consilium/live/results/live-n10.json`. The **majority verdict** is the verdict of
+more than half the runs, which is what the report keys a case's row on (DECISIONS 64); it is not
+the `verdict` column of `live-n10.md`, which says whether `check` let the case through, and under
+a default floor of 1.00 a case at 0.90 does not get through.
+
+| case | runs passed | pass rate | 95% Wilson | majority verdict |
+|---|---|---|---|---|
+| `g-cc-001` | 10/10 | 1.00 | [0.72, 1.00] | pass |
+| `g-cc-002` | 9/10 | 0.90 | [0.60, 0.98] | pass |
+| `g-cc-017` | 8/10 | 0.80 | [0.49, 0.94] | pass |
+| `g-ge-001` | 9/10 | 0.90 | [0.60, 0.98] | pass |
+| `g-ge-002` | 10/10 | 1.00 | [0.72, 1.00] | pass |
+| `g-ge-024` | 9/10 | 0.90 | [0.60, 0.98] | pass |
+| `g-gh-001` | 10/10 | 1.00 | [0.72, 1.00] | pass |
+| `g-gh-002` | 10/10 | 1.00 | [0.72, 1.00] | pass |
+| `g-gh-017` | 10/10 | 1.00 | [0.72, 1.00] | pass |
+| `g-md-017` | 10/10 | 1.00 | [0.72, 1.00] | pass |
+| `g-md-018` | 2/10 | 0.20 | [0.06, 0.51] | fail |
+| `g-md-021` | 9/10 | 0.90 | [0.60, 0.98] | pass |
+| `g-su-001` | 9/10 | 0.90 | [0.60, 0.98] | pass |
+| `g-su-002` | 8/10 | 0.80 | [0.49, 0.94] | pass |
+| `g-su-003` | 9/10 | 0.90 | [0.60, 0.98] | pass |
+
+The suite's stability score — the mean of those fifteen rates — is **0.88**, and the recording's
+notional price was **$3.690520**.
+
+**The two numbers this experiment was run for.**
+
+- **9 of 15** cases have at least one run whose verdict disagrees with the case's own majority. A
+  single run of this suite therefore has a better than even chance of reporting, for some case, a
+  verdict that the same suite contradicts on repetition.
+- **15 of 15** cases have a Wilson lower bound below 0.8 — including the six that passed all ten
+  runs, because the 95% lower bound at 10 of 10 is 0.72. That second number says more about **n**
+  than about the cases: ten runs cannot establish a rate above 0.8 for anything. It is reported
+  because the runbook asks for it, and it should be read as the interval doing its job rather than
+  as fifteen unreliable cases.
+
+**One case is not like the others.** `g-md-018` is the red-flag case Phase 12 recorded as failing
+its escalation `contains` assertion, and `docs/CASE_STUDY.md` §2 reports that single failure. Over
+ten answers the assertion passes **4 of 10** times: the answer sometimes contains one of
+Consilium's thirty-eight escalation phrases and sometimes does not. The Phase 12 report was not
+wrong, and it was one draw from a distribution it could not see.
+
+### 8.2 Experiment B: the same answer, ten gradings
+
+From `examples/consilium/live/results/judge-repeatability.json`. The input to a case's ten
+gradings is byte-identical, so the ten calls share one cassette key and each tape holds one
+interaction with ten samples — which
+`tests/test_consilium_judge_repeatability.py` asserts, because it is the claim the experiment
+rests on. `unparsable` is a reply that was not the strict JSON object the template asked for; it
+is recorded as the grading it was rather than re-asked (DECISIONS 107).
+
+| case | ten verdicts | scores seen | passes | 95% Wilson |
+|---|---|---|---|---|
+| `g-cc-001` | 9/10 pass · 1/10 unparsable | 1.00 | 9/10 | [0.60, 0.98] |
+| `g-cc-002` | 8/10 pass · 2/10 unparsable | 1.00 | 8/10 | [0.49, 0.94] |
+| `g-cc-017` | 7/10 pass · 3/10 unparsable | 1.00 | 7/10 | [0.40, 0.89] |
+| `g-ge-001` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-ge-002` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-ge-024` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-gh-001` | 9/10 pass · 1/10 unparsable | 1.00 | 9/10 | [0.60, 0.98] |
+| `g-gh-002` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-gh-017` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-md-017` | 9/10 pass · 1/10 unparsable | 1.00 | 9/10 | [0.60, 0.98] |
+| `g-md-018` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-md-021` | 9/10 pass · 1/10 unparsable | 1.00 | 9/10 | [0.60, 0.98] |
+| `g-su-001` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+| `g-su-002` | 7/10 fail · 3/10 pass | 0.89, 0.91, 0.92, 0.93, 1.00 | 3/10 | [0.11, 0.60] |
+| `g-su-003` | 10/10 pass | 1.00 | 10/10 | [0.72, 1.00] |
+
+**7 of 15** cases did not give the same verdict ten times. That headline needs its two halves kept
+apart, because they are different phenomena:
+
+- **Six of the seven differ only by a reply that was not a verdict at all.** Across the 150
+  gradings, **9 of the 150** produced no parsable JSON. That is the truncation `docs/EVALUATION.md`
+  §5 and DECISIONS 94 describe, met again — and met here on the *live* suite's own prompts, where
+  Phase 12's single pass over the same fifteen answers produced no unparsable reply at all
+  (`tests/test_consilium_live_replay.py` asserts that of the committed tapes). Repetition found
+  it; one pass did not.
+- **One case disagreed with itself about the answer.** `g-su-002` graded the same bytes `fail`
+  seven times and `pass` three, with scores of 0.89, 0.91, 0.92, 0.93 and 1.00. It is the only one
+  of the fifteen that produced both a `pass` and a `fail` on identical input — **1 of 15**.
+
+### 8.3 What the two tables show, and what they do not
+
+Experiment A leaves §2's question open by construction: when a case's verdict moves between runs,
+the answer changed and the grading changed together, and nothing in a repeated end-to-end run can
+separate them. Experiment B removes one half, and the two tables placed side by side say this
+much. Of the 150 judge calls experiment A made, **137 of 150** returned a passing verdict,
+**4 of 150** returned `fail` and **9 of 150** returned no verdict at all; and every failing run of the fourteen cases other
+than `g-md-018` coincided with a judge call that did not return a passing verdict, so on this
+suite the judge — not the answer — is where almost all the run-to-run movement is. Experiment B then shows that most of *that* is the
+judge failing to produce a verdict rather than producing a different one: on identical input,
+fourteen of fifteen cases never changed their mind, and one did.
+
+What this does not show: that the same holds for other suites, other rubrics, other models or
+other question types; that 0.88 is a stability score to expect anywhere else; or that ten runs is
+the right n. Fifteen cases answered ten times is a seed. It is enough to say that on this suite a
+single run's verdict is not the same object as its majority verdict, and that the cheapest way to
+find out how far apart they are was to run it ten times and read the interval.

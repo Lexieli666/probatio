@@ -280,10 +280,9 @@ Next, in the order they would be built:
   cannot yet declare a floor that fails the build the way a budget overrun does. The judge in this
   repository scored κ 0.600 on one blind forty-row sample and 0.253 on another, which is the
   argument for the gate and for reporting the number rather than the adjective.
-- **The variance study.** The `--runs` engine is also an instrument: run a benchmark subset n
-  times and measure how often rankings flip. Seeded as an optional phase in `PROGRESS.md`, and
-  the one thing that would settle whether the judge or the answer is the unstable half of this
-  project's own relation rates (`docs/EVALUATION.md` §2).
+- **The variance study.** Seeded rather than done: `docs/EVALUATION.md` §8 reports what ten
+  repeated runs of the fifteen live cases, and ten gradings of each of their committed answers,
+  showed about how much confidence a single evaluation run carries.
 
 ## License
 

@@ -23,7 +23,7 @@ with phase N's code.
 - [x] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
 - [x] **Phase 13** — Prior-art table, docs, README final (spec §7)
 - [x] **Phase 14** — Public repo, CI green, PyPI release, `v0.1.0`, resume bullets
-- [ ] **Phase 15** — *(optional)* Variance study seed
+- [x] **Phase 15** — *(optional)* Variance study seed
 
 ## Run log
 
@@ -879,3 +879,66 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   plugin's options; GitHub release <https://github.com/Lexieli666/probatio/releases/tag/v0.1.0>
   carries the wheel, the sdist and CHANGELOG.md as notes. Resume bullets follow in the build
   package (`05-RESUME-AND-INTERVIEW.md`), outside this repository.
+
+- 2026-09-06 — **Phase 15** — gate green: `pytest -q` 1336 passed, 0 skipped, 0 xfailed;
+  coverage of `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and
+  `ruff format --check` clean on `src tests examples`; `mypy --strict src/probatio` clean
+  (46 source files); `examples/demo_suite/` still differs from 8a998af by the one sanctioned
+  Phase 9 edit and nothing else, with `git status --porcelain` on it empty. **The second phase
+  that called a model**, always through `ClaudeCLIProvider` on `claude-opus-5`, the Phase 12
+  model, never with an API key, and never from the test suite.
+  **Live-call accounting, counted from the tapes rather than estimated.** A tape's calls are its
+  samples, so the count is `sum(len(interaction.completions))` over each cassette directory:
+  - **Experiment A: 300 calls on the tapes**, in
+    `examples/consilium/live/cassettes-n10/test_live_variance/` — fifteen files, 165 interactions,
+    300 samples. Twenty a case: the system-under-test call is **one** interaction with ten samples
+    (a stable key, one sample appended per run, DECISIONS 44), and the judge is **ten**
+    interactions with one sample each, because a judge prompt carries the answer it grades and all
+    ten answers differed. **310 calls were actually made**: the first recording was killed midway
+    through `g-gh-002`, whose ten half-recorded samples were deleted and re-recorded from scratch
+    so that no orphan judge interaction would survive in the tape. Only the 300 are committed.
+  - **Experiment B: 150 calls on the tapes**, in
+    `examples/consilium/live/cassettes-judge-x10/judge_repeatability/` — fifteen files, fifteen
+    interactions, 150 samples. Ten a case in **one** interaction, because the input to all ten
+    gradings is byte-identical and identical input is one cassette key. No call was wasted.
+  - **450 committed, 460 made.**
+  **Results files this phase produced**, all committed: `examples/consilium/live/results/live-n10.json`,
+  `.md` and `.xml` (the offline replay of experiment A) and `results/judge-repeatability.json`
+  (experiment B, rebuilt from its tapes by `judge_repeatability.py --replay`), plus the fifteen
+  `scores` baselines under `.probatio/baseline-live-n10/test_live_variance/`.
+  **A correction to the recorded commands.** The replay of experiment A needs
+  `--probatio-model claude-opus-5`; without it the cassette key's model is `FakeProvider`'s
+  `fake-1` and all fifteen cases raise `StaleCassetteError` (DECISIONS 91, met again). Every
+  command in `examples/consilium/live/README.md` also now names its test module, because that
+  directory holds two suites with different tapes and baselines (DECISIONS 103); the six Phase 12
+  commands were re-run in that form and the offline replay reproduces `results/live-baseline.json`
+  and `.md` byte for byte, checked against the committed files rather than assumed.
+  **One defect in `src/probatio`, found by the study and not by review** (DECISIONS 106). The
+  one-sample note fired on any interaction with one sample replayed at a run index above zero,
+  which is every judge interaction under `--runs N`, so the first replay of experiment A told the
+  reader fifteen times that a case's pass rate "can only be 0 or 1" beside a table reading 0.90,
+  0.80 and 0.20. The note now also requires that no judge is speaking; `tests/test_cassette.py`
+  gains a test that fails against the code as it stood, and `live-n10.*` were re-recorded with the
+  fix. Nine phases had never replayed a judge under repeated runs.
+  **The two numbers the runbook asks for, and experiment B's headline.** 9 of 15 cases have at
+  least one run whose verdict disagrees with their own majority; 15 of 15 have a Wilson lower
+  bound below 0.8, which at n=10 is a fact about n — the bound at ten passes in ten is 0.72 — and
+  is reported as one. Experiment B: 7 of 15 cases did not give the same verdict ten times, but six
+  of the seven differ only by a reply that was no verdict at all (9 of the 150 gradings produced
+  no parsable JSON), and exactly one case, `g-su-002`, graded identical bytes both `fail` (seven
+  times) and `pass` (three). Of experiment A's 150 judge calls, 137 passed, 4 failed and 9 did not
+  parse, and every failing run of the fourteen cases other than `g-md-018` coincided with one of
+  those; `g-md-018`'s escalation `contains` assertion passes 4 of 10 times, so the hard failure
+  `docs/CASE_STUDY.md` §2 reports from one Phase 12 run is one draw from a distribution that run
+  could not see.
+  New `docs/EVALUATION.md` §8 (a new section, not a renumbering, DECISIONS 109) with eleven
+  provenance tests in `tests/test_docs_evaluation.py` that re-derive both tables cell by cell and
+  recount every headline from the verdicts themselves; `docs/PROVENANCE.md` gains 36 measurement
+  rows, one non-measurement row for the runbook's `0.8` threshold, the commands R4 and R5, and
+  five new checks in `run_check` (`variance`, `judge-repeat`, `samples`, `variance-judge`,
+  `variance-assertion`). One sentence was cut rather than sourced: a claim that Phase 12 made
+  "124 judge calls" appears in DECISIONS 92 but is not derivable from the committed tapes, so §8
+  states the parse-failure comparison without it. `README.md`'s roadmap item is one sentence
+  pointing at §8 and states no number. DECISIONS 103–109; `docs/DESIGN.md` Phase 15;
+  new `examples/consilium/live/test_live_variance.py`, `judge_repeatability.py`,
+  `tests/test_consilium_judge_repeatability.py`. **Not pushed.**
