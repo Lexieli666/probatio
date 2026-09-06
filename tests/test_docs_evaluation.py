@@ -21,10 +21,17 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 from pathlib import Path
 from typing import Final
 
 import yaml
+from pydantic import ValidationError
+
+from probatio import load_cases
+from probatio.assertions.schema import strip_code_fence
+from probatio.judge import JudgeVerdict
+from probatio.runner import evaluate_case
 
 REPO_ROOT: Final = Path(__file__).resolve().parents[1]
 DOC: Final = REPO_ROOT / "docs" / "EVALUATION.md"
@@ -49,7 +56,7 @@ SECTION_2: Final = section("## 2. What the metamorphic", "## 3. The frozen")
 SECTION_3: Final = section("## 3. The frozen", "## 4. Judge validation")
 SECTION_4: Final = section("## 4. Judge validation", "## 5. Provider reliability")
 SECTION_5: Final = section("## 5. Provider reliability", "## 6. Cost cross-check")
-SECTION_6: Final = TEXT[TEXT.index("## 6. Cost cross-check") :]
+SECTION_6: Final = section("## 6. Cost cross-check", "## 7. What dogfooding")
 
 
 def results() -> dict[str, object]:
@@ -341,7 +348,7 @@ def test_the_live_suites_notional_total_is_the_one_the_replay_reports() -> None:
     assert stated == round(float(results()["cost_total_usd"]), 6)  # type: ignore[arg-type]
 
 
-SECTION_7: Final = TEXT.split("## 7. What dogfooding found about Probatio itself", 1)[1]
+SECTION_7: Final = section("## 7. What dogfooding found about Probatio itself", "## 8. Repetition")
 
 
 def _section_7_rows() -> list[tuple[str, str, str]]:
@@ -394,3 +401,196 @@ def test_section_7_says_why_the_two_defects_survived_the_unit_tests() -> None:
 def test_section_7_calls_the_timeout_flag_a_gap_and_not_a_defect() -> None:
     assert "The third is not a defect and is listed anyway" in SECTION_7
     assert "cannot be reached from where a user stands" in " ".join(SECTION_7.split())
+
+
+# -- section 8: the Phase 15 variance study seed ----------------------------------------------
+
+SECTION_8: Final = TEXT[TEXT.index("## 8. Repetition") :]
+SECTION_8_A: Final = SECTION_8[: SECTION_8.index("### 8.2")]
+SECTION_8_B: Final = SECTION_8[SECTION_8.index("### 8.2") : SECTION_8.index("### 8.3")]
+SECTION_8_C: Final = SECTION_8[SECTION_8.index("### 8.3") :]
+
+N10_RESULTS: Final = LIVE / "results" / "live-n10.json"
+N10_REPORT: Final = LIVE / "results" / "live-n10.md"
+N10_CASSETTES: Final = LIVE / "cassettes-n10" / "test_live_variance"
+JUDGE_STUDY: Final = LIVE / "results" / "judge-repeatability.json"
+JUDGE_CASSETTES: Final = LIVE / "cassettes-judge-x10" / "judge_repeatability"
+
+
+def _rows(section: str) -> list[list[str]]:
+    """The body rows of the one table in a section, as lists of cells."""
+    return [
+        [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
+        for line in section.splitlines()
+        if line.startswith("| `g-")
+    ]
+
+
+def _variance() -> dict[str, dict[str, object]]:
+    payload = json.loads(N10_RESULTS.read_text(encoding="utf-8"))
+    return {case["case_id"]: case["stability"] for case in payload["cases"]}
+
+
+def _judge_study() -> dict[str, object]:
+    payload: dict[str, object] = json.loads(JUDGE_STUDY.read_text(encoding="utf-8"))
+    return payload
+
+
+def _samples(directory: Path) -> int:
+    return sum(
+        len(interaction["completions"])
+        for path in sorted(directory.glob("*.json"))
+        for interaction in json.loads(path.read_text(encoding="utf-8"))["interactions"]
+    )
+
+
+def test_every_row_of_the_experiment_a_table_is_the_recorded_measurement() -> None:
+    """Fifteen rows, each cell re-derived from the committed replay rather than trusted."""
+    stability = _variance()
+    rows = _rows(SECTION_8_A)
+    assert len(rows) == len(stability) == 15
+
+    for case_id, passed, rate, interval, majority in rows:
+        measured = stability[case_id]
+        assert f"{measured['passes']}/{measured['runs']}" == passed, case_id
+        assert f"{measured['pass_rate']:.2f}" == rate, case_id
+        assert f"[{measured['wilson_low']:.2f}, {measured['wilson_high']:.2f}]" == interval, case_id
+        assert ("pass" if measured["majority_verdict"] else "fail") == majority, case_id
+
+
+def test_the_two_counts_the_runbook_asks_for_are_recounted_from_the_results() -> None:
+    """The whole experiment exists for these two, so neither is read out of the prose."""
+    stability = _variance()
+    disagreeing = [s for s in stability.values() if 0 < s["passes"] < s["runs"]]
+    below = [s for s in stability.values() if s["wilson_low"] < 0.8]
+    assert f"**{len(disagreeing)} of {len(stability)}** cases have at least one run" in SECTION_8_A
+    assert f"**{len(below)} of {len(stability)}** cases have a Wilson lower bound below 0.8" in (
+        SECTION_8_A
+    )
+    assert len(below) == len(stability), (
+        "the section explains this as a fact about n, not the cases"
+    )
+
+
+def test_the_stability_score_and_notional_price_are_the_reports_own() -> None:
+    """Both are quoted from `live-n10.md`, which the replay wrote."""
+    report = N10_REPORT.read_text(encoding="utf-8")
+    score = re.search(r"stability score[^*]*\*\*([\d.]+)\*\*", SECTION_8_A).group(1)
+    price = re.search(r"notional price was \*\*\$([\d.]+)\*\*", SECTION_8_A).group(1)
+    assert f"stability score: {score}" in report
+    assert f"${price}" in report
+
+    rates = [measured["pass_rate"] for measured in _variance().values()]
+    assert f"{sum(rates) / len(rates):.2f}" == score, "the section calls it the mean of the fifteen"
+
+
+def test_the_unstable_escalation_assertion_is_measured_over_the_ten_answers() -> None:
+    """`g-md-018` is the Phase 12 failure; over ten answers its `contains` passes some of them."""
+    stated = re.search(r"assertion passes \*\*(\d+) of (\d+)\*\* times", SECTION_8_A)
+    case = next(c for c in load_cases(LIVE / "cases") if c.id == "g-md-018")
+    tape = json.loads((N10_CASSETTES / "g-md-018.json").read_text(encoding="utf-8"))
+    answered = next(i for i in tape["interactions"] if len(i["completions"]) > 1)
+    passed = sum(
+        1
+        for sample in answered["completions"]
+        for result in evaluate_case(case, sample["text"], judge_provider=None)
+        if result.assertion_type == "contains" and result.passed
+    )
+    assert (int(stated.group(1)), int(stated.group(2))) == (passed, len(answered["completions"]))
+
+
+def test_every_row_of_the_experiment_b_table_is_the_recorded_measurement() -> None:
+    """The ten verdicts, the scores, the pass count and the interval, all re-derived."""
+    entries = {entry["case_id"]: entry for entry in _judge_study()["cases"]}
+    rows = _rows(SECTION_8_B)
+    assert len(rows) == len(entries) == 15
+
+    for case_id, verdicts, scores, passes, interval in rows:
+        entry = entries[case_id]
+        tally = Counter(entry["verdicts"])
+        rendered = " · ".join(
+            f"{n}/{entry['n']} {verdict}"
+            for verdict, n in sorted(tally.items(), key=lambda kv: (-kv[1], kv[0]))
+        )
+        assert verdicts == rendered, case_id
+        seen = sorted({score for score in entry["scores"] if score is not None})
+        assert scores == ", ".join(f"{score:.2f}" for score in seen), case_id
+        assert passes == f"{entry['passes']}/{entry['n']}", case_id
+        low, high = entry["wilson_95"]
+        assert interval == f"[{low:.2f}, {high:.2f}]", case_id
+
+
+def test_the_judge_repeatability_headlines_are_recounted_from_the_verdicts() -> None:
+    """Not unanimous, no verdict at all, and both verdicts, each counted from the ten themselves."""
+    payload = _judge_study()
+    entries = payload["cases"]
+    not_unanimous = [e for e in entries if len(set(e["verdicts"])) > 1]
+    unparsable = [v for e in entries for v in e["verdicts"] if v == "unparsable"]
+    both = [e for e in entries if {"pass", "fail"} <= set(e["verdicts"])]
+    gradings = sum(len(e["verdicts"]) for e in entries)
+
+    assert len(not_unanimous) == payload["cases_not_unanimous"]
+    assert f"**{len(not_unanimous)} of {len(entries)}** cases did not give the same verdict" in (
+        SECTION_8_B
+    )
+    assert f"**{len(unparsable)} of the {gradings}** produced no parsable JSON" in SECTION_8_B
+    assert f"**{len(both)} of {len(entries)}**" in SECTION_8_B
+    assert len(both) == 1 and both[0]["case_id"] == "g-su-002"
+    assert "`g-su-002`" in SECTION_8_B
+
+
+def test_the_cross_experiment_tally_is_read_off_experiment_as_tapes() -> None:
+    """Section 8.3's attribution is a count over the judge replies experiment A recorded."""
+    tally = {"pass": 0, "fail": 0, "unparsable": 0}
+    for path in sorted(N10_CASSETTES.glob("*.json")):
+        for graded in json.loads(path.read_text(encoding="utf-8"))["interactions"]:
+            if len(graded["completions"]) != 1:
+                continue
+            try:
+                verdict = JudgeVerdict.model_validate(
+                    json.loads(strip_code_fence(graded["completions"][0]["text"]).strip())
+                )
+            except (json.JSONDecodeError, ValidationError):
+                tally["unparsable"] += 1
+                continue
+            tally["pass" if verdict.passes(1.0) else "fail"] += 1
+
+    total = sum(tally.values())
+    assert f"**{tally['pass']} of {total}** returned a passing verdict" in SECTION_8_C
+    assert f"**{tally['fail']} of {total}** returned `fail`" in SECTION_8_C
+    assert f"**{tally['unparsable']} of {total}** returned no verdict at all" in SECTION_8_C
+
+    stability = _variance()
+    for case_id, measured in stability.items():
+        if case_id == "g-md-018":
+            continue
+        passing = 0
+        tape = json.loads((N10_CASSETTES / f"{case_id}.json").read_text(encoding="utf-8"))
+        for graded in tape["interactions"]:
+            if len(graded["completions"]) != 1:
+                continue
+            try:
+                verdict = JudgeVerdict.model_validate(
+                    json.loads(strip_code_fence(graded["completions"][0]["text"]).strip())
+                )
+            except (json.JSONDecodeError, ValidationError):
+                continue
+            passing += int(verdict.passes(1.0))
+        assert passing == measured["passes"], (
+            f"{case_id}: section 8.3 claims every failing run of the other fourteen cases "
+            "coincided with a judge call that did not pass"
+        )
+
+
+def test_the_call_counts_are_the_samples_the_two_recordings_left() -> None:
+    """300 and 150 are counted from the tapes, ten samples an interaction, not estimated."""
+    assert f"{_samples(N10_CASSETTES)} live calls" in SECTION_8
+    assert f"{_samples(JUDGE_CASSETTES)} live calls" in SECTION_8
+
+
+def test_section_8_says_it_is_a_seed_and_declines_to_generalise() -> None:
+    """The runbook asks for this in writing, so it is asserted rather than merely intended."""
+    assert "**This is a seed, not a study.**" in SECTION_8_A
+    assert "What this does not show" in SECTION_8_C
+    for claim in ("other suites", "other rubrics", "the right n"):
+        assert claim in SECTION_8_C

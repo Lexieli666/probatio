@@ -14,7 +14,11 @@ is what makes that emptiness a fact rather than an intention.
 ## How to read a row
 
 - **number** — the figure exactly as it appears in the prose, with any `**` emphasis removed.
-- **appears in** — every document that prints it. A number printed in two documents has one row.
+- **appears in** — every document that prints it. A number printed in two documents has one row —
+  unless two *different* measurements happen to print the same string, which is why `0.90` has two
+  (the demo suite's stability score, and a per-case pass rate in the variance study). One string,
+  two rows, two derivations: merging them would make one of the two claim a source it did not
+  come from.
 - **source file** — the committed file it came from. Where one document quotes a figure another
   document already carries, the source is that document, which has a provenance test of its own;
   the chain always ends at an artefact, and the last table below records which test guards which
@@ -27,13 +31,19 @@ is what makes that emptiness a fact rather than an intention.
   `similarity-headroom <tau>` aggregate the similarity scores in a results file, `kappa` recomputes
   Cohen's κ from a label CSV, `length` and `json-error-column` measure a captured reply,
   `verdicts-moved` and `judge-failures` compare two results files, `variants-deleted` counts the
-  deletion notes and the surviving paraphrases in the frozen variant files, and `interactions`
-  counts what a directory of cassettes holds. A check the test does not implement raises rather
-  than passing.
+  deletion notes and the surviving paraphrases in the frozen variant files, `interactions` counts
+  what a directory of cassettes holds and `samples` counts the recorded completions inside them,
+  `variance <field>` reads the per-case stability statistics out of a repeated run's results file
+  — `pass-rate`, `wilson-low`, `wilson-high` and `runs-passed` assert the figure is one the file
+  holds, `disagreeing` counts the cases with at least one run against their own majority and
+  `below <floor>` the cases whose Wilson lower bound falls under a floor — and
+  `judge-repeat <field>` does the same for the judge repeatability file, with `not-unanimous`
+  recounting its headline from the verdicts themselves rather than reading the field beside them.
+  A check the test does not implement raises rather than passing.
 - **regenerate** — the command that rebuilds the source file. `—` means the file is not a run
   output: a committed case, a constant in the package, or the run log itself.
 
-Two commands recur and are written once here rather than in twenty rows:
+Five commands recur and are written once here rather than in twenty rows:
 
 ```bash
 # R1 — the demo suite's committed --runs 5 run, quoted in PROGRESS.md at commit 4c2114e
@@ -45,10 +55,22 @@ pytest examples/consilium -q --cassette-dir examples/consilium/cassettes \
        --probatio-report examples/consilium/results/replay-unpriced.md
 
 # R3 — the live Consilium replay, opus baseline and haiku change
-pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
-       --baseline-dir .probatio/baseline-live \
+pytest examples/consilium/live/test_live.py -q \
+       --cassette-dir examples/consilium/live/cassettes \
+       --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5 \
        --probatio-results examples/consilium/live/results/live-baseline.json \
        --probatio-report examples/consilium/live/results/live-baseline.md
+
+# R4 — the Phase 15 variance replay, ten runs of the same fifteen live cases
+pytest examples/consilium/live/test_live_variance.py -q --runs 10 \
+       --cassette-dir examples/consilium/live/cassettes-n10 \
+       --baseline-dir .probatio/baseline-live-n10 --probatio-model claude-opus-5 \
+       --probatio-results examples/consilium/live/results/live-n10.json \
+       --probatio-junit examples/consilium/live/results/live-n10.xml \
+       --probatio-report examples/consilium/live/results/live-n10.md
+
+# R5 — the Phase 15 judge repeatability study, rebuilt from its tapes
+python examples/consilium/live/judge_repeatability.py --replay
 ```
 
 ## Measurements
@@ -58,7 +80,7 @@ pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassett
 | `0.57` | `README.md`, `docs/stability.md` | `PROGRESS.md` | text | R1 |
 | `0.90` | `README.md`, `docs/stability.md` | `PROGRESS.md` | text | R1 |
 | `0.38` | `README.md`, `docs/stability.md` | `PROGRESS.md` | text | R1 |
-| `0.72` | `docs/stability.md` | `src/probatio/stability/wilson.py` | wilson 10 | — |
+| `0.72` | `docs/stability.md`, `docs/EVALUATION.md` | `src/probatio/stability/wilson.py` | wilson 10 | — |
 | `12 of 12` | `README.md`, `docs/stability.md` | `PROGRESS.md` | text | R1 |
 | `0.14` | `README.md` | `PROGRESS.md` | text | R1 |
 | `0.17` | `README.md`, `docs/CASE_STUDY.md`, `docs/EVALUATION.md` | `PROGRESS.md` | text | R1 |
@@ -115,17 +137,54 @@ pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassett
 | `2 of the 45` | `docs/CASE_STUDY.md` | `examples/consilium/live/variants` | variants-deleted | `probatio freeze-variants` |
 | `$0.015070` | `docs/EVALUATION.md` | `examples/consilium/results/replay-priced.md` | text | R2 with `--probatio-prices` |
 | `278` | `docs/EVALUATION.md` | `examples/consilium/live/cassettes/test_live` | interactions | `pytest examples/consilium/live --cassette=record` |
+| `1.00` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance pass-rate | R4 |
+| `0.90` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance pass-rate | R4 |
+| `0.80` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance pass-rate | R4 |
+| `0.20` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance pass-rate | R4 |
+| `0.60` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance wilson-low | R4 |
+| `0.49` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance wilson-low | R4 |
+| `0.06` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance wilson-low | R4 |
+| `0.98` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance wilson-high | R4 |
+| `0.94` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance wilson-high | R4 |
+| `0.51` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance wilson-high | R4 |
+| `10/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance runs-passed | R4 |
+| `9/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance runs-passed | R4 |
+| `8/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance runs-passed | R4 |
+| `2/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance runs-passed | R4 |
+| `0.88` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.md` | text | R4 |
+| `$3.690520` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.md` | text | R4 |
+| `9 of 15` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance disagreeing | R4 |
+| `15 of 15` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance below 0.8 | R4 |
+| `4 of 10` | `docs/EVALUATION.md` | `examples/consilium/live/cases` | variance-assertion g-md-018 contains 10 | R4 |
+| `7/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat passes | R5 |
+| `3/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat passes | R5 |
+| `0.89` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat score | R5 |
+| `0.91` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat score | R5 |
+| `0.92` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat score | R5 |
+| `0.93` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat score | R5 |
+| `0.40` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat wilson-low | R5 |
+| `0.11` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat wilson-low | R5 |
+| `7 of 15` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat not-unanimous | R5 |
+| `9 of the 150` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat unparsable | R5 |
+| `1 of 15` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat both-verdicts | R5 |
+| `137 of 150` | `docs/EVALUATION.md` | `examples/consilium/live/cassettes-n10/test_live_variance` | variance-judge pass | R4 |
+| `4 of 150` | `docs/EVALUATION.md` | `examples/consilium/live/cassettes-n10/test_live_variance` | variance-judge fail | R4 |
+| `9 of 150` | `docs/EVALUATION.md` | `examples/consilium/live/cassettes-n10/test_live_variance` | variance-judge unparsable | R4 |
+| `300` | `docs/EVALUATION.md` | `examples/consilium/live/cassettes-n10/test_live_variance` | samples | R4 |
+| `150` | `docs/EVALUATION.md` | `examples/consilium/live/cassettes-judge-x10/judge_repeatability` | samples | R5 |
 | `191` | `README.md`, `docs/relations.md` | `docs/relations.md` | text | — |
 | `36` | `README.md`, `docs/relations.md` | `docs/relations.md` | text | — |
 
 ## Numerals that are not measurements
 
-Every other numeral in `README.md` and in `CHANGELOG.md` is one of these. Each row says what the
-numeral is and where it is fixed; `re:` marks a pattern rather than a literal.
+Every other numeral in `README.md` and in `CHANGELOG.md` is one of these, as is the one threshold
+`docs/EVALUATION.md` §8 states rather than measures. Each row says what the numeral is and where it
+is fixed; `re:` marks a pattern rather than a literal.
 
 | numeral, as it appears | what it is | fixed in |
 |---|---|---|
 | `95%` | the confidence level of the only interval in the tool | `src/probatio/stability/wilson.py` |
+| `0.8` | the Wilson lower bound `04-DOGFOOD-AND-CASE-STUDY.md` §6 asks the variance study to count cases against; a threshold chosen by the runbook, not a figure any run produced | `docs/EVALUATION.md` §8 |
 | `95` | the same level, in the report's column heading | `src/probatio/stability/wilson.py` |
 | `p=0.8, n=5` | the demo suite's declared flakiness floor and run length | `examples/demo_suite/test_demo.py` |
 | `n = 5` | the run length of R1, restated in prose | `PROGRESS.md` |

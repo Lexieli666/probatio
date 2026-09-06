@@ -2334,3 +2334,18 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   for the same reason (DECISIONS 88): a script's own directory is on `sys.path`.
   It is a script rather than a test for the reason every live step here is a script — `CLAUDE.md`
   forbids a live call from anything `pytest` runs — and the test beside it runs only `--replay`.
+
+## 109. The variance study is `docs/EVALUATION.md` §8, and nothing is renumbered
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** Runbook §6 says to put the variance numbers in `docs/EVALUATION.md` §3. That section is
+  the frozen paraphrases, and §2 is the relation table the runbook's own numbering expects at §3.
+- **A:** A new §8 at the end. Nothing above it moves.
+- **Why:** The existing sections are cross-referenced by number from `README.md`,
+  `docs/CASE_STUDY.md`, `docs/PROVENANCE.md`, `examples/consilium/live/README.md` and four
+  provenance tests — §4 for the judge kappas, §5 for provider reliability, §7 for what dogfooding
+  found. Renumbering to honour a section number from a planning document would rewrite every one
+  of those references to say the same thing, and each rewrite is a chance to say it wrongly. The
+  runbook's §3 is a position in a document that was never written; §8 is a position in the one
+  that was. The prompt for this phase allows exactly this ("or a new section if 3 is taken by the
+  relation table"). The open question §8 answers is stated in **§2**, and §8 names it that way.

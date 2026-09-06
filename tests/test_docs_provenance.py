@@ -183,6 +183,114 @@ def run_check(number: str, source: Path, check: str) -> None:
         assert number in (f"{deleted} of {asked}", f"{deleted} of the {asked}")
         return
 
+    if kind == "variance":
+        cases = json.loads(source.read_text(encoding="utf-8"))["cases"]
+        stability = [case["stability"] for case in cases]
+        if argument == "pass-rate":
+            assert bare in {f"{s['pass_rate']:.{decimals(bare)}f}" for s in stability}
+            return
+        if argument in {"wilson-low", "wilson-high"}:
+            field = "wilson_low" if argument == "wilson-low" else "wilson_high"
+            assert bare in {f"{s[field]:.{decimals(bare)}f}" for s in stability}
+            return
+        if argument == "runs-passed":
+            assert bare in {f"{s['passes']}/{s['runs']}" for s in stability}
+            return
+        if argument == "disagreeing":
+            moved = [s for s in stability if 0 < s["passes"] < s["runs"]]
+            assert f"{len(moved)} of {len(cases)}" == number
+            return
+        if argument.startswith("below "):
+            floor = float(argument.split()[1])
+            below = [s for s in stability if s["wilson_low"] < floor]
+            assert f"{len(below)} of {len(cases)}" == number
+            return
+        raise AssertionError(f"unknown variance derivation: {argument!r}")
+
+    if kind == "judge-repeat":
+        payload = json.loads(source.read_text(encoding="utf-8"))
+        entries = payload["cases"]
+        if argument == "not-unanimous":
+            counted = sum(1 for entry in entries if not entry["unanimous"])
+            assert counted == payload["cases_not_unanimous"]
+            assert f"{counted} of {len(entries)}" == number
+            return
+        if argument == "passes":
+            assert bare in {f"{entry['passes']}/{entry['n']}" for entry in entries}
+            return
+        if argument == "score":
+            seen = {score for entry in entries for score in entry["scores"] if score is not None}
+            assert bare in {f"{score:.{decimals(bare)}f}" for score in seen}
+            return
+        if argument in {"wilson-low", "wilson-high"}:
+            index = 0 if argument == "wilson-low" else 1
+            bounds = {entry["wilson_95"][index] for entry in entries}
+            assert bare in {f"{bound:.{decimals(bare)}f}" for bound in bounds}
+            return
+        if argument == "unparsable":
+            counted = sum(v == "unparsable" for e in entries for v in e["verdicts"])
+            total = sum(len(entry["verdicts"]) for entry in entries)
+            assert number in (f"{counted} of {total}", f"{counted} of the {total}")
+            return
+        if argument == "both-verdicts":
+            both = [e for e in entries if {"pass", "fail"} <= set(e["verdicts"])]
+            assert f"{len(both)} of {len(entries)}" == number
+            return
+        raise AssertionError(f"unknown judge-repeat derivation: {argument!r}")
+
+    if kind == "variance-judge":
+        from probatio.assertions.schema import strip_code_fence
+        from probatio.judge import JudgeVerdict
+
+        tally = {"pass": 0, "fail": 0, "unparsable": 0}
+        for path in sorted(source.glob("*.json")):
+            for graded in json.loads(path.read_text(encoding="utf-8"))["interactions"]:
+                if len(graded["completions"]) != 1:
+                    continue  # the system-under-test call: one key, one sample per run
+                try:
+                    verdict = JudgeVerdict.model_validate(
+                        json.loads(strip_code_fence(graded["completions"][0]["text"]).strip())
+                    )
+                except Exception:  # noqa: BLE001 - any unparsable reply is the same outcome
+                    tally["unparsable"] += 1
+                    continue
+                tally["pass" if verdict.passes(1.0) else "fail"] += 1
+        assert f"{tally[argument]} of {sum(tally.values())}" == number, (argument, tally)
+        return
+
+    if kind == "variance-assertion":
+        from probatio import load_cases
+        from probatio.runner import evaluate_case
+
+        case_id, assertion_type, denominator = argument.split()
+        case = next(c for c in load_cases(source) if c.id == case_id)
+        tape = json.loads(
+            (
+                REPO_ROOT
+                / "examples/consilium/live/cassettes-n10/test_live_variance"
+                / f"{case_id}.json"
+            ).read_text(encoding="utf-8")
+        )
+        answered = next(i for i in tape["interactions"] if len(i["completions"]) > 1)
+        passed = sum(
+            1
+            for sample in answered["completions"]
+            for result in evaluate_case(case, sample["text"], judge_provider=None)
+            if result.assertion_type == assertion_type and result.passed
+        )
+        assert len(answered["completions"]) == int(denominator)
+        assert f"{passed} of {denominator}" == number
+        return
+
+    if kind == "samples":
+        total = sum(
+            len(interaction["completions"])
+            for path in sorted(source.glob("*.json"))
+            for interaction in json.loads(path.read_text(encoding="utf-8"))["interactions"]
+        )
+        assert str(total) == bare
+        return
+
     if kind == "interactions":
         total = sum(
             len(json.loads(path.read_text(encoding="utf-8"))["interactions"])
