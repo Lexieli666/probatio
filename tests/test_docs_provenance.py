@@ -4,10 +4,11 @@
 produce. The five older modules in this family each enforce that rule for one document. This one
 enforces the rule *over the documents as a set*: it reads `docs/PROVENANCE.md`, runs each row's
 check against the file the row names, asserts the figure really is printed in every document the
-row claims, and then sweeps `README.md` for any numeral that neither table accounts for.
+row claims, and then sweeps `README.md` and `CHANGELOG.md` for any numeral that neither table
+accounts for.
 
 The sweep is the half that cannot be satisfied by writing more prose. A number added to the README
-fails the suite until somebody names the file it came from.
+or to the changelog fails the suite until somebody names the file it came from.
 """
 
 from __future__ import annotations
@@ -246,10 +247,10 @@ def patterns() -> list[str]:
     ]
 
 
-def readme_prose() -> str:
-    """`README.md` without its fenced blocks: those are quoted runs, checked separately."""
+def unfenced(name: str) -> str:
+    """A document without its fenced blocks: those are quoted runs, checked separately."""
     kept, fenced = [], False
-    for line in (REPO_ROOT / "README.md").read_text(encoding="utf-8").splitlines():
+    for line in (REPO_ROOT / name).read_text(encoding="utf-8").splitlines():
         if line.startswith("```"):
             fenced = not fenced
             continue
@@ -258,15 +259,31 @@ def readme_prose() -> str:
     return "\n".join(kept).replace("**", "")
 
 
-def test_every_numeral_in_the_readme_is_accounted_for_by_one_of_the_two_tables() -> None:
-    """The sweep. A number added to the README fails until its row names the file it came from."""
-    remaining = readme_prose()
+def readme_prose() -> str:
+    return unfenced("README.md")
+
+
+@pytest.mark.parametrize("name", ["README.md", "CHANGELOG.md"])
+def test_every_numeral_in_a_swept_document_is_accounted_for_by_one_of_the_two_tables(
+    name: str,
+) -> None:
+    """The sweep. A number added to either document fails until a row names the file behind it."""
+    remaining = unfenced(name)
     for pattern in patterns():
         remaining = re.sub(pattern, " ", remaining)
     for literal in accounted_for():
         remaining = remaining.replace(literal, " ")
     stray = sorted({match.group(0) for match in NUMERAL.finditer(remaining)})
-    assert not stray, f"README.md prints numerals docs/PROVENANCE.md does not account for: {stray}"
+    assert not stray, f"{name} prints numerals docs/PROVENANCE.md does not account for: {stray}"
+
+
+def test_the_changelog_states_no_measurement_and_says_so() -> None:
+    """`CHANGELOG.md` carries no row in the measurements table, and claims exactly that."""
+    changelog = prose(REPO_ROOT / "CHANGELOG.md")
+    assert "This file states no measurement." in changelog
+    for row in MEASUREMENTS:
+        assert "CHANGELOG.md" not in row[1], f"{row[0]} is indexed as appearing in the changelog"
+        assert unticked(row[0]) not in changelog, f"the changelog prints the measurement {row[0]}"
 
 
 def unlabelled_blocks(markdown: str) -> list[str]:
@@ -337,7 +354,9 @@ def test_every_document_that_prints_a_number_names_the_test_that_guards_it() -> 
         document, test = unticked(row[0]), unticked(row[1])
         assert (REPO_ROOT / document).is_file(), document
         assert (REPO_ROOT / test).is_file(), test
-    documented = {"README.md"} | {f"docs/{path.name}" for path in (REPO_ROOT / "docs").glob("*.md")}
+    documented = {"README.md", "CHANGELOG.md"} | {
+        f"docs/{path.name}" for path in (REPO_ROOT / "docs").glob("*.md")
+    }
     assert documented == guarded, documented ^ guarded
 
 

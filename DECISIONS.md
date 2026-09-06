@@ -2107,3 +2107,85 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   enforced: a figure cannot enter `DESIGN.md` unless some other document already measured it and
   the index says where. The rejected alternative — leaving `DESIGN.md` out of the guards table —
   would have let the one document with no test be the one nobody notices.
+
+## 100. The sdist ships the package and three files; neither `tests/` nor `examples/`
+
+- **Date:** 2026-09-06 (Phase 14)
+- **Q:** The Phase 14 prompt asks that the sdist and wheel carry `src/probatio`, `README.md` and
+  `LICENSE` and "nothing from `tests/` or `examples/` that a user does not need", and asks for a
+  recorded decision on whether `examples/` ships. The sdist as configured in Phase 0 shipped
+  `tests/` in full. Does it keep it, and does `examples/` join it?
+- **A:** Neither ships. `[tool.hatch.build.targets.sdist]` is now
+  `include = ["src/probatio", "README.md", "CHANGELOG.md", "LICENSE", "pyproject.toml"]` with an
+  explicit `exclude = ["examples", "tests"]`; hatchling adds `.gitignore` and `PKG-INFO` of its
+  own accord. The sdist is 53 entries. The wheel is unchanged: `probatio/` and its `dist-info`,
+  now including `probatio/py.typed`.
+- **Why:** Measured, not assumed. The Phase 0 sdist was built, extracted and run: `pytest -q`
+  inside it stops with **10 collection errors** before a single test executes, because the suite is
+  inseparable from four things the sdist does not and should not carry — `examples/demo_suite/`
+  and `examples/consilium/`, which `testpaths`, `test_demo_spec.py` and the three Consilium
+  modules load cases and cassettes from; `docs/`, which the seven `test_docs_*.py` modules read;
+  `PROGRESS.md`, which the provenance index names as the source of R1's figures; and this
+  repository's git history, without which gate condition 5 has no commit to diff the frozen demo
+  suite against. Shipping a test tree that cannot be collected is worse than shipping none: it
+  invites a packager to run it and read the result as a defect in the package. The auditable
+  source is the tagged public repository, which carries all four. Rejected alternative: keeping
+  `tests/` and adding `examples/`, `docs/`, `.probatio/` and `PROGRESS.md` until the suite runs —
+  that is the repository, minus its history, at which point the sdist is a worse copy of a clone.
+  Also rejected: keeping `tests/` and marking the ten modules `skipif`, which would make the gate
+  weaker inside the repository to make a shipped copy look green outside it.
+
+## 101. `CHANGELOG.md` comes under the provenance rule, and states no measurement
+
+- **Date:** 2026-09-06 (Phase 14)
+- **Q:** `CLAUDE.md` forbids a number in `README.md` or under `docs/` that a committed file did not
+  produce, and DECISIONS 96 built the index and the sweep that enforce it. `CHANGELOG.md` is
+  neither: it sits at the root and is the one document a PyPI reader may see before any other.
+  Does the rule reach it, and if so how?
+- **A:** The rule reaches it, and the changelog answers by carrying no measurement at all. Its
+  "Known limitations" section states each limit in words and points at `docs/CASE_STUDY.md` §5 and
+  `docs/EVALUATION.md` for the figures behind them. `docs/PROVENANCE.md` gains one row — `0.1.0`,
+  the version, fixed in `src/probatio/__init__.py` — and its guards table gains a `CHANGELOG.md`
+  line; `tests/test_docs_provenance.py`'s sweep is parametrised over `README.md` and
+  `CHANGELOG.md`, and a second test asserts that no row of the measurements table names the
+  changelog and that no measurement's string appears in it. Both were provoked: a stray `42%` and
+  a stray `0.600` each fail their own test.
+- **Why:** A changelog is a summary written once and read long after, which is exactly the shape
+  of document a figure rots in — the number outlives the run that produced it and nothing fails
+  when they diverge. The two obvious alternatives were both worse. Giving the changelog rows in
+  the measurements table would have made every kappa and violation rate exist in a fifth place,
+  and the index's own contract is that a row lists *every* document printing the number, so each
+  addition would have edited rows the case study and the evaluation own. Leaving the changelog
+  outside the rule would have made the release's most quotable document the one with no test. The
+  emptiness is the point, and the sweep is what makes it a fact rather than an intention.
+
+## 102. The audited list of files whose content came from the build package
+
+- **Date:** 2026-09-06 (Phase 14)
+- **Q:** Phase 14's audit asks that no file in the working tree hold content from
+  `probatio-package/` except `CLAUDE.md`, the two judge-label CSVs, the corpus notes, the
+  escalation phrase list, `golden-subset.jsonl` and the two faithfulness rubric copies. Run
+  exhaustively rather than from memory, what does the tree actually hold?
+- **A:** Nineteen tracked files are byte-identical to a build-package file, and four more carry its
+  content verbatim without being byte-identical. Byte-identical: `CLAUDE.md`; the fourteen corpus
+  notes under `tests/fixtures/consilium/corpus/`; `tests/fixtures/consilium/faithfulness_v2.md`;
+  the two label CSVs `judge-sample-labeled.csv` and `judge-sample-2-labeled.csv`; and
+  `tests/fixtures/claude_cli_payload.json`, which the list above does not name. Verbatim but not
+  byte-identical: `examples/consilium/golden-subset.jsonl`, whose fifteen lines are fifteen lines
+  of the package's `golden.jsonl`; `tests/fixtures/consilium/escalation_phrases.txt`, whose
+  thirty-eight phrases are the constant in the package's `safety/escalation.py`, one per line; and
+  the two files `convert_traces.py --emit-live-cases` writes from those fixtures,
+  `examples/consilium/live/cases/*.yaml` and `examples/consilium/live/rubrics/faithfulness.md`.
+  Everything else that shares a long line with the package shares the specification's own API
+  signatures and sample YAML, the reference list Phase 13 was handed, or a command line quoted
+  from the dogfood document.
+- **Why:** Recorded because the audit found one file the prompt's list did not name.
+  `tests/fixtures/claude_cli_payload.json` is sanctioned and always was — DECISIONS 14 records it
+  as "a verbatim copy of one real payload from that version", the payload the Phase 2 prompt said
+  a human would capture, and the parser and `docs/providers.md`'s three dollar figures are written
+  against it — but it was recorded as a copy of a *CLI reply*, not as a copy of a *package file*,
+  and an audit run from a remembered list would have missed it. The list above is the complete one,
+  derived by hashing every file in both trees and then comparing long lines across them, and it is
+  written down so the next audit compares against a checked artefact rather than a recollection.
+  Rejected alternative: reporting the prompt's list as confirmed and mentioning the payload in
+  passing, which is how a sanctioned copy quietly becomes an unrecorded one.
