@@ -1,0 +1,897 @@
+{
+  "case_id": "g-cc-002",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": 0.10848800000000001,
+          "latency_ms": 11152.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11981,
+            "duration_ms": 11152,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0051730000000000005,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8288,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10331500000000002,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 805,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the no-presumption rule for hypertensive heart disease, the CKD contrast, the \\\"with\\\" presumption and its override, Excludes1 versus Excludes2, and the pregnancy exclusion replacing I10 \u2014 is directly quoted or paraphrased from the two source documents, e.g. \\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately and I11 is not used.\\\"\"}",
+            "session_id": "ad6ef1dd-38a7-41c7-9316-59ef54ffa1e7",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 116,
+            "total_cost_usd": 0.10848800000000001,
+            "ttft_ms": 9262,
+            "ttft_stream_ms": 1853,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8288,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8288,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8288,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8288,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 805,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 805,
+              "output_tokens_details": {
+                "thinking_tokens": 631
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "70192629-5308-4091-b6f5-adc749349464"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the no-presumption rule for hypertensive heart disease, the CKD contrast, the \\\"with\\\" presumption and its override, Excludes1 versus Excludes2, and the pregnancy exclusion replacing I10 \u2014 is directly quoted or paraphrased from the two source documents, e.g. \\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately and I11 is not used.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 805
+        },
+        {
+          "cost_usd": 0.106998,
+          "latency_ms": 11070.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 12127,
+            "duration_ms": 11070,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.005188,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 19,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10181,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 744,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the absent heart-disease presumption versus the presumed hypertension\u2013CKD link, the \\\"with\\\" presumption and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 contrast, the pregnancy exclusion replacing I10, and the closing principle about inferring detail \u2014 is stated verbatim or near-verbatim in the two source documents.\"}",
+            "session_id": "03035621-9a77-494a-a09a-dd41b283d176",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 195,
+            "total_cost_usd": 0.106998,
+            "ttft_ms": 9323,
+            "ttft_stream_ms": 2237,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 744,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 744,
+              "output_tokens_details": {
+                "thinking_tokens": 589
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "83f7e7e2-7e8e-454d-9305-42d255997210"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the absent heart-disease presumption versus the presumed hypertension\u2013CKD link, the \\\"with\\\" presumption and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 contrast, the pregnancy exclusion replacing I10, and the closing principle about inferring detail \u2014 is stated verbatim or near-verbatim in the two source documents.\"}",
+          "tokens_in": 2,
+          "tokens_out": 744
+        },
+        {
+          "cost_usd": 0.107313,
+          "latency_ms": 9146.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10085,
+            "duration_ms": 9146,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.005178,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 17,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.102135,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 757,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim \u2014 the no-presumption rule for hypertensive heart disease (\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately and I11 is not used\\\"), the contrasting CKD presumption, the \\\"with\\\" convention and its override, Excludes1/Excludes2, the pregnancy exclusion, and the closing principle \u2014 is stated verbatim or near-verbatim in the sources.\"}",
+            "session_id": "ecd0e575-badd-484d-94e1-820c0096803e",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 246,
+            "total_cost_usd": 0.107313,
+            "ttft_ms": 7900,
+            "ttft_stream_ms": 1479,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 757,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 757,
+              "output_tokens_details": {
+                "thinking_tokens": 588
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "0d24e93b-9e6b-4458-9e27-72a7ec2bd67a"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim \u2014 the no-presumption rule for hypertensive heart disease (\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately and I11 is not used\\\"), the contrasting CKD presumption, the \\\"with\\\" convention and its override, Excludes1/Excludes2, the pregnancy exclusion, and the closing principle \u2014 is stated verbatim or near-verbatim in the sources.\"}",
+          "tokens_in": 2,
+          "tokens_out": 757
+        },
+        {
+          "cost_usd": 0.106283,
+          "latency_ms": 11070.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11684,
+            "duration_ms": 11070,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0051730000000000005,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10111,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 716,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the no-presumption rule for hypertensive heart disease (\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately\\\"), the CKD presumption, the \\\"with\\\" override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, and the pregnancy code being \\\"used in place of I10, not alongside it\\\" \u2014 is stated verbatim or in direct paraphrase in the two sources.\"}",
+            "session_id": "5da6039c-c32c-4886-a069-3baa43ec0c36",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 100,
+            "total_cost_usd": 0.106283,
+            "ttft_ms": 9006,
+            "ttft_stream_ms": 2569,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 716,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 716,
+              "output_tokens_details": {
+                "thinking_tokens": 530
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "fc7a8f5e-fc43-46e8-adc8-b49631305aef"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the no-presumption rule for hypertensive heart disease (\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately\\\"), the CKD presumption, the \\\"with\\\" override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, and the pregnancy code being \\\"used in place of I10, not alongside it\\\" \u2014 is stated verbatim or in direct paraphrase in the two sources.\"}",
+          "tokens_in": 2,
+          "tokens_out": 716
+        },
+        {
+          "cost_usd": 0.106358,
+          "latency_ms": 9870.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10154,
+            "duration_ms": 9870,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0051730000000000005,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.101185,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 719,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heart-disease non-presumption versus the presumed CKD link, the \\\"with\\\" convention and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, the pregnancy code used \\\"in place of I10, not alongside it,\\\" and the closing principle that \\\"inferring detail the record does not contain is the error the convention exists to prevent\\\" \u2014 is directly stated in the two source documents, mostly verbatim.\"}",
+            "session_id": "7e9b4ead-59a7-47ed-8d9b-2ad05eba5982",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 812,
+            "total_cost_usd": 0.106358,
+            "ttft_ms": 8464,
+            "ttft_stream_ms": 1778,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 719,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 719,
+              "output_tokens_details": {
+                "thinking_tokens": 541
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "e1d1bf1c-363d-47cd-abcc-381f60c64363"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heart-disease non-presumption versus the presumed CKD link, the \\\"with\\\" convention and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, the pregnancy code used \\\"in place of I10, not alongside it,\\\" and the closing principle that \\\"inferring detail the record does not contain is the error the convention exists to prevent\\\" \u2014 is directly stated in the two source documents, mostly verbatim.\"}",
+          "tokens_in": 2,
+          "tokens_out": 719
+        },
+        {
+          "cost_usd": 0.10683300000000001,
+          "latency_ms": 9324.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10112,
+            "duration_ms": 9324,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.005168000000000001,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8288,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.101665,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 739,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the no-presumption rule for hypertensive heart disease (\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately\\\"), the CKD presumption, the \\\"with\\\" override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, and the pregnancy code being used \\\"in place of I10, not alongside it\\\" \u2014 is drawn verbatim or by direct paraphrase from the two source documents.\"}",
+            "session_id": "e3460498-813e-416d-8ad9-8595b4cf6e25",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 74,
+            "total_cost_usd": 0.10683300000000001,
+            "ttft_ms": 7190,
+            "ttft_stream_ms": 1040,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8288,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8288,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8288,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8288,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 739,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 739,
+              "output_tokens_details": {
+                "thinking_tokens": 550
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "179ed3de-3058-4b87-a8e7-5b256e00dac3"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the no-presumption rule for hypertensive heart disease (\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately\\\"), the CKD presumption, the \\\"with\\\" override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, and the pregnancy code being used \\\"in place of I10, not alongside it\\\" \u2014 is drawn verbatim or by direct paraphrase from the two source documents.\"}",
+          "tokens_in": 2,
+          "tokens_out": 739
+        },
+        {
+          "cost_usd": 0.105573,
+          "latency_ms": 8382.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9318,
+            "duration_ms": 8382,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.005188,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 19,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.100385,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 687,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the absent hypertensive-heart presumption and non-use of I11, the presumed hypertension\u2013CKD link, the \\\"with\\\" presumption and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 contrast, the pregnancy exclusion replacing I10, and the caution against inferring undocumented detail \u2014 is directly quoted or paraphrased from the two source documents.}\"}",
+            "session_id": "d2938bc5-a1b3-4deb-8811-96814203075d",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 86,
+            "total_cost_usd": 0.105573,
+            "ttft_ms": 6514,
+            "ttft_stream_ms": 834,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 687,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 687,
+              "output_tokens_details": {
+                "thinking_tokens": 521
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "f7038d68-32a5-4c2b-8c06-4eccf59c7381"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the absent hypertensive-heart presumption and non-use of I11, the presumed hypertension\u2013CKD link, the \\\"with\\\" presumption and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 contrast, the pregnancy exclusion replacing I10, and the caution against inferring undocumented detail \u2014 is directly quoted or paraphrased from the two source documents.}\"}",
+          "tokens_in": 2,
+          "tokens_out": 687
+        },
+        {
+          "cost_usd": 0.105608,
+          "latency_ms": 9219.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9975,
+            "duration_ms": 9219,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0051730000000000005,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.100435,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 689,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the no-presumption rule for hypertensive heart disease and I11, the contrasting CKD presumption, the \\\"with\\\" convention being overridden when documentation says the conditions are unrelated and limited to listed pairings, the Excludes1/Excludes2 definitions, the pregnancy code used \\\"in place of I10, not alongside it,\\\" and the inferring-detail principle \u2014 is stated verbatim or near-verbatim in the two source documents.}",
+            "session_id": "64919afb-6606-429e-b6f0-b138ad544524",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 112,
+            "total_cost_usd": 0.105608,
+            "ttft_ms": 7527,
+            "ttft_stream_ms": 1050,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 689,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 689,
+              "output_tokens_details": {
+                "thinking_tokens": 512
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "699461d4-9bea-4fec-a902-6ff4d6bd31bc"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the no-presumption rule for hypertensive heart disease and I11, the contrasting CKD presumption, the \\\"with\\\" convention being overridden when documentation says the conditions are unrelated and limited to listed pairings, the Excludes1/Excludes2 definitions, the pregnancy code used \\\"in place of I10, not alongside it,\\\" and the inferring-detail principle \u2014 is stated verbatim or near-verbatim in the two source documents.}",
+          "tokens_in": 2,
+          "tokens_out": 689
+        },
+        {
+          "cost_usd": 0.107608,
+          "latency_ms": 9626.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10537,
+            "duration_ms": 9626,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0051730000000000005,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8290,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.102435,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 769,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the absence of a presumed hypertension/heart-disease link versus the presumed CKD link, the \\\"with\\\" presumption and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, the pregnancy code replacing I10, and the principle against inferring undocumented detail \u2014 is carried verbatim or by direct paraphrase in the two sources.\"}",
+            "session_id": "a87571e9-ab00-469c-ad2f-72fbaac7538c",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 121,
+            "total_cost_usd": 0.107608,
+            "ttft_ms": 8157,
+            "ttft_stream_ms": 1088,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8290,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8290,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8290,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8290,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 769,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 769,
+              "output_tokens_details": {
+                "thinking_tokens": 611
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "28541129-e8d4-4b8c-af21-b33bdbba7ff0"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the absence of a presumed hypertension/heart-disease link versus the presumed CKD link, the \\\"with\\\" presumption and its override when documentation says the conditions are unrelated, the Excludes1/Excludes2 distinction, the pregnancy code replacing I10, and the principle against inferring undocumented detail \u2014 is carried verbatim or by direct paraphrase in the two sources.\"}",
+          "tokens_in": 2,
+          "tokens_out": 769
+        },
+        {
+          "cost_usd": 0.10893300000000002,
+          "latency_ms": 9825.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10617,
+            "duration_ms": 9825,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.005168000000000001,
+                "inputTokens": 5093,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 8288,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10376500000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 823,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim \u2014 the no-presumption rule for hypertensive heart disease versus the presumed CKD link, the \\\"with\\\" presumption being overridden when documentation says the conditions are unrelated and limited to indexed pairings, the Excludes1/Excludes2 distinction, and the pregnancy code being \\\"used in place of I10, not alongside it\\\" \u2014 is stated verbatim or near-verbatim in the two source documents.}",
+            "session_id": "66b17bf1-3404-49a9-8087-3ed7bdd3574c",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 173,
+            "total_cost_usd": 0.10893300000000002,
+            "ttft_ms": 8170,
+            "ttft_stream_ms": 1044,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 8288,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 8288,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 8288,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 8288,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 823,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 823,
+              "output_tokens_details": {
+                "thinking_tokens": 660
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "975bd820-c781-47c5-b5b2-b8b1fa642f39"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim \u2014 the no-presumption rule for hypertensive heart disease versus the presumed CKD link, the \\\"with\\\" presumption being overridden when documentation says the conditions are unrelated and limited to indexed pairings, the Excludes1/Excludes2 distinction, and the pregnancy code being \\\"used in place of I10, not alongside it\\\" \u2014 is stated verbatim or near-verbatim in the two source documents.}",
+          "tokens_in": 2,
+          "tokens_out": 823
+        }
+      ],
+      "key": "347552fdc461cad5",
+      "model": "claude-opus-5",
+      "params": {},
+      "prompt": "You are grading one output of a system under test against a rubric. Apply the rubric exactly as\nwritten; do not add criteria of your own.\n\n## Rubric\n\n# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)\n\n<!-- Provenance: the sections from \"## System\" to \"### Evidence for every verdict ...\" below are\ncopied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That\nfile's \"## Output\" section, which asks for a per-claim JSON list, is replaced by the \"## Output\"\nsection at the end, because Probatio's judge template supplies its own output instruction. In\nProbatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under \"Input\nthe system was given\" and the ANSWER under \"Output under test\". v2's rationale header (why v2\nexists, the round-1 numbers) is omitted here; it is in the source file. -->\n\n## System\n\nYou are grading whether an answer is supported by the source documents it was given. You are not\ngrading whether the answer is good, well written, complete, or clinically correct. You are grading\none thing: does each factual claim in the answer appear in the sources.\n\n## Task\n\nYou will be given:\n\n- QUESTION: what the user asked.\n- SOURCES: numbered excerpts from reference documents.\n- ANSWER: the answer that was delivered.\n\nWork in two steps. First list the answer's factual claims. Then give each one a verdict.\n\n### Step 1 \u2014 what is a claim\n\nA **factual claim** is a statement that asserts something checkable about the world: a fact, a\nthreshold or number, a mechanism, a course of action, or something guidance is said to describe.\n\nThe following are **not claims**. Do not list them, and do not grade them:\n\n- greetings, sign-offs, and offers to help further;\n- the disclaimer, the escalation banner, and any instruction to seek care or call emergency\n  services;\n- any text in square brackets beginning with \"removed:\" \u2014 that is a redaction marker;\n- **summary, framing and transition sentences**, whose work is to open, close or connect rather\n  than to assert: \"Here is what guidance describes\", \"In summary\", \"Putting those together\",\n  \"There are a few things worth knowing here\";\n- **hedges and statements of variability that carry no specific fact**: \"this depends on your\n  situation\", \"recommendations differ between people\", \"your clinician can advise on the details\";\n- **meta-commentary that restates something you have already listed**. If two sentences assert the\n  same fact, list it once. A closing paragraph that repeats the body of the answer adds no claims;\n- **exhortations that assert nothing checkable**: \"do not leave this unaddressed\", \"take it\n  seriously\", \"it is worth acting on\".\n\nIf you are unsure whether a sentence carries a checkable fact, it is **not** a claim. Grading\ntransition and summary sentences as unsupported was the single largest source of error in the\nprevious version of this prompt: one such sentence flips the whole answer, because the answer-level\nlabel is `supported` only when every claim is.\n\n### Step 2 \u2014 verdicts\n\n- `supported` \u2014 the sources state the claim, or it follows directly from them.\n- `unsupported` \u2014 the claim is not in these sources. This includes a claim that is *true in\n  general* but absent from them. You are grading grounding, not correctness.\n- `contradicted` \u2014 the sources say something incompatible with the claim.\n\n**Paraphrase is support.** The claim does not have to reuse the source's wording, its sentence\nstructure, or its level of detail. A claim that restates a source in different words is\n`supported`. So is a claim that **aggregates or generalizes** several source statements into one\nsentence, as long as every part it asserts appears somewhere in the sources \u2014 cite the source\ncarrying the main part. Requiring the answer to echo the source is grading style, not grounding.\n\n**A rationale the sources do not give is a separate claim.** Where the sources state a rule and the\nanswer explains *why* the rule exists \u2014 in terms of billing, reimbursement, record complexity, or\nany motivation the sources are silent on \u2014 the rule is one claim and is `supported`, and the\nrationale is a second claim and is `unsupported`. Do not let the supported half carry the other.\n\n### The specific-attribute check\n\nRun this before you write `supported`. **Topical overlap is not support**: a claim and a source can\nbe about the same document, the same condition and the same paragraph and still not match. Check\nthat the source agrees with the claim on each of:\n\n- the **object** the fact attaches to \u2014 which measure, which drug class, which body system, which\n  test;\n- the **threshold or number** \u2014 the value, the unit, and the direction of the comparison;\n- the **mechanism or cause** it names;\n- the **population or condition** it applies to.\n\nA claim that takes a fact the sources state about one object, threshold, mechanism or population\nand attaches it to a **different** one is `contradicted`, not `supported`. Worked example: the\nsources describe an action plan built on daily weight change and fluid-retention warning signs, and\nthe answer says patients are given an action plan for salt intake. Same note, same condition, wrong\nobject \u2014 that is `contradicted`.\n\n### Claims about the sources themselves\n\nA sentence asserting what the SOURCES do or do not contain \u2014 \"the passage does not list the\nspecific classes\", \"the retrieved material does not name a threshold\" \u2014 **is a claim**, and it is\nchecked against the sources rather than waved through. Read the sources and decide. If a source\ndoes contain what the answer says is absent, the claim is `contradicted`.\n\n### Evidence for every verdict that is not `unsupported`\n\nEvery claim you mark `supported` must carry **the number of the source that supports it** and a\n**short verbatim span copied from that source** \u2014 at most 25 words \u2014 in `quote`. If you cannot copy\na span that carries the claim, the verdict is not `supported`.\n\nA `contradicted` claim carries the number of the source it contradicts and the span that\ncontradicts it. An `unsupported` claim carries `\"source\": null` and an empty `quote`.\n\n## Output\n\nProbatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as\nfollows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer\ncontains no factual claims. `verdict` is `\"pass\"` when every listed claim is `supported` (or there\nare no claims) and `\"fail\"` otherwise, which is v2's answer-level roll-up. `rationale` is one\nsentence naming the first `unsupported` or `contradicted` claim and the source span that decides\nit, or stating that every claim is supported.\n\n## Input the system was given\n\n{\n  \"documents\": [\n    \"---\\ndoc_id: coding-hypertension-i10\\ncategory: coding\\ntitle: \\\"Coding hypertension: I10 and the hypertensive disease family\\\"\\nsource: \\\"US clinical modification of ICD-10 maintained by NCHS and CMS (educational summary)\\\"\\nlast_reviewed: 2026-08-17\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## The code\\n\\nEssential, or primary, hypertension is I10 in ICD-10-CM. It sits in Chapter 9, diseases of the\\ncirculatory system, in the hypertensive-disease block that runs from I10 to I16.\\n\\nI10 is unusual in being a complete code at three characters. Most ICD-10-CM categories require a\\nfourth, fifth or sixth character before the code is billable; I10 takes none, so a request to\\n\\\"add more specificity to I10\\\" is a request the classification cannot satisfy. What the category\\nincludes is broad: high blood pressure described as arterial, essential, primary or systemic all map\\nto the same code. The benign-versus-malignant split that the previous US classification carried was\\nnot brought forward, which is why searching for a \\\"malignant hypertension\\\" code returns nothing\\nseparate.\\n\\n## What I10 is not used for\\n\\nA single raised reading, or a series of readings, in someone who has not been given a diagnosis of\\nhypertension is a finding rather than a disease, and it is classified with the abnormal findings in\\nChapter 18 instead. The distinction is documentation-driven: the diagnosis in the record, not the\\nnumber, is what moves a case to I10. The same chapter holds the code for low blood pressure.\\n\\nHypertension complicating pregnancy, childbirth or the period after delivery is excluded outright\\nand is classified in the obstetric chapter; the pregnancy code is used in place of I10, not\\nalongside it. Hypertension affecting the vessels of the brain or of the eye is handled differently\\nagain \u2014 those are separate conditions that may be coded in addition to the hypertension rather than\\ninstead of it.\\n\\n## When hypertension stops being I10\\n\\nI10 applies when hypertension stands alone. Once organ involvement is in the picture, the\\nclassification prefers a combination code:\\n\\n- Documented hypertensive heart disease moves the case to I11, subdivided by whether heart failure\\n  is present. When it is, the type of heart failure is added from I50 as a second code.\\n- Hypertension with chronic kidney disease moves to I12, with a second code identifying the stage of\\n  kidney disease.\\n- Both together move to I13.\\n- Hypertension attributed to an identifiable underlying cause \u2014 renal, endocrine, or another \u2014 is\\n  secondary hypertension in I15, coded together with the cause.\\n- Hypertensive urgency and hypertensive emergency are distinguished within I16.\\n\\nThe heart and kidney rules differ in an important way. The classification presumes a causal link\\nbetween hypertension and chronic kidney disease and pairs them without being told to. It makes no\\nsuch presumption for heart disease: unless the record states that the heart condition is\\nhypertensive or due to the hypertension, the two are coded separately and I11 is not used.\\n\\n## Related codes that appear on the same encounter\\n\\nScreening for cardiovascular disorders in someone without symptoms has its own encounter code in the\\nfactors-influencing-health chapter, as does a personal history of, or long-term drug therapy for, a\\ncirculatory condition. Tobacco use or dependence is frequently added, because many categories in\\nChapter 9 carry an explicit instruction to identify it.\\n\",\n    \"---\\ndoc_id: coding-icd10-cm-code-structure-and-conventions\\ncategory: coding\\ntitle: \\\"ICD-10-CM code structure and the conventions that govern selection\\\"\\nsource: \\\"US clinical modification of ICD-10 maintained by NCHS and CMS (educational summary)\\\"\\nlast_reviewed: 2026-08-17\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## What a code looks like\\n\\nAn ICD-10-CM code is three to seven characters long. The first character is a letter, the second is\\na digit, and the remaining characters may be either. A decimal point follows the first three\\ncharacters when more follow, so I10 has no decimal and E11.9 has one.\\n\\nThe three-character form is the category. Characters four and five add detail \u2014 cause, anatomical\\nsite, severity \u2014 and character six frequently carries laterality, where right, left and unspecified\\nare three different codes rather than one code with a note. A seventh character, where a category\\nuses one, records something about the encounter rather than about the disease: for injuries it\\ndistinguishes initial treatment, subsequent treatment and sequela.\\n\\nMost categories are not valid at three characters. A code has to be carried to its full length for\\nthe category it belongs to, and a category that requires a seventh character requires it even when\\nthe intervening characters are empty \u2014 which is what the placeholder X exists for, holding a\\nposition open so the seventh character lands in the seventh place.\\n\\n## The two-step lookup\\n\\nA code is found in the Alphabetic Index and then verified in the Tabular List. Skipping the second\\nstep is the most common way to arrive at a wrong code, because the index does not carry the\\ninstructional notes and the tabular list does. The tabular list governs.\\n\\n## The instructional notes\\n\\n**Excludes1** means \\\"not coded here\\\" in the strong sense: the two conditions cannot both be present,\\nand the codes are never reported together. **Excludes2** is the weaker one: the excluded condition\\nis not part of the code above it, but a person can have both, and both may be reported. The two look\\nalike on the page and mean opposite things about whether a second code is permitted.\\n\\n**Code first** and **use additional code** appear as a pair and fix sequencing: an underlying\\ncondition is reported before its manifestation. **Code also** signals that two codes are needed\\nwithout dictating which comes first.\\n\\n**Combination codes** carry two conditions, or a condition and a complication, in one code. Where a\\ncombination code exists it is used instead of the separate codes, which is why a family such as\\ndiabetes appears so large.\\n\\n## \\\"With\\\", and the presumption it creates\\n\\nWhere the Alphabetic Index links two conditions with the word \\\"with\\\", the classification reads it as\\n\\\"associated with\\\" or \\\"due to\\\" and presumes the relationship without requiring the record to state\\nit. The presumption holds only for the pairings the index actually lists, and it is overridden when\\nthe documentation says the two are unrelated.\\n\\n## Unspecified codes, NEC and NOS\\n\\n**NEC**, not elsewhere classifiable, means the condition is specified but the classification has no\\ndistinct code for it. **NOS**, not otherwise specified, means the documentation was not specific.\\nThe distinction matters because an unspecified code is a statement about the record rather than\\nabout the person, and it remains a valid code: where the documentation genuinely does not support\\nmore detail, the unspecified code is the correct one, and inferring detail the record does not\\ncontain is the error the convention exists to prevent.\\n\"\n  ],\n  \"question\": \"Is there a case where two conditions documented together must NOT be linked by the coder?\"\n}\n\n## Output under test\n\nYes \u2014 the documents describe several such cases.\n\n**1. Hypertension and heart disease (the clearest example).** The classification \"makes no such presumption for heart disease: unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately and I11 is not used.\" So a coder who sees hypertension and a heart condition documented on the same encounter must *not* link them on their own initiative \u2014 the link has to come from the documentation.\n\nThis is explicitly contrasted with chronic kidney disease, where the opposite is true: \"The classification presumes a causal link between hypertension and chronic kidney disease and pairs them without being told to.\"\n\n**2. When documentation states the conditions are unrelated.** The \"with\" convention normally lets the classification read a linkage as \"associated with\" or \"due to\" without the record saying so \u2014 but that presumption \"is overridden when the documentation says the two are unrelated.\" It also \"holds only for the pairings the index actually lists,\" so a \"with\" linkage cannot be extended to pairings the index doesn't carry.\n\n**3. Excludes1.** This is a stronger case still \u2014 not merely \"don't link,\" but \"don't report together.\" Excludes1 means \"'not coded here' in the strong sense: the two conditions cannot both be present, and the codes are never reported together.\" (Contrast Excludes2, where \"a person can have both, and both may be reported.\")\n\n**4. Conditions that displace rather than accompany.** Hypertension complicating pregnancy, childbirth or the postpartum period is excluded from I10 outright: \"the pregnancy code is used in place of I10, not alongside it.\"\n\nThe underlying principle the documents give for all of this is that \"inferring detail the record does not contain is the error the convention exists to prevent.\"\n\n## Your answer\n\nReply with one JSON object and nothing else, in exactly this form:\n\n{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"<one sentence>\"}\n\n\"verdict\" is \"pass\" or \"fail\", \"score\" is a number from 0 to 1, and \"rationale\" is one sentence.\nDo not wrap the object in a code fence and do not write anything before or after it.\n",
+      "system": null
+    }
+  ],
+  "model": "claude-opus-5",
+  "provider": "claude-cli",
+  "recorded": "2026-09-06T23:10:01Z"
+}

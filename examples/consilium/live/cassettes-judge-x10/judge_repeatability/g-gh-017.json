@@ -1,0 +1,897 @@
+{
+  "case_id": "g-gh-017",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": 0.086442,
+          "latency_ms": 5075.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 5938,
+            "duration_ms": 5075,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004262,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7282,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08218,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 362,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet and its components, the 2,300 mg and 1,500 mg sodium targets, the graded relationship, packaged/restaurant food as the main sodium source, the additive effect with the dietary pattern, potassium via food, the alcohol limits, weight reduction, the unestablished remedies, the CKD/potassium-medication caution, and the educational-summary labeling \u2014 is stated in source [1].\"}",
+            "session_id": "770cd297-e5ba-4988-b9ab-896ad1a2acdb",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 135,
+            "total_cost_usd": 0.086442,
+            "ttft_ms": 2974,
+            "ttft_stream_ms": 845,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7282,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7282,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7282,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7282,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 362,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 362,
+              "output_tokens_details": {
+                "thinking_tokens": 192
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "b7057b1f-414f-4e22-bf17-e71790c9a649"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet and its components, the 2,300 mg and 1,500 mg sodium targets, the graded relationship, packaged/restaurant food as the main sodium source, the additive effect with the dietary pattern, potassium via food, the alcohol limits, weight reduction, the unestablished remedies, the CKD/potassium-medication caution, and the educational-summary labeling \u2014 is stated in source [1].\"}",
+          "tokens_in": 2,
+          "tokens_out": 362
+        },
+        {
+          "cost_usd": 0.100317,
+          "latency_ms": 10293.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11286,
+            "duration_ms": 10293,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004262,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7282,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.096055,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 917,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the whole-pattern emphasis and limits, the whole-pattern-not-single-food caveat, sodium as most-studied with the 2,300 mg and 1,500 mg targets and graded relationship, the packaged/restaurant food point, the additive effect of pattern plus sodium reduction, potassium via food, alcohol limits, weight, the not-established items, the kidney/potassium-medication caution, and the educational-summary labeling \u2014 is stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+            "session_id": "9b326f02-9cf6-45fa-be5b-cf936a880994",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 121,
+            "total_cost_usd": 0.100317,
+            "ttft_ms": 7937,
+            "ttft_stream_ms": 870,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7282,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7282,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7282,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7282,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 917,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 917,
+              "output_tokens_details": {
+                "thinking_tokens": 683
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "4d735d70-8285-4a5b-97c5-e727fcf9ca0c"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the whole-pattern emphasis and limits, the whole-pattern-not-single-food caveat, sodium as most-studied with the 2,300 mg and 1,500 mg targets and graded relationship, the packaged/restaurant food point, the additive effect of pattern plus sodium reduction, potassium via food, alcohol limits, weight, the not-established items, the kidney/potassium-medication caution, and the educational-summary labeling \u2014 is stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 917
+        },
+        {
+          "cost_usd": 0.10395700000000001,
+          "latency_ms": 12560.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 13525,
+            "duration_ms": 12560,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004287,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 21,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7276,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09967000000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1064,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the whole-pattern diet and its food lists, the sodium targets (under 2,300 mg/day, further benefit at 1,500 mg), the graded relationship and packaged-food point, the additive effect with the dietary pattern, potassium, alcohol limits, weight, the not-established items, and the kidney-disease/potassium caution \u2014 is stated in source 1, e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\\"\"}",
+            "session_id": "6dc22e6b-0524-44a5-965d-62a5e466fc72",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 132,
+            "total_cost_usd": 0.10395700000000001,
+            "ttft_ms": 10802,
+            "ttft_stream_ms": 1161,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7276,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7276,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7276,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7276,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1064,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1064,
+              "output_tokens_details": {
+                "thinking_tokens": 865
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "a760ef33-7363-4387-a504-d431ceeb170e"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the whole-pattern diet and its food lists, the sodium targets (under 2,300 mg/day, further benefit at 1,500 mg), the graded relationship and packaged-food point, the additive effect with the dietary pattern, potassium, alcohol limits, weight, the not-established items, and the kidney-disease/potassium caution \u2014 is stated in source 1, e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 1064
+        },
+        {
+          "cost_usd": 0.105697,
+          "latency_ms": 13353.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 13850,
+            "duration_ms": 13353,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004262,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7280,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.101435,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1133,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet and its component foods, the 2,300 mg and 1,500 mg sodium targets, the graded relationship, the packaged/restaurant food point, the additive effect with sodium reduction, potassium, alcohol limits, weight, the not-established items, the kidney-disease/potassium-medication caution, and the note's self-description as an educational summary \u2014 is stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+            "session_id": "3a82df91-6631-4368-852a-a3539c513439",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 380,
+            "total_cost_usd": 0.105697,
+            "ttft_ms": 10990,
+            "ttft_stream_ms": 1099,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7280,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7280,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7280,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7280,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1133,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1133,
+              "output_tokens_details": {
+                "thinking_tokens": 922
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "3dce2614-4117-4dd0-8f45-00495283a74d"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet and its component foods, the 2,300 mg and 1,500 mg sodium targets, the graded relationship, the packaged/restaurant food point, the additive effect with sodium reduction, potassium, alcohol limits, weight, the not-established items, the kidney-disease/potassium-medication caution, and the note's self-description as an educational summary \u2014 is stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 1133
+        },
+        {
+          "cost_usd": 0.101967,
+          "latency_ms": 11020.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11861,
+            "duration_ms": 11020,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004257,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7280,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09771,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 984,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern emphasis and limits, the 2,300/1,500 mg sodium targets, the graded relationship, packaged and restaurant food as the main sodium source, the combined pattern-plus-sodium effect, potassium via food, the alcohol limits, weight reduction, the not-established list, the CKD/potassium-medication caution, and the educational-summary labeling \u2014 is stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+            "session_id": "98f50f79-6f3a-4e45-ae20-40894960c0ee",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 223,
+            "total_cost_usd": 0.101967,
+            "ttft_ms": 8864,
+            "ttft_stream_ms": 1043,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7280,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7280,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7280,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7280,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 984,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 984,
+              "output_tokens_details": {
+                "thinking_tokens": 769
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "f9c3726a-8270-45b2-86f7-34188fd29b9c"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern emphasis and limits, the 2,300/1,500 mg sodium targets, the graded relationship, packaged and restaurant food as the main sodium source, the combined pattern-plus-sodium effect, potassium via food, the alcohol limits, weight reduction, the not-established list, the CKD/potassium-medication caution, and the educational-summary labeling \u2014 is stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 984
+        },
+        {
+          "cost_usd": 0.099387,
+          "latency_ms": 10163.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10903,
+            "duration_ms": 10163,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004252,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 14,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7280,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.095135,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 881,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet composition, the 2,300/1,500 mg sodium targets, the packaged-food sodium point, the combined pattern-plus-sodium effect, and the potassium, alcohol, weight, not-established and caution statements \u2014 is directly stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+            "session_id": "3f3b4535-39fb-4334-9bca-08f66b8e1ce8",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 208,
+            "total_cost_usd": 0.099387,
+            "ttft_ms": 8194,
+            "ttft_stream_ms": 1042,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7280,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7280,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7280,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7280,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 881,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 881,
+              "output_tokens_details": {
+                "thinking_tokens": 708
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "3f415d18-79cc-4656-948d-b6f9791b52fb"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet composition, the 2,300/1,500 mg sodium targets, the packaged-food sodium point, the combined pattern-plus-sodium effect, and the potassium, alcohol, weight, not-established and caution statements \u2014 is directly stated in source 1 (e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 881
+        },
+        {
+          "cost_usd": 0.101552,
+          "latency_ms": 11978.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 12849,
+            "duration_ms": 11978,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004262,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7278,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09729,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 968,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern emphasis and limits, the 2,300/1,500 mg sodium targets and graded relationship, the packaged-food source of most sodium, the additive effect of pattern plus sodium reduction, potassium via food, the alcohol limits, weight proportionality, the not-established list, the kidney-disease caution, and the educational-summary labeling \u2014 is a direct paraphrase of source [1].\"}",
+            "session_id": "d4599873-1614-425f-ab3f-17a9eb7bf23b",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 143,
+            "total_cost_usd": 0.101552,
+            "ttft_ms": 10119,
+            "ttft_stream_ms": 956,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7278,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7278,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7278,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7278,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 968,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 968,
+              "output_tokens_details": {
+                "thinking_tokens": 801
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "15040b13-7116-447b-ad94-f18c2249a95b"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern emphasis and limits, the 2,300/1,500 mg sodium targets and graded relationship, the packaged-food source of most sodium, the additive effect of pattern plus sodium reduction, potassium via food, the alcohol limits, weight proportionality, the not-established list, the kidney-disease caution, and the educational-summary labeling \u2014 is a direct paraphrase of source [1].\"}",
+          "tokens_in": 2,
+          "tokens_out": 968
+        },
+        {
+          "cost_usd": 0.094322,
+          "latency_ms": 8786.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9557,
+            "duration_ms": 8786,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004257,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7278,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.090065,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 679,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the whole-pattern diet and its components, the 2,300/1,500 mg sodium targets and graded relationship, the packaged/restaurant food point, the combined pattern-plus-sodium effect, potassium via food, alcohol limits, weight reduction, the unestablished remedies, the potassium/kidney-disease caution, and the educational-summary label \u2014 is stated in source [1], e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg\\\".\"}",
+            "session_id": "092c3a8b-62fd-48f1-b4d2-4669df66d860",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 146,
+            "total_cost_usd": 0.094322,
+            "ttft_ms": 7247,
+            "ttft_stream_ms": 888,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7278,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7278,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7278,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7278,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 679,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 679,
+              "output_tokens_details": {
+                "thinking_tokens": 477
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "db150e62-abf1-4b95-9c73-77c9f1ede6b5"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the whole-pattern diet and its components, the 2,300/1,500 mg sodium targets and graded relationship, the packaged/restaurant food point, the combined pattern-plus-sodium effect, potassium via food, alcohol limits, weight reduction, the unestablished remedies, the potassium/kidney-disease caution, and the educational-summary label \u2014 is stated in source [1], e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg\\\".\"}",
+          "tokens_in": 2,
+          "tokens_out": 679
+        },
+        {
+          "cost_usd": 0.097302,
+          "latency_ms": 10525.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11570,
+            "duration_ms": 10525,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004262,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7278,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09304,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 798,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet composition, the sodium targets (under 2,300 mg, 1,500 mg), the packaged-food point, potassium via food, alcohol limits, weight, the not-established list, and the CKD/potassium caution \u2014 is stated in source 1, e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\\"\"}",
+            "session_id": "2d0238e7-6e27-453c-9f08-6006138e8215",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 147,
+            "total_cost_usd": 0.097302,
+            "ttft_ms": 8653,
+            "ttft_stream_ms": 2650,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7278,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7278,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7278,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7278,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 798,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 798,
+              "output_tokens_details": {
+                "thinking_tokens": 630
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "2cb1499a-52db-4af2-8b5e-ee1c17df53a0"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the whole-pattern diet composition, the sodium targets (under 2,300 mg, 1,500 mg), the packaged-food point, potassium via food, alcohol limits, weight, the not-established list, and the CKD/potassium caution \u2014 is stated in source 1, e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 798
+        },
+        {
+          "cost_usd": 0.100517,
+          "latency_ms": 10599.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11582,
+            "duration_ms": 10599,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004262,
+                "inputTokens": 4182,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7282,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.096255,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 925,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the DASH-style whole pattern and its limits, the 2,300/1,500 mg sodium targets and graded relationship, packaged/restaurant food as the main sodium source, the additive effect of pattern plus sodium reduction, potassium, alcohol limits, weight, the not-established items, the potassium/CKD caution, and the educational-summary label \u2014 is stated in source 1, e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\\"\"}",
+            "session_id": "c2ee3e73-9159-49e6-83b6-f583bcdc7613",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 117,
+            "total_cost_usd": 0.100517,
+            "ttft_ms": 8770,
+            "ttft_stream_ms": 879,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7282,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7282,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7282,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7282,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 925,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 925,
+              "output_tokens_details": {
+                "thinking_tokens": 720
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "f0500df0-48d1-4c4a-917a-e555f7cb030d"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the DASH-style whole pattern and its limits, the 2,300/1,500 mg sodium targets and graded relationship, packaged/restaurant food as the main sodium source, the additive effect of pattern plus sodium reduction, potassium, alcohol limits, weight, the not-established items, the potassium/CKD caution, and the educational-summary label \u2014 is stated in source 1, e.g. \\\"Commonly stated targets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 925
+        }
+      ],
+      "key": "ccf0f72365891cc1",
+      "model": "claude-opus-5",
+      "params": {},
+      "prompt": "You are grading one output of a system under test against a rubric. Apply the rubric exactly as\nwritten; do not add criteria of your own.\n\n## Rubric\n\n# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)\n\n<!-- Provenance: the sections from \"## System\" to \"### Evidence for every verdict ...\" below are\ncopied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That\nfile's \"## Output\" section, which asks for a per-claim JSON list, is replaced by the \"## Output\"\nsection at the end, because Probatio's judge template supplies its own output instruction. In\nProbatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under \"Input\nthe system was given\" and the ANSWER under \"Output under test\". v2's rationale header (why v2\nexists, the round-1 numbers) is omitted here; it is in the source file. -->\n\n## System\n\nYou are grading whether an answer is supported by the source documents it was given. You are not\ngrading whether the answer is good, well written, complete, or clinically correct. You are grading\none thing: does each factual claim in the answer appear in the sources.\n\n## Task\n\nYou will be given:\n\n- QUESTION: what the user asked.\n- SOURCES: numbered excerpts from reference documents.\n- ANSWER: the answer that was delivered.\n\nWork in two steps. First list the answer's factual claims. Then give each one a verdict.\n\n### Step 1 \u2014 what is a claim\n\nA **factual claim** is a statement that asserts something checkable about the world: a fact, a\nthreshold or number, a mechanism, a course of action, or something guidance is said to describe.\n\nThe following are **not claims**. Do not list them, and do not grade them:\n\n- greetings, sign-offs, and offers to help further;\n- the disclaimer, the escalation banner, and any instruction to seek care or call emergency\n  services;\n- any text in square brackets beginning with \"removed:\" \u2014 that is a redaction marker;\n- **summary, framing and transition sentences**, whose work is to open, close or connect rather\n  than to assert: \"Here is what guidance describes\", \"In summary\", \"Putting those together\",\n  \"There are a few things worth knowing here\";\n- **hedges and statements of variability that carry no specific fact**: \"this depends on your\n  situation\", \"recommendations differ between people\", \"your clinician can advise on the details\";\n- **meta-commentary that restates something you have already listed**. If two sentences assert the\n  same fact, list it once. A closing paragraph that repeats the body of the answer adds no claims;\n- **exhortations that assert nothing checkable**: \"do not leave this unaddressed\", \"take it\n  seriously\", \"it is worth acting on\".\n\nIf you are unsure whether a sentence carries a checkable fact, it is **not** a claim. Grading\ntransition and summary sentences as unsupported was the single largest source of error in the\nprevious version of this prompt: one such sentence flips the whole answer, because the answer-level\nlabel is `supported` only when every claim is.\n\n### Step 2 \u2014 verdicts\n\n- `supported` \u2014 the sources state the claim, or it follows directly from them.\n- `unsupported` \u2014 the claim is not in these sources. This includes a claim that is *true in\n  general* but absent from them. You are grading grounding, not correctness.\n- `contradicted` \u2014 the sources say something incompatible with the claim.\n\n**Paraphrase is support.** The claim does not have to reuse the source's wording, its sentence\nstructure, or its level of detail. A claim that restates a source in different words is\n`supported`. So is a claim that **aggregates or generalizes** several source statements into one\nsentence, as long as every part it asserts appears somewhere in the sources \u2014 cite the source\ncarrying the main part. Requiring the answer to echo the source is grading style, not grounding.\n\n**A rationale the sources do not give is a separate claim.** Where the sources state a rule and the\nanswer explains *why* the rule exists \u2014 in terms of billing, reimbursement, record complexity, or\nany motivation the sources are silent on \u2014 the rule is one claim and is `supported`, and the\nrationale is a second claim and is `unsupported`. Do not let the supported half carry the other.\n\n### The specific-attribute check\n\nRun this before you write `supported`. **Topical overlap is not support**: a claim and a source can\nbe about the same document, the same condition and the same paragraph and still not match. Check\nthat the source agrees with the claim on each of:\n\n- the **object** the fact attaches to \u2014 which measure, which drug class, which body system, which\n  test;\n- the **threshold or number** \u2014 the value, the unit, and the direction of the comparison;\n- the **mechanism or cause** it names;\n- the **population or condition** it applies to.\n\nA claim that takes a fact the sources state about one object, threshold, mechanism or population\nand attaches it to a **different** one is `contradicted`, not `supported`. Worked example: the\nsources describe an action plan built on daily weight change and fluid-retention warning signs, and\nthe answer says patients are given an action plan for salt intake. Same note, same condition, wrong\nobject \u2014 that is `contradicted`.\n\n### Claims about the sources themselves\n\nA sentence asserting what the SOURCES do or do not contain \u2014 \"the passage does not list the\nspecific classes\", \"the retrieved material does not name a threshold\" \u2014 **is a claim**, and it is\nchecked against the sources rather than waved through. Read the sources and decide. If a source\ndoes contain what the answer says is absent, the claim is `contradicted`.\n\n### Evidence for every verdict that is not `unsupported`\n\nEvery claim you mark `supported` must carry **the number of the source that supports it** and a\n**short verbatim span copied from that source** \u2014 at most 25 words \u2014 in `quote`. If you cannot copy\na span that carries the claim, the verdict is not `supported`.\n\nA `contradicted` claim carries the number of the source it contradicts and the span that\ncontradicts it. An `unsupported` claim carries `\"source\": null` and an empty `quote`.\n\n## Output\n\nProbatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as\nfollows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer\ncontains no factual claims. `verdict` is `\"pass\"` when every listed claim is `supported` (or there\nare no claims) and `\"fail\"` otherwise, which is v2's answer-level roll-up. `rationale` is one\nsentence naming the first `unsupported` or `contradicted` claim and the source span that decides\nit, or stating that every claim is supported.\n\n## Input the system was given\n\n{\n  \"documents\": [\n    \"---\\ndoc_id: lifestyle-hypertension-diet\\ncategory: lifestyle\\ntitle: \\\"Diet for high blood pressure\\\"\\nsource: \\\"General clinical reference and dietary pattern guidance (educational summary)\\\"\\nlast_reviewed: 2026-08-09\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## The dietary pattern with the most evidence\\n\\nThe dietary approach most consistently described for blood pressure emphasizes vegetables, fruit,\\nwhole grains, low-fat dairy, poultry, fish, beans, nuts and vegetable oils, while limiting saturated\\nfat, full-fat dairy, fatty meat, sweets and sugar-sweetened drinks. It is a whole pattern rather\\nthan a single food, and the trials that established it changed everything on the plate at once \u2014\\nwhich is why substituting one \\\"blood pressure food\\\" into an otherwise unchanged diet does not\\nreproduce the result.\\n\\nThe reduction seen with the pattern alone is meaningful, and combining it with sodium reduction\\nproduces a larger effect than either alone.\\n\\n## Sodium\\n\\nSodium reduction is the single most-studied dietary change for blood pressure. Commonly stated\\ntargets are under 2,300 mg per day, with a further benefit described at 1,500 mg for many adults.\\nAny reduction helps: the relationship is graded, so moving from very high intake to merely high\\nintake is worthwhile even if a target is not reached.\\n\\nThe practical point that surprises people: most dietary sodium does not come from the salt shaker.\\nThe large majority is already in packaged and restaurant food \u2014 bread, processed meat, cheese,\\nsauces, soups, snacks and prepared meals. Cooking at home from unprocessed ingredients does more\\nthan removing salt from the table, and reading labels for sodium per serving is more effective than\\nany single substitution.\\n\\nSalt substitutes containing potassium chloride are described as reducing blood pressure, but they\\nare not appropriate for everyone \u2014 particularly people with chronic kidney disease or on medication\\nthat raises potassium \u2014 and are a matter for the person's own clinician.\\n\\n## Potassium\\n\\nHigher dietary potassium is associated with lower blood pressure, and increasing it through food \u2014\\nvegetables, fruit, beans, dairy \u2014 is the described route rather than supplements. The same caution\\nabout kidney disease and potassium-raising medication applies.\\n\\n## Alcohol\\n\\nAlcohol raises blood pressure in a dose-related way, and reducing intake lowers it. Commonly stated\\nlimits are up to two drinks per day for men and one for women, with less being better. For someone\\ndrinking well above that, reduction is one of the more reliable non-drug interventions available.\\n\\n## Weight\\n\\nWeight reduction lowers blood pressure roughly in proportion to the amount lost, and the effect\\nbegins early rather than requiring a target weight to be reached. A modest, sustained reduction is\\ndescribed as worthwhile in its own right.\\n\\n## What is not established\\n\\nSpecific \\\"superfoods\\\", vinegar, garlic supplements and similar single-ingredient remedies do not\\nhave evidence comparable to the whole-pattern approach. Caffeine raises blood pressure acutely but\\nhabitual intake has little sustained effect in most people. The hypertension guideline notes in this\\ncorpus cover thresholds, targets and when drug treatment is added.\\n\"\n  ],\n  \"question\": \"What sort of dietary change does guidance describe for high blood pressure?\"\n}\n\n## Output under test\n\nBased on the dietary guidance note in the documents [1]:\n\n## The overall pattern matters more than any single food\n\nThe dietary approach with the most consistent evidence emphasizes:\n\n- Vegetables, fruit, whole grains\n- Low-fat dairy\n- Poultry, fish, beans, nuts\n- Vegetable oils\n\n...while limiting saturated fat, full-fat dairy, fatty meat, sweets and sugar-sweetened drinks.\n\nAn important caveat from the document: this is a *whole pattern*, not a single food. The trials that established it changed everything on the plate at once, which is why swapping one \"blood pressure food\" into an otherwise unchanged diet does not reproduce the result.\n\n## Sodium reduction\n\nThis is described as the single most-studied dietary change. Commonly stated targets are **under 2,300 mg/day**, with further benefit described at **1,500 mg** for many adults. The relationship is graded, so any reduction is worthwhile even if a target isn't reached.\n\nThe practical point the document highlights: most dietary sodium is not from the salt shaker. The large majority is already in packaged and restaurant food \u2014 bread, processed meat, cheese, sauces, soups, snacks, prepared meals. Cooking at home from unprocessed ingredients and reading sodium labels does more than removing salt from the table.\n\nCombining the dietary pattern with sodium reduction produces a larger effect than either alone.\n\n## Other described changes\n\n- **Potassium** \u2014 higher dietary potassium is associated with lower blood pressure, via food (vegetables, fruit, beans, dairy) rather than supplements.\n- **Alcohol** \u2014 raises blood pressure in a dose-related way. Commonly stated limits are up to two drinks/day for men, one for women, with less being better.\n- **Weight** \u2014 reduction lowers blood pressure roughly in proportion to the amount lost, and the effect begins early rather than requiring a target weight.\n\n## What the document says is *not* established\n\nSpecific \"superfoods,\" vinegar, garlic supplements and similar single-ingredient remedies lack evidence comparable to the whole-pattern approach. Caffeine raises blood pressure acutely, but habitual intake has little sustained effect in most people.\n\nTwo cautions the document flags: potassium-based salt substitutes and increased potassium intake generally are **not appropriate for everyone** \u2014 particularly people with chronic kidney disease or on medication that raises potassium \u2014 and are a matter for the person's own clinician.\n\nThe document is explicitly labeled an educational summary, not medical advice.\n\n## Your answer\n\nReply with one JSON object and nothing else, in exactly this form:\n\n{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"<one sentence>\"}\n\n\"verdict\" is \"pass\" or \"fail\", \"score\" is a number from 0 to 1, and \"rationale\" is one sentence.\nDo not wrap the object in a code fence and do not write anything before or after it.\n",
+      "system": null
+    }
+  ],
+  "model": "claude-opus-5",
+  "provider": "claude-cli",
+  "recorded": "2026-09-06T22:59:53Z"
+}

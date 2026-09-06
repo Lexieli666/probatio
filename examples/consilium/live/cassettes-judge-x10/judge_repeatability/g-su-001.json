@@ -1,0 +1,897 @@
+{
+  "case_id": "g-su-001",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": 0.09283,
+          "latency_ms": 13546.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 14416,
+            "duration_ms": 13546,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004185,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7081,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.088645,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 701,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration pattern treated as possible heart attack, ambulance over self-transport with ECG and en-route treatment, waiting as the most costly error, progressive muscle death, false alarm as a good outcome, heartburn/antacid non-reassurance, the while-waiting steps, and the associated-symptom list \u2014 is stated in the single source document.\"}",
+            "session_id": "e6fe27be-6274-4304-91f9-0ec0190cd4d9",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 72,
+            "total_cost_usd": 0.09283,
+            "ttft_ms": 13476,
+            "ttft_stream_ms": 2624,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7081,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7081,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7081,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7081,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 701,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 701,
+              "output_tokens_details": {
+                "thinking_tokens": 553
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "9763c4ea-e0f4-4d6b-bba1-798566978901"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration pattern treated as possible heart attack, ambulance over self-transport with ECG and en-route treatment, waiting as the most costly error, progressive muscle death, false alarm as a good outcome, heartburn/antacid non-reassurance, the while-waiting steps, and the associated-symptom list \u2014 is stated in the single source document.\"}",
+          "tokens_in": 2,
+          "tokens_out": 701
+        },
+        {
+          "cost_usd": 0.092145,
+          "latency_ms": 8053.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9182,
+            "duration_ms": 8053,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041800000000000006,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7083,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.087965,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 673,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, ambulance versus self-transport and the three things it loses, waiting as the most common and costly error, progressive muscle death and early reperfusion, false alarm as a good outcome, heartburn/antacid non-reassurance, and the while-waiting and associated-symptom lists \u2014 is stated in source 1, e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\".\"}",
+            "session_id": "3815ad52-d6c8-4cc5-898b-d84eea44348e",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 150,
+            "total_cost_usd": 0.092145,
+            "ttft_ms": 5844,
+            "ttft_stream_ms": 889,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7083,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7083,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7083,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7083,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 673,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 673,
+              "output_tokens_details": {
+                "thinking_tokens": 481
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "3113ede6-2294-4419-bd57-be0e845ad42a"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, ambulance versus self-transport and the three things it loses, waiting as the most common and costly error, progressive muscle death and early reperfusion, false alarm as a good outcome, heartburn/antacid non-reassurance, and the while-waiting and associated-symptom lists \u2014 is stated in source 1, e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\".\"}",
+          "tokens_in": 2,
+          "tokens_out": 673
+        },
+        {
+          "cost_usd": 0.09516999999999999,
+          "latency_ms": 8989.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9962,
+            "duration_ms": 8989,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004185,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7085,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.090985,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 793,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, the ambulance-versus-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death and early reperfusion, false alarm as a good outcome, heartburn/antacid non-reassurance, the while-waiting advice, and the associated-symptom list \u2014 is stated in Source 1, e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\".\"}",
+            "session_id": "efbf266f-3ddf-4bff-b002-18b1edd20cf3",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 89,
+            "total_cost_usd": 0.09516999999999999,
+            "ttft_ms": 7295,
+            "ttft_stream_ms": 874,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7085,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7085,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7085,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7085,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 793,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 793,
+              "output_tokens_details": {
+                "thinking_tokens": 583
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "f9ef0bfe-3e54-4a61-ab6e-68d492d1e472"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, the ambulance-versus-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death and early reperfusion, false alarm as a good outcome, heartburn/antacid non-reassurance, the while-waiting advice, and the associated-symptom list \u2014 is stated in Source 1, e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\".\"}",
+          "tokens_in": 2,
+          "tokens_out": 793
+        },
+        {
+          "cost_usd": 0.09453000000000002,
+          "latency_ms": 9444.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10436,
+            "duration_ms": 9444,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041800000000000006,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7079,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09035000000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 770,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion and 'possible heart attack until proven otherwise', the ambulance-over-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death and early reperfusion, 'a false alarm is a good outcome', the heartburn/antacid caveat, the while-waiting steps, and the associated-symptom list \u2014 is stated in the single source document.\"}",
+            "session_id": "ecbdacc9-af40-4269-b4d8-7a643149a203",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 181,
+            "total_cost_usd": 0.09453000000000002,
+            "ttft_ms": 8075,
+            "ttft_stream_ms": 1592,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7079,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7079,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7079,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7079,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 770,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 770,
+              "output_tokens_details": {
+                "thinking_tokens": 594
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "82f142c9-b0ef-4c24-b09f-6e9ebe39e4a3"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion and 'possible heart attack until proven otherwise', the ambulance-over-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death and early reperfusion, 'a false alarm is a good outcome', the heartburn/antacid caveat, the while-waiting steps, and the associated-symptom list \u2014 is stated in the single source document.\"}",
+          "tokens_in": 2,
+          "tokens_out": 770
+        },
+        {
+          "cost_usd": 0.095265,
+          "latency_ms": 10889.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11758,
+            "duration_ms": 10889,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041800000000000006,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7085,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.091085,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 797,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure/heaviness lasting more than a few minutes as a possible heart attack, ambulance over self-transport (\\\"Paramedics can record an ECG, begin treatment on the way, and route to a hospital capable of intervention\\\"), waiting as the costliest error, progressive muscle death, false alarm as a good outcome, heartburn indistinguishability, the while-waiting steps, and the associated-symptom list \u2014 is stated in source 1.\"}",
+            "session_id": "0c3b653e-1867-4610-bb6f-f9ac8c2143d8",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 154,
+            "total_cost_usd": 0.095265,
+            "ttft_ms": 8954,
+            "ttft_stream_ms": 2972,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7085,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7085,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7085,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7085,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 797,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 797,
+              "output_tokens_details": {
+                "thinking_tokens": 619
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "dbbb5c66-8254-474a-b878-11715161ee2f"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure/heaviness lasting more than a few minutes as a possible heart attack, ambulance over self-transport (\\\"Paramedics can record an ECG, begin treatment on the way, and route to a hospital capable of intervention\\\"), waiting as the costliest error, progressive muscle death, false alarm as a good outcome, heartburn indistinguishability, the while-waiting steps, and the associated-symptom list \u2014 is stated in source 1.\"}",
+          "tokens_in": 2,
+          "tokens_out": 797
+        },
+        {
+          "cost_usd": 0.0914,
+          "latency_ms": 7881.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 8623,
+            "duration_ms": 7881,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004185,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7083,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.087215,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 643,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, ambulance vs. self-transport and the three losses, waiting as the most common and costly error, progressive muscle death from artery occlusion, false alarm as a good outcome, heartburn/antacid non-exclusion, the while-waiting steps, and the associated symptom list \u2014 is stated in the single source (e.g., \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\").\"}",
+            "session_id": "3006b9a9-c8f6-4d0c-9280-3f8352d469c5",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 326,
+            "total_cost_usd": 0.0914,
+            "ttft_ms": 5546,
+            "ttft_stream_ms": 1131,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7083,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7083,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7083,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7083,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 643,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 643,
+              "output_tokens_details": {
+                "thinking_tokens": 451
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "1c238b80-0b32-4853-90a3-1c6614fc07e7"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, ambulance vs. self-transport and the three losses, waiting as the most common and costly error, progressive muscle death from artery occlusion, false alarm as a good outcome, heartburn/antacid non-exclusion, the while-waiting steps, and the associated symptom list \u2014 is stated in the single source (e.g., \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 643
+        },
+        {
+          "cost_usd": 0.09838,
+          "latency_ms": 9556.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10401,
+            "duration_ms": 9556,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004185,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7081,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.094195,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 923,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure/heaviness lasting more than a few minutes being treated as possible heart attack, calling emergency services rather than self-transport (\\\"Paramedics can record an ECG, begin treatment on the way, and route to a hospital capable of intervention\\\"), waiting being the most costly error, false alarm being a good outcome, antacid relief not ruling out cardiac cause, and the while-waiting and associated-symptom lists \u2014 is stated in source 1.\"}",
+            "session_id": "37ad1400-5aaf-4c97-b260-3baf78973aee",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 119,
+            "total_cost_usd": 0.09838,
+            "ttft_ms": 7991,
+            "ttft_stream_ms": 896,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7081,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7081,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7081,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7081,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 923,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 923,
+              "output_tokens_details": {
+                "thinking_tokens": 743
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "179a808d-0bbd-41a6-a132-41762c5b286c"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure/heaviness lasting more than a few minutes being treated as possible heart attack, calling emergency services rather than self-transport (\\\"Paramedics can record an ECG, begin treatment on the way, and route to a hospital capable of intervention\\\"), waiting being the most costly error, false alarm being a good outcome, antacid relief not ruling out cardiac cause, and the while-waiting and associated-symptom lists \u2014 is stated in source 1.\"}",
+          "tokens_in": 2,
+          "tokens_out": 923
+        },
+        {
+          "cost_usd": 0.09387999999999999,
+          "latency_ms": 8851.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9764,
+            "duration_ms": 8851,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004185,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7081,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.089695,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 743,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure-lasting-minutes red flag, ambulance over self-transport with ECG/en-route treatment/capable hospital, waiting as the costliest error, progressive muscle death, false alarm as a good outcome, heartburn indistinguishability and antacid non-exclusion, the while-waiting steps and the associated-symptom list \u2014 is stated in source 1 (e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\").\"}",
+            "session_id": "ec43f981-ddfb-41e7-8ef1-da0b23d651c2",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 244,
+            "total_cost_usd": 0.09387999999999999,
+            "ttft_ms": 6339,
+            "ttft_stream_ms": 1051,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7081,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7081,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7081,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7081,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 743,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 743,
+              "output_tokens_details": {
+                "thinking_tokens": 539
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "f18ac44a-4561-40bf-8a5c-7f6efe6764e4"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure-lasting-minutes red flag, ambulance over self-transport with ECG/en-route treatment/capable hospital, waiting as the costliest error, progressive muscle death, false alarm as a good outcome, heartburn indistinguishability and antacid non-exclusion, the while-waiting steps and the associated-symptom list \u2014 is stated in source 1 (e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 743
+        },
+        {
+          "cost_usd": 0.096065,
+          "latency_ms": 9248.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10812,
+            "duration_ms": 9248,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0042,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 19,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7083,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.091865,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 829,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, the ambulance-vs-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death, false alarm as a good outcome, heartburn/antacid non-exclusion, the while-waiting advice, and the associated-symptom list \u2014 is directly stated in source 1, e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\".\"}",
+            "session_id": "4f5a6408-6b1a-4b54-b236-589a86f0568a",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 97,
+            "total_cost_usd": 0.096065,
+            "ttft_ms": 7247,
+            "ttft_stream_ms": 876,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7083,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7083,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7083,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7083,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 829,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 829,
+              "output_tokens_details": {
+                "thinking_tokens": 625
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "03034a90-0eef-41df-afd1-929973bc447a"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the heaviness/duration criterion, the ambulance-vs-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death, false alarm as a good outcome, heartburn/antacid non-exclusion, the while-waiting advice, and the associated-symptom list \u2014 is directly stated in source 1, e.g. \\\"Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting more than a few minutes\\\".\"}",
+          "tokens_in": 2,
+          "tokens_out": 829
+        },
+        {
+          "cost_usd": 0.09227500000000001,
+          "latency_ms": 8424.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9717,
+            "duration_ms": 8424,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041800000000000006,
+                "inputTokens": 4105,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7081,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.088095,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 679,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure/heaviness lasting more than a few minutes as a possible-heart-attack presentation, the ambulance-over-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death, the false alarm being a good outcome, the heartburn/antacid caveat, the while-waiting steps, and the associated-symptom list \u2014 is stated in the single source document.\"}",
+            "session_id": "e92b6d10-d49a-4ba6-848e-5218ea6eced8",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 91,
+            "total_cost_usd": 0.09227500000000001,
+            "ttft_ms": 6769,
+            "ttft_stream_ms": 1067,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7081,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7081,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7081,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7081,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 679,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 679,
+              "output_tokens_details": {
+                "thinking_tokens": 507
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "1b551484-2973-405c-aa95-b8b157c58d7d"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure/heaviness lasting more than a few minutes as a possible-heart-attack presentation, the ambulance-over-self-transport rationale (ECG, treatment en route, capable hospital), waiting as the most common and costly error, progressive muscle death, the false alarm being a good outcome, the heartburn/antacid caveat, the while-waiting steps, and the associated-symptom list \u2014 is stated in the single source document.\"}",
+          "tokens_in": 2,
+          "tokens_out": 679
+        }
+      ],
+      "key": "c9ebdacff95bc15e",
+      "model": "claude-opus-5",
+      "params": {},
+      "prompt": "You are grading one output of a system under test against a rubric. Apply the rubric exactly as\nwritten; do not add criteria of your own.\n\n## Rubric\n\n# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)\n\n<!-- Provenance: the sections from \"## System\" to \"### Evidence for every verdict ...\" below are\ncopied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That\nfile's \"## Output\" section, which asks for a per-claim JSON list, is replaced by the \"## Output\"\nsection at the end, because Probatio's judge template supplies its own output instruction. In\nProbatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under \"Input\nthe system was given\" and the ANSWER under \"Output under test\". v2's rationale header (why v2\nexists, the round-1 numbers) is omitted here; it is in the source file. -->\n\n## System\n\nYou are grading whether an answer is supported by the source documents it was given. You are not\ngrading whether the answer is good, well written, complete, or clinically correct. You are grading\none thing: does each factual claim in the answer appear in the sources.\n\n## Task\n\nYou will be given:\n\n- QUESTION: what the user asked.\n- SOURCES: numbered excerpts from reference documents.\n- ANSWER: the answer that was delivered.\n\nWork in two steps. First list the answer's factual claims. Then give each one a verdict.\n\n### Step 1 \u2014 what is a claim\n\nA **factual claim** is a statement that asserts something checkable about the world: a fact, a\nthreshold or number, a mechanism, a course of action, or something guidance is said to describe.\n\nThe following are **not claims**. Do not list them, and do not grade them:\n\n- greetings, sign-offs, and offers to help further;\n- the disclaimer, the escalation banner, and any instruction to seek care or call emergency\n  services;\n- any text in square brackets beginning with \"removed:\" \u2014 that is a redaction marker;\n- **summary, framing and transition sentences**, whose work is to open, close or connect rather\n  than to assert: \"Here is what guidance describes\", \"In summary\", \"Putting those together\",\n  \"There are a few things worth knowing here\";\n- **hedges and statements of variability that carry no specific fact**: \"this depends on your\n  situation\", \"recommendations differ between people\", \"your clinician can advise on the details\";\n- **meta-commentary that restates something you have already listed**. If two sentences assert the\n  same fact, list it once. A closing paragraph that repeats the body of the answer adds no claims;\n- **exhortations that assert nothing checkable**: \"do not leave this unaddressed\", \"take it\n  seriously\", \"it is worth acting on\".\n\nIf you are unsure whether a sentence carries a checkable fact, it is **not** a claim. Grading\ntransition and summary sentences as unsupported was the single largest source of error in the\nprevious version of this prompt: one such sentence flips the whole answer, because the answer-level\nlabel is `supported` only when every claim is.\n\n### Step 2 \u2014 verdicts\n\n- `supported` \u2014 the sources state the claim, or it follows directly from them.\n- `unsupported` \u2014 the claim is not in these sources. This includes a claim that is *true in\n  general* but absent from them. You are grading grounding, not correctness.\n- `contradicted` \u2014 the sources say something incompatible with the claim.\n\n**Paraphrase is support.** The claim does not have to reuse the source's wording, its sentence\nstructure, or its level of detail. A claim that restates a source in different words is\n`supported`. So is a claim that **aggregates or generalizes** several source statements into one\nsentence, as long as every part it asserts appears somewhere in the sources \u2014 cite the source\ncarrying the main part. Requiring the answer to echo the source is grading style, not grounding.\n\n**A rationale the sources do not give is a separate claim.** Where the sources state a rule and the\nanswer explains *why* the rule exists \u2014 in terms of billing, reimbursement, record complexity, or\nany motivation the sources are silent on \u2014 the rule is one claim and is `supported`, and the\nrationale is a second claim and is `unsupported`. Do not let the supported half carry the other.\n\n### The specific-attribute check\n\nRun this before you write `supported`. **Topical overlap is not support**: a claim and a source can\nbe about the same document, the same condition and the same paragraph and still not match. Check\nthat the source agrees with the claim on each of:\n\n- the **object** the fact attaches to \u2014 which measure, which drug class, which body system, which\n  test;\n- the **threshold or number** \u2014 the value, the unit, and the direction of the comparison;\n- the **mechanism or cause** it names;\n- the **population or condition** it applies to.\n\nA claim that takes a fact the sources state about one object, threshold, mechanism or population\nand attaches it to a **different** one is `contradicted`, not `supported`. Worked example: the\nsources describe an action plan built on daily weight change and fluid-retention warning signs, and\nthe answer says patients are given an action plan for salt intake. Same note, same condition, wrong\nobject \u2014 that is `contradicted`.\n\n### Claims about the sources themselves\n\nA sentence asserting what the SOURCES do or do not contain \u2014 \"the passage does not list the\nspecific classes\", \"the retrieved material does not name a threshold\" \u2014 **is a claim**, and it is\nchecked against the sources rather than waved through. Read the sources and decide. If a source\ndoes contain what the answer says is absent, the claim is `contradicted`.\n\n### Evidence for every verdict that is not `unsupported`\n\nEvery claim you mark `supported` must carry **the number of the source that supports it** and a\n**short verbatim span copied from that source** \u2014 at most 25 words \u2014 in `quote`. If you cannot copy\na span that carries the claim, the verdict is not `supported`.\n\nA `contradicted` claim carries the number of the source it contradicts and the span that\ncontradicts it. An `unsupported` claim carries `\"source\": null` and an empty `quote`.\n\n## Output\n\nProbatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as\nfollows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer\ncontains no factual claims. `verdict` is `\"pass\"` when every listed claim is `supported` (or there\nare no claims) and `\"fail\"` otherwise, which is v2's answer-level roll-up. `rationale` is one\nsentence naming the first `unsupported` or `contradicted` claim and the source span that decides\nit, or stating that every claim is supported.\n\n## Input the system was given\n\n{\n  \"documents\": [\n    \"---\\ndoc_id: red-flag-chest-pain\\ncategory: red_flag\\ntitle: \\\"Chest pain that may indicate a heart attack\\\"\\nsource: \\\"Emergency medicine and cardiology society guidance (educational summary)\\\"\\nlast_reviewed: 2026-08-09\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## Call emergency services immediately\\n\\nChest discomfort with any of the following is treated as a possible heart attack until proven\\notherwise:\\n\\n- Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting\\n  more than a few minutes, or going away and coming back.\\n- Discomfort spreading to one or both arms, the shoulders, neck, jaw, back, or upper abdomen.\\n- Chest discomfort with breathlessness, cold sweat, nausea or vomiting, light-headedness, or a sense\\n  of impending doom.\\n- Chest discomfort at rest, or brought on by less exertion than usual in someone with known angina.\\n- Any chest discomfort in someone with known coronary artery disease, diabetes, or several\\n  cardiovascular risk factors.\\n\\nEmergency services are called rather than arranging transport privately. Paramedics can record an\\nECG, begin treatment on the way, and route to a hospital capable of intervention. Self-transport\\nloses all three, and it is dangerous if the person deteriorates during the journey.\\n\\n## Why the threshold is set low\\n\\nTime is the determining factor in the outcome of a heart attack: heart muscle dies progressively\\nfrom the moment the artery occludes, and treatment that restores flow early preserves function that\\ncannot be recovered later. The most common and most costly error is waiting \u2014 to see whether it\\nsettles, to avoid embarrassment at a false alarm, or because the discomfort is mild.\\n\\nA false alarm is a good outcome. This is the clearest case in medicine where over-escalation is the\\ncorrect policy, and it is why this system escalates on the possibility rather than the probability.\\n\\n## Presentations that are missed\\n\\nNot all heart attacks present with severe chest pain. Breathlessness alone, unusual fatigue,\\nindigestion-like discomfort, nausea, or discomfort felt mainly in the jaw, back or upper abdomen are\\nrecognized presentations, and are relatively more common in women, in older adults, and in people\\nwith diabetes, in whom nerve damage can blunt pain. The absence of classic pain is not reassuring.\\n\\nHeartburn and cardiac pain are not reliably distinguishable by how they feel, and a history of\\nreflux does not exclude a cardiac cause. Antacid relief does not rule it out either.\\n\\n## Other emergencies presenting as chest pain\\n\\nSudden tearing chest or back pain, sudden pleuritic chest pain with breathlessness, and chest pain\\nwith collapse can indicate aortic dissection, pulmonary embolism, or another immediately\\nlife-threatening condition. All are emergencies, and none is distinguishable from cardiac pain\\nwithout assessment.\\n\\n## While waiting\\n\\nStay with the person, keep them still and seated or resting, and be ready to describe when the\\nsymptoms started. If the person becomes unresponsive and is not breathing normally, emergency\\ndispatchers can guide chest compressions over the phone.\\n\\nThis system does not diagnose. Any presentation matching this note is escalated, and no answer it\\nproduces is a substitute for emergency assessment.\\n\"\n  ],\n  \"question\": \"I think maybe something is wrong with my chest. It feels like someone heavy is sitting on it and it started about twenty minutes ago.\"\n}\n\n## Output under test\n\n**This may be an emergency. Call emergency services (911) now \u2014 do not wait to see if it settles, and do not drive yourself.**\n\nWhat you're describing \u2014 a heavy, pressing sensation on the chest that has lasted more than a few minutes \u2014 matches exactly what the guidance I have treats as a possible heart attack until proven otherwise. Twenty minutes of continuous pressure is well past the threshold for calling.\n\nA few things from the reference material that are worth knowing right now:\n\n- **Call an ambulance rather than arranging your own transport.** Paramedics can record an ECG, start treatment on the way, and take you to a hospital equipped to intervene. Self-transport loses all three and is dangerous if you deteriorate en route.\n- **Waiting is the most common and most costly error.** Heart muscle dies progressively from the moment an artery blocks, and treatment that restores blood flow early preserves function that can't be recovered later.\n- **A false alarm is a good outcome.** This is the clearest case where over-escalating is the correct choice.\n- **Don't be reassured by mildness or by other explanations.** Heartburn and cardiac pain aren't reliably distinguishable by how they feel, and relief from an antacid doesn't rule out a cardiac cause.\n\n**While you wait:** stay still, sit or rest, ideally have someone with you, and be ready to tell the dispatcher when the symptoms started (about twenty minutes ago). If you develop any of these alongside the chest pressure, mention them \u2014 discomfort spreading to your arms, shoulders, neck, jaw, back or upper abdomen; breathlessness; cold sweat; nausea; light-headedness; or a sense of impending doom.\n\nPlease make the call now. I'm working only from an educational reference document \u2014 I can't assess you, and nothing here substitutes for emergency assessment.\n\n## Your answer\n\nReply with one JSON object and nothing else, in exactly this form:\n\n{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"<one sentence>\"}\n\n\"verdict\" is \"pass\" or \"fail\", \"score\" is a number from 0 to 1, and \"rationale\" is one sentence.\nDo not wrap the object in a code fence and do not write anything before or after it.\n",
+      "system": null
+    }
+  ],
+  "model": "claude-opus-5",
+  "provider": "claude-cli",
+  "recorded": "2026-09-06T23:01:38Z"
+}
