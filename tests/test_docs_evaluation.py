@@ -339,3 +339,58 @@ def test_the_token_ratio_the_section_uses_to_explain_the_gap_is_the_tapes_own() 
 def test_the_live_suites_notional_total_is_the_one_the_replay_reports() -> None:
     stated = float(re.search(r"live suite's `\$([0-9.]+)`", SECTION_6).group(1))
     assert stated == round(float(results()["cost_total_usd"]), 6)  # type: ignore[arg-type]
+
+
+SECTION_7: Final = TEXT.split("## 7. What dogfooding found about Probatio itself", 1)[1]
+
+
+def _section_7_rows() -> list[tuple[str, str, str]]:
+    """(`DECISIONS n`, kind, commit) for every row of §7's table."""
+    rows = []
+    for line in SECTION_7.splitlines():
+        if not line.startswith("| DECISIONS "):
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        rows.append((cells[0], cells[2], cells[3].strip("`")))
+    return rows
+
+
+def test_section_7_lists_the_three_decisions_the_dogfood_suites_exposed() -> None:
+    """Phase 13: DECISIONS 90, 92 and 95, each with the commit that fixed it."""
+    rows = _section_7_rows()
+    assert [entry for entry, _, _ in rows] == ["DECISIONS 90", "DECISIONS 92", "DECISIONS 95"]
+    assert [kind for _, kind, _ in rows] == ["defect", "defect", "gap"]
+
+
+def test_every_decision_section_7_names_exists_in_decisions_md() -> None:
+    decisions = (REPO_ROOT / "DECISIONS.md").read_text(encoding="utf-8")
+    for entry, _, _ in _section_7_rows():
+        number = entry.removeprefix("DECISIONS ")
+        assert re.search(rf"^## {number}\. ", decisions, re.MULTILINE), entry
+
+
+def test_every_commit_section_7_names_is_in_this_repositorys_history() -> None:
+    """A commit hash is a claim about a file; `git cat-file` is the file."""
+    import subprocess
+
+    for _, _, commit in _section_7_rows() + [("", "", "ceed3f9")]:
+        completed = subprocess.run(
+            ["git", "cat-file", "-t", commit],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:  # pragma: no cover - only on a checkout without history
+            return
+        assert completed.stdout.strip() == "commit", commit
+
+
+def test_section_7_says_why_the_two_defects_survived_the_unit_tests() -> None:
+    assert "seam between two features that had\nnever been exercised together" in SECTION_7
+    assert "A fixture is\na hypothesis about what a provider does" in SECTION_7
+
+
+def test_section_7_calls_the_timeout_flag_a_gap_and_not_a_defect() -> None:
+    assert "The third is not a defect and is listed anyway" in SECTION_7
+    assert "cannot be reached from where a user stands" in " ".join(SECTION_7.split())

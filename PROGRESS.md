@@ -21,7 +21,7 @@ with phase N's code.
 - [x] **Phase 10** — JUnit XML and results JSON reporters (spec §3.11)
 - [x] **Phase 11** — Consilium dogfood, offline, from published traces
 - [x] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
-- [ ] **Phase 13** — Prior-art table, docs, README final (spec §7)
+- [x] **Phase 13** — Prior-art table, docs, README final (spec §7)
 - [ ] **Phase 14** — Public repo, CI green, PyPI release, `v0.1.0`, resume bullets
 - [ ] **Phase 15** — *(optional)* Variance study seed
 
@@ -713,3 +713,95 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   validation record that carried a home directory; `git log origin/main..main -S '/Users/...'`
   is empty. DECISIONS 87–95; `docs/DESIGN.md` Phase 12; new `docs/EVALUATION.md`,
   `examples/consilium/live/README.md`.
+- 2026-09-06 — **Phase 13** — gate green: `pytest -q` 1212 passed, 0 skipped, 0 xfailed;
+  coverage of `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and
+  `ruff format --check` clean on `src tests examples`; `mypy --strict src/probatio` clean
+  (46 source files); `examples/demo_suite/` still differs from 8a998af by the one sanctioned
+  Phase 9 edit and nothing else, with `git status --porcelain` on it empty. **Nothing under `src/`
+  or `examples/` changed in this phase**: it is documentation, and the tests that hold the
+  documentation to its sources.
+  **`README.md` is written in spec §7's order**: the pitch (a pytest plugin, the two headline
+  features, and the judge described as **measured agreement** rather than validated, per
+  `05-RESUME-AND-INTERVIEW.md` §5); a fifteen-line quick start whose every line but one is
+  verbatim from the frozen `examples/demo_suite/`; the two headline features, each quoting the
+  `probatio` section of the committed `--runs 5` run recorded in this file and naming `4c2114e` as
+  the commit that produced it, with `n below floor: 12 of 12` explained in a sentence; the
+  prior-art table, captioned "checked against each tool's documentation on 2026-09-05", with the
+  pages read listed under it, what is **not** a differentiator said plainly (pytest-native,
+  repeated runs, JUnit output), what is (an interval on a per-case pass rate, a stability score, a
+  floor marker, relations as stated invariants), the one-sentence contrast with DeepEval's flaky
+  flag, and the five citations; the case study summary (Route A retrospective, five of six
+  red-flag cases failing on `full` and none on `baseline_llm`; Route B prospective in form, one
+  flag, 4 of 15 verdicts moved, the judge marking a third unfaithful, a six-fold notional cost
+  difference), each labelled as `docs/CASE_STUDY.md` labels it; the four design positions; and
+  install extras, status and roadmap pointing at `PROGRESS.md` and `DECISIONS.md`.
+  **New `docs/PROVENANCE.md` and `tests/test_docs_provenance.py`** (DECISIONS 96, 97). The file
+  holds three tables: 62 **measurements**, each with the documents that print it, the committed
+  source file, a named check and the command that regenerates the source; 17 **numerals that are
+  not measurements**, declared as literals or `re:` patterns with what each one is and where it is
+  fixed; and 9 rows naming which provenance test guards which document, asserted to cover every
+  file under `docs/` plus `README.md`. The test runs every row's check — `text` plus thirteen
+  named derivations, each recomputing the figure from the artefact rather than searching for it —
+  asserts the figure is printed in every document its row names, asserts every source file is
+  tracked by `git ls-files`, and sweeps `README.md` exhaustively: strip both tables' literals and
+  patterns, and any numeral left over fails. Three failure modes were provoked and seen to fail: a
+  stray "42% faster" added to the README, `$6.037457` edited in the README, and `$6.037457` edited
+  in `live-baseline.md`. The sweep is exhaustive for `README.md` only, because every other
+  document already has a provenance test that re-derives its figures, which is the stronger check;
+  that boundary is stated in `docs/PROVENANCE.md` itself rather than left implicit.
+  **One README sentence was deleted rather than softened**: "reproduced as a failing `pytest` run
+  from committed tapes at $0" lost its `$0`, which no committed file produces — replay reproduces
+  the costs the tapes recorded, and the claim the sentence wanted was that no model is called, so
+  it now says that. Nothing else was removed for lack of a file; the phase's other numbers all
+  found one.
+  **`docs/relations.md`'s four placeholders are gone**, replaced by five entries verified against
+  Crossref on 2026-09-05, and OpenAlex for the one abstract: LLMorph (ASE 2025,
+  DOI 10.1109/ASE63991.2025.00385), the NLP catalogue (ICSME 2025,
+  DOI 10.1109/ICSME64153.2025.00025, whose abstract gives **191** relations with 36 implemented),
+  Chen et al. (*ACM Computing Surveys* 2018, DOI 10.1145/3143561), Segura et al. (*IEEE TSE* 2016,
+  DOI 10.1109/TSE.2016.2532875) and MTF (AIAT 2025, DOI 10.1145/3787120.3787123), the last cited
+  only by the README. `tests/test_docs_relations.py`'s two placeholder tests are replaced by five
+  that check every entry carries a venue, a year and a DOI, that the DOI set is exactly those
+  five, that each DOI link resolves to the DOI it names, that 191 is attributed to the abstract,
+  and that the section still says Probatio claims no new relation.
+  **`docs/providers.md` gained `--probatio-timeout`** and a section on what recording a real suite
+  through `ClaudeCLIProvider` cost: the roughly-one-reply-in-eight rationale-string truncation with
+  the committed 400-character reply and its `line 1 column 49`, the 8-of-40 and 5-of-40 re-ask
+  counts, `cli.JUDGE_ATTEMPTS = 3`, the exit-1-with-empty-stderr crash, and the timeout that the
+  120-second default could not carry. Four new tests read those back out of the fixture, the
+  validation record, `PROGRESS.md` and the two constants.
+  **`docs/assertions.md` publishes the band and refuses the recommendation** (DECISIONS 98): the
+  thirty real answers in `replay-unpriced.json` score 0.398 to 0.705 against their references, per
+  configuration and median, every one of them above the committed `tau: 0.30` with the worst 0.098
+  above it — and no recommended value, because one corpus at one answer length is a band and not a
+  distribution. The Phase 4 deferral sentence is gone; its test is replaced by two that recompute
+  all six figures and the headroom from the results file.
+  **`docs/stability.md` gained "What a committed run says"**, reading `stability score: 0.90` and
+  `12 of 12` off the run's own cases table, with the mean of the twelve pass rates re-derived from
+  `PROGRESS.md` by a new test, and a sentence putting per-run fixture isolation on the roadmap
+  rather than in v0.1.
+  **`docs/DESIGN.md` gained the Phase 12 timeout paragraph and a Phase 13 section** (why a number
+  gets an index and a test, why the README quotes one commit's run, why the prior-art table states
+  absences only for pages that were read, and why the measured band replaced the deferred
+  recommendation). It is the one document with no figures of its own, so DECISIONS 99 covers it
+  from the index instead of a seventh module.
+  **`docs/EVALUATION.md` gained §7, "What dogfooding found about Probatio itself"**: DECISIONS 90
+  (the cassette store's active case, fixed in `528333f`), 92 (the judge re-ask, `3ffde31`) and 95
+  (`--probatio-timeout`, `15651f2`) as the two defects and one gap the Consilium suites exposed,
+  with why the two defects survived nine phases and why the third is listed even though nothing
+  was wrong with the code. Five new tests check the table's entries exist in `DECISIONS.md` and
+  its commits exist in this repository's history.
+  **Three follow-up edits, in the same commit.** The case study section links
+  `https://github.com/Lexieli666/consilium-health`, the URL `examples/consilium/README.md` already
+  gives, with a test that reads it out of that file rather than repeating it; the same section ends
+  by naming the three things dogfooding found wrong with Probatio itself and pointing at
+  `docs/EVALUATION.md` §7, with a test asserting that section still lists two defects and one gap;
+  and the quick start says that the case it shows takes a **bare string** input, so
+  `@format_jitter(field="input.question")` reports *not applicable* on it rather than `0.00`, and
+  names `cases/01-htn-definition.yaml` as the dict-input case the field relations do apply to —
+  with a test that re-derives both from the frozen cases through `FormatJitter.applicable`. All
+  three new tests were provoked and seen to fail. The sweep caught all three edits on the way in
+  (a URL, a `NN-name.yaml` prefix and a second `0.00`), which is what the amendment to
+  DECISIONS 96 records.
+  `examples/README.md`'s errata section is unchanged. DECISIONS 96–99;
+  `docs/DESIGN.md` Phase 13; new `docs/PROVENANCE.md`, `tests/test_docs_provenance.py`.

@@ -50,6 +50,28 @@ floors, and raise `--runs` before reading it as a count of problems.
 `probatio` also never calls anything else a "confidence": the only interval in the tool is this
 one.
 
+## What a committed run says
+
+`pytest examples/demo_suite --runs 5`, run at commit `4c2114e` and quoted in full in
+`PROGRESS.md`, ends its `probatio` section with these two lines:
+
+```
+stability score: 0.90 over 12 repeated case(s)
+cases whose Wilson lower bound is below their floor: 12 of 12
+```
+
+Both are readable straight off the cases table above them. Twelve rows ran five times each: ten
+passed every run for a rate of 1.00, `flu-antivirals-flaky` passed four of five for 0.80, and
+`anxiety-expected-fail` failed every run for 0.00. The mean of those twelve rates is 0.90, and
+that is the whole of the stability score — no weighting, no exclusion of the case that is failing
+on purpose. A suite's score falls because cases in it fail or waver, and both are things the
+author should see in one number.
+
+The second line is `12 of 12` for the reason above: eleven of the twelve carry the default floor
+of 1.0, which no five-run bound can reach, and the twelfth declares `flaky_tolerant(p=0.8, n=5)`,
+whose observed 0.80 still has a lower bound of 0.38. Neither fact failed anything. Raise `--runs`
+before reading that line as a count of problems.
+
 ## `@flaky_tolerant(p, n)`
 
 ```python
@@ -79,7 +101,9 @@ fixtures build an index or open a client would measure the setup instead.
 
 The consequence is worth knowing. If a system under test mutates something a fixture handed it —
 appending to a list, advancing a cursor — run 2 sees run 1's mutation. A suite that wants
-per-run isolation builds it inside the callable it hands to `check`.
+per-run isolation builds it inside the callable it hands to `check`. A per-run fixture mode, in
+which pytest re-runs the setup for each repetition, is on the roadmap in `README.md` and is not in
+v0.1: it is a change to how the plugin drives pytest, not a flag over the existing loop.
 
 `ScriptedProvider` relies on exactly this: it is created once, and its script advances one entry
 per call, which is how "fails the first of five calls" is modelled offline with no randomness

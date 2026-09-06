@@ -221,3 +221,39 @@ an invoice, and the run that produced the answers was billed to Consilium's acco
 applies to the live suite's `$6.037457`, which is what the Claude CLI reported as the notional API
 price of 278 calls made on a subscription that was not billed that money — `docs/providers.md`
 states that caveat for `ClaudeCLIProvider` generally.
+
+## 7. What dogfooding found about Probatio itself
+
+The Consilium suites were built to test Consilium's answers. They also tested Probatio, and they
+found three things nine phases of unit tests and `pytester` sessions had not. Each is recorded as
+a numbered decision and fixed in a named commit; none was found by review.
+
+| # | what the suites exposed | kind | fixed in |
+|---|---|---|---|
+| DECISIONS 90 | The cassette store's active case covered the system under test only, so a `judge` call — made while the case's assertions are being evaluated — and every relation-variant call reached the store with no case to file under. The first live recording died on its first case with `a cassette call was made outside a case`. | defect | `528333f` |
+| DECISIONS 92 | `validate-judge --run-judge` propagated an unparsable judge reply, so one bad row in forty ended a forty-row run. Against a real model that is roughly one row in eight, which makes a whole-command retry succeed about one time in sixty. | defect | `3ffde31` |
+| DECISIONS 95 | `ClaudeCLIProvider.timeout_s` had been a constructor argument since Phase 2 with no flag reaching it, so a developer recording on a throttled plan could not raise the 120-second default without writing their own `provider` fixture. | gap | `15651f2` |
+
+**Why the first two survived nine phases.** Both live in the seam between two features that had
+never been exercised together. No suite before `examples/consilium/live/` had combined a cassette
+store with a judge assertion or with a relation, because the demo suite records no tapes and the
+offline Consilium suite carries no judge; the active-case context and the completion sink had been
+sharing one `try/finally`, so a change to the one that mattered for budgets silently made the
+other wrong. And no test had ever handed `validate-judge --run-judge` a reply that was neither a
+verdict nor absent, because a `FakeProvider` returns what it was scripted to return. A fixture is
+a hypothesis about what a provider does; two of these are what happens when the hypothesis meets
+forty rows of a real one.
+
+**The third is not a defect and is listed anyway.** Nothing was wrong with the timeout's value or
+with the code that used it; the argument simply had no path from the command line, which no test
+could have noticed because every test constructs the provider directly. It is here because the
+distinction between "the code is wrong" and "the code cannot be reached from where a user stands"
+is invisible from inside a test suite and obvious the first time somebody uses the tool for
+something they actually wanted.
+
+Two smaller corrections came out of the same work and are recorded with them: the validation
+record's `labels_file` now goes through `artefacts.display_path` so a committed record names the
+repository rather than a home directory (DECISIONS 93, commit `ceed3f9`), and `Judge.parse` quotes
+the reply it could not parse, which is what let one real truncated reply become
+`tests/fixtures/claude_cli_truncated_judge_reply.txt` instead of an invented one (DECISIONS 94,
+same commit).

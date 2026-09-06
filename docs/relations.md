@@ -130,15 +130,42 @@ decided by the plugin.
 
 ## References
 
-Each entry below is a placeholder key. **The bibliographic details — authors, venue, year and
-DOI — are verified and filled in in Phase 13**, together with the prior-art table in `README.md`;
-until then only the key is quoted, and each relation's attribution to a key is provisional.
+Verified on 2026-09-05 against Crossref (`api.crossref.org/works/<DOI>`) and, for the abstract of
+`[MR-CATALOG-NLP]`, OpenAlex. Title, authors, venue, year, pages and DOI come from those records;
+nothing here is from memory. Where the publisher's capitalisation differs from the citation key,
+the publisher's is used in the entry.
 
-- `[LLMORPH]` — the metamorphic-testing framework for large language models this project takes its
-  transformation vocabulary from.
-- `[MR-CATALOG-NLP]` — the catalogue of metamorphic relations for natural-language processing
-  systems.
-- `[CHEN-MT-SURVEY]` — Chen et al.'s survey of metamorphic testing, the general background for the
-  method.
-- `[SEGURA-MT-SURVEY]` — Segura et al.'s survey of metamorphic relations, the general background
-  for how relations are catalogued.
+- `[LLMORPH]` — Steven Cho, Stefano Ruberto and Valerio Terragni. "LLMorph: Automated Metamorphic
+  Testing of Large Language Models." In *2025 40th IEEE/ACM International Conference on Automated
+  Software Engineering (ASE)*, Seoul, 16–20 November 2025, pp. 4102–4105. IEEE.
+  DOI [10.1109/ASE63991.2025.00385](https://doi.org/10.1109/ASE63991.2025.00385).
+  The framework this project takes its transformation vocabulary from. `distractor_robust` and
+  `format_jitter` are named against it.
+- `[MR-CATALOG-NLP]` — Steven Cho, Stefano Ruberto and Valerio Terragni. "Metamorphic Testing of
+  Large Language Models for Natural Language Processing." In *2025 IEEE International Conference on
+  Software Maintenance and Evolution (ICSME)*, Auckland, 7–12 September 2025, pp. 174–186. IEEE.
+  DOI [10.1109/ICSME64153.2025.00025](https://doi.org/10.1109/ICSME64153.2025.00025);
+  arXiv 2511.02108. Its abstract reports a literature review collecting **191** metamorphic
+  relations for NLP, of which a representative subset of 36 was implemented. `order_invariant` and
+  `paraphrase_invariant` are named against that catalogue.
+- `[CHEN-MT-SURVEY]` — Tsong Yueh Chen, Fei-Ching Kuo, Huai Liu, Pak-Lok Poon, Dave Towey,
+  T. H. Tse and Zhi Quan Zhou. "Metamorphic Testing: A Review of Challenges and Opportunities."
+  *ACM Computing Surveys* 51(1), Article 4, 27 pages. Published online 4 January 2018; the print
+  issue is dated January 2019. DOI [10.1145/3143561](https://doi.org/10.1145/3143561).
+  The general background for the method, and for the violation-as-oracle idea `RelationResult`
+  reports.
+- `[SEGURA-MT-SURVEY]` — Sergio Segura, Gordon Fraser, Ana B. Sánchez and Antonio Ruiz-Cortés.
+  "A Survey on Metamorphic Testing." *IEEE Transactions on Software Engineering* 42(9),
+  pp. 805–824, 2016. DOI [10.1109/TSE.2016.2532875](https://doi.org/10.1109/TSE.2016.2532875).
+  The background for how relations are catalogued and reused across systems.
+- `[MTF]` — Theis Henry, Sian Savourat, Lydie du Bousquet and Masahide Nakamura. "MTF: an
+  Open-Source Metamorphic Testing Framework for LLM-based systems." In *Proceedings of the 2025 5th
+  International Conference on Artificial Intelligence and Application Technologies (AIAT 2025)*,
+  Kyoto, pp. 62–66. ACM, published 4 December 2025.
+  DOI [10.1145/3787120.3787123](https://doi.org/10.1145/3787120.3787123).
+  Cited in `README.md`'s prior-art section as the other maintained research framework in this
+  space; no relation shipped here is attributed to it.
+
+Probatio claims no new relation. Its four are pytest decorators over transformations these papers
+name, with the variants frozen into the repository so a reviewer can read them; the contribution is
+the packaging, not the relation.
