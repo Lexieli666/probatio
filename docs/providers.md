@@ -128,6 +128,57 @@ disables all built-in tools, and with no tools the run is a single turn — whic
 is obtained on a version of the CLI that has no `--max-turns`. Every flag name, the executable and
 the timeout are constructor arguments, so a rename in the CLI is a one-line override.
 
+### `--probatio-timeout`
+
+`ClaudeCLIProvider.timeout_s` defaults to `DEFAULT_TIMEOUT_S`, 120 seconds, and a call that
+overruns it fails the case with `the Claude CLI did not answer within 120s`. It has been a
+constructor argument since the adapter was written, but until Phase 13's predecessor no flag
+reached the constructor, so a developer recording on a throttled plan had no way to raise it
+without writing their own `provider` fixture:
+
+```bash
+pytest examples/consilium/live --probatio-provider claude-cli \
+       --probatio-model <model> --probatio-timeout 600 --cassette=record
+```
+
+The value reaches whichever adapter is built for the session and is ignored by the two that cannot
+time out. **It is not part of a cassette key**: how long a call was allowed to take is a fact about
+the machine that recorded the tape, not about what was asked, so a tape recorded under
+`--probatio-timeout 600` is indistinguishable from one recorded under the default and replays the
+same either way (`DECISIONS.md` entry 95).
+
+### What recording a real suite through this adapter cost
+
+The observations below are from Phase 12, the only phase of this project that called a model:
+about 940 live calls in one day, all through this adapter, recorded in `PROGRESS.md`. They are
+here because each of them reads as a Probatio bug the first time it is met, and none of them is.
+
+**Roughly one judge reply in eight is not JSON.** Grading Consilium's forty-row label samples
+produced replies whose `verdict` and `score` were complete and whose `rationale` string stopped
+mid-sentence, so the reply did not parse at all rather than parsing to a wrong verdict. One
+captured reply is committed at `tests/fixtures/claude_cli_truncated_judge_reply.txt`; it is 400
+characters long, and `json.loads` on it raises `Unterminated string starting at: line 1 column
+49`, column 49 being where the rationale opens. The two runs that completed needed **8 of 40** and
+**5 of 40** rows asked again: the sample-1 validation record under
+`examples/consilium/live/results/judges-sample-1/` holds the first as `rows_reasked`, and
+`PROGRESS.md` quotes the second run's summary verbatim.
+`probatio validate-judge --run-judge` therefore re-asks a row rather than propagating the failure,
+at most `cli.JUDGE_ATTEMPTS = 3` times, and writes the count into the validation record beside the
+kappa. The long inputs are what provokes it: those rows carry about 23,500 characters of context
+each, against about 10,000 for a live case.
+
+**The CLI can exit 1 with an empty stderr, mid-run.** One forty-row grading run stopped with
+`the Claude CLI exited 1 for 'claude -p'; stderr: <empty>` on a call indistinguishable from the
+ones before and after it. `ProbatioConfigError` carries the stderr precisely so that an empty one
+is visible as an empty one; there is nothing the adapter can do about it, and a caller who wants
+to survive it re-runs the command.
+
+**The default timeout is not generous enough for a long day.** After roughly 600 calls, a single
+call against `claude-opus-5` was taking 40 to 90 seconds where it had taken 12, and the occasional
+one exceeded 120. One case of the live suite failed three times running on the timeout and
+recorded on the next attempt under `--probatio-timeout 600`.
+`docs/EVALUATION.md` §5 has the per-attempt record for all of this.
+
 Two things this adapter does not do, both deliberate (`DECISIONS.md` entry 14):
 
 - **It does not pass `--bare`.** That flag skips `CLAUDE.md` discovery, which is wanted, but it

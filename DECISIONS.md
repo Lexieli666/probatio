@@ -2004,3 +2004,106 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   public decorator or YAML syntax the demo suite fixes, and calling a live model from a test; a new
   pytest option is none of those. `examples/consilium/live/README.md` uses it in the Route B
   recording command, so the command as documented is the command that worked.
+
+## 96. `docs/PROVENANCE.md` indexes measurements; a second table declares what is not one
+
+- **Date:** 2026-09-05 (Phase 13)
+- **Q:** The phase's rule is that no number appears in `README.md` or under `docs/` without a
+  committed file behind it, that every such number is listed in `docs/PROVENANCE.md`, and that a
+  test reads the file and checks each number against its source. Taken as an exhaustive sweep over
+  every numeral in every document it is not achievable honestly: `docs/` and `README.md` together
+  hold 191 distinct numerals, and most of them are DECISIONS numbers, spec section references, case ids, dates,
+  model names, phase numbers and small integers in prose ("one turn", "three transforms"). What
+  is the scope of the table, and what does the test enforce?
+- **A:** Two tables and one sweep. The **measurements** table lists every figure a run or a
+  committed artefact produced, with the document(s) that print it, the source file, a named check
+  and the command that regenerates the source; 62 rows. The **numerals that are not measurements**
+  table declares the rest as literals or `re:` patterns, each naming what the numeral is and where
+  it is fixed. `tests/test_docs_provenance.py` runs every row's check, asserts each figure is
+  printed in every document its row names, asserts every source file is tracked by git, and then
+  sweeps `README.md` exhaustively: strip every literal from both tables and every declared
+  pattern, and any numeral left over fails. The sweep is exhaustive for `README.md` and not for
+  the other documents, because each of those already has its own provenance test — named in a
+  third table, which is asserted to cover every file under `docs/`.
+- **Why:** The README is the document a stranger reads and the only one where an unsourced number
+  does real damage, so that is where the sweep has to be total; the others are covered by tests
+  that re-derive their figures from artefacts, which is a stronger check than a sweep and was
+  already written. Declaring the non-measurements rather than silently excluding them by regex is
+  the part that keeps the file honest: a reader can see exactly what the sweep is allowed to
+  ignore, and adding a category to that table is a visible edit. Both failure directions were
+  provoked and seen to fail — a stray "42% faster" added to the README, a figure edited in the
+  README, and a figure edited in `live-baseline.md` — before the phase's commit.
+  **Amendment, same day.** Three follow-up edits to the README's quick start and case study added
+  a repository URL, a filename with a numeric ordering prefix and a second mention of `0.00`, and
+  the sweep flagged all three — which is the file working. The non-measurements table gained
+  `re:https?://\S+` ("a URL: an address, not a measurement") and a row for the demo suite's
+  `NN-name.yaml` prefixes, and the two vocabulary rows for `0.00` and `0.0` now carry the bare
+  value rather than the phrase that surrounded it, since the phrase was a guess about how the
+  value would be worded next time and the value is not.
+  **Rejected alternatives.** An exhaustive sweep over all of `docs/`, which needs an exemption
+  list long enough that nobody would read it, and whose length would be the hiding place. Dropping
+  the sweep and keeping only the row-by-row checks, which cannot catch a number that was never
+  listed — the exact failure the rule exists to prevent. Generating the documents' figures at
+  build time from the artefacts, which removes the writer's ability to choose which figure makes
+  a point and turns prose into a template.
+
+## 97. The check column names a derivation, not a substring, wherever a substring would be a lie
+
+- **Date:** 2026-09-05 (Phase 13)
+- **Q:** Most rows of the measurements table can be checked by asking whether the number's string
+  appears in the source file, because the committed markdown reports print the figures the
+  documents quote. Several cannot: `0.600` is stored as `0.6000000000000001` in a validation
+  record, `$0.001074` is a difference between two payload figures, `0.72` is computed by
+  `wilson_interval(10, 10)` and appears in no file, `4 of 15` is a comparison between two results
+  files, and `2 of 45` is a count over the frozen variant headers. Weaken the rows to prose, or
+  give the table a vocabulary?
+- **A:** Give it a vocabulary. `check` is `text` or one of thirteen named derivations —
+  `json <path>`, `json-of <a> <b>`, `json-difference`, `wilson <n>`, `similarity <suite> <stat>`,
+  `similarity-headroom <tau>`, `kappa`, `length`, `json-error-column`, `verdicts-moved`,
+  `judge-failures`, `variants-deleted`, `interactions` — each implemented once in
+  `run_check`, each recomputing the figure from the artefact rather than searching for it. A check
+  name the test does not implement raises rather than passing.
+- **Why:** A substring check on a JSON file would have passed for `0.6` and failed for `0.600`,
+  and rounding the prose to match the file is backwards: the prose prints three decimals because
+  that is how a kappa is read, and the record stores a float because that is what the arithmetic
+  produced. Deriving the figure and formatting it to the decimals the prose prints keeps both
+  sides honest and makes the row say which arithmetic connects them. The cost is that the table
+  can name a check nobody wrote; that is why the fallback is an `AssertionError` naming the check,
+  not a silent pass.
+
+## 98. The similarity band is published; a recommended `tau` still is not
+
+- **Date:** 2026-09-05 (Phase 13)
+- **Q:** `docs/assertions.md` has deferred a `tau` recommendation since Phase 4 with the sentence
+  "Phase 11's Consilium data is what will produce one". That data exists: thirty real answers,
+  each scored against a hand-written reference, in `replay-unpriced.json`. Publish a recommended
+  value, publish the band, or leave the deferral in place?
+- **A:** Publish the band — 0.398 to 0.705 across the thirty, with per-configuration minimum,
+  maximum and median — and refuse the recommendation, saying why in the same section: one corpus,
+  one domain, one answer length is a band and not a distribution, and the band moves with what the
+  reference is. The advice given instead is procedural: measure your own suite once and put the
+  floor under the scores it produced.
+- **Why:** The deferral's reason was that no measurement existed, and one does now, so leaving the
+  sentence would be false. But a number that would be copied into other people's suites needs to
+  be true of those suites, and nothing here supports that. The band is a measurement of this
+  corpus and is labelled as one; a recommended `tau` would be the first figure in this repository
+  with nothing behind it but a feeling. `tests/test_docs_assertions.py` recomputes all six figures
+  and the headroom from the results file, so the section cannot drift from the run.
+
+## 99. `docs/DESIGN.md` gets no provenance test of its own, and is checked by the index instead
+
+- **Date:** 2026-09-05 (Phase 13)
+- **Q:** Every document under `docs/` that prints a number now has a test that re-derives it.
+  `DESIGN.md` prints five — `0.923`, `0.398`, `0.705`, `0.350`, `0.592` — all of them quoted from
+  documents that already have such a test. Write a seventh provenance module for it, or cover it
+  from `tests/test_docs_provenance.py`?
+- **A:** Cover it from the index. `test_design_md_repeats_only_figures_the_measurements_table_carries`
+  extracts every three-decimal figure in `DESIGN.md` and asserts it is a row of the measurements
+  table, and the "which test guards which document" table names `tests/test_docs_provenance.py` as
+  its guard, with a test asserting that table covers every file under `docs/` plus `README.md`.
+- **Why:** `DESIGN.md` is argument, not measurement: it exists to name rejected alternatives, and
+  the figures in it are there to make an argument another document already established. A seventh
+  module would duplicate five checks that exist. The constraint that matters is the one now
+  enforced: a figure cannot enter `DESIGN.md` unless some other document already measured it and
+  the index says where. The rejected alternative — leaving `DESIGN.md` out of the guards table —
+  would have let the one document with no test be the one nobody notices.

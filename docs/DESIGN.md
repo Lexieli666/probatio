@@ -740,3 +740,56 @@ reply that produced it. `Judge.parse` now quotes the first 400 characters of wha
 from a log, and that a real failing reply can become a test fixture instead of being invented —
 which matters here, because `tests/fixtures/` is worth having only if everything in it is
 something that actually happened.
+
+**A timeout is a property of the machine, not of the question.** `ClaudeCLIProvider` had carried a
+`timeout_s` constructor argument since Phase 2 and no flag had ever reached it, which nothing
+noticed until a day of recording had slowed a single call from twelve seconds to ninety and the
+shipped 120-second default started failing cases that were otherwise fine. `--probatio-timeout`
+sets it for the session (DECISIONS 95). The choice worth recording is that the value is **not**
+part of a cassette key. A key answers "was this the same question, of the same model, with the
+same parameters"; how long the caller was willing to wait is none of those, and folding it in
+would make every tape recorded on a slow afternoon replay as stale on a fast one. The rejected
+alternative was to raise `DEFAULT_TIMEOUT_S` instead, which would have hidden a hung subprocess
+for ten minutes in every suite that never needed it, to spare one suite a flag.
+
+## Phase 13 — documentation
+
+**A number in a document is a claim, so it gets a test and an index.** Phases 3, 9, 11 and 12 each
+grew a provenance test for the document they wrote, and by Phase 13 there were six of them, each
+knowing about one file. `docs/PROVENANCE.md` is the index they were missing: one row per measured
+figure, naming the document it appears in, the committed file it came from, the check that ties
+the two together, and the command that regenerates the file. `tests/test_docs_provenance.py` reads
+that table and runs the checks, so the index cannot drift from either side — a figure edited in a
+document fails, and a figure whose source file was re-recorded fails too. The alternative
+considered was to leave the six tests alone and write the provenance table as prose. It fails on
+the case that matters: the table exists to be read by somebody deciding whether to believe the
+README, and an unchecked table of provenance claims is exactly the kind of document this project
+argues against everywhere else.
+
+**The README quotes one run, and names the commit that produced it.** Every figure in the two
+headline-feature sections comes from the `--runs 5` run of the demo suite recorded verbatim in
+`PROGRESS.md` at commit `4c2114e`, and the README says so in the sentence beside the excerpt. The
+alternative was to re-run the suite while writing the README and paste the fresh output, which is
+what most projects do and which produces a README nobody can reproduce: the reader has no way to
+tell which commit's behaviour they are looking at, and the next change to a table's column widths
+silently invalidates the quotation. Quoting a run that is committed in a file makes the excerpt
+checkable — `tests/test_docs_provenance.py` asserts the README's excerpt is a substring of
+`PROGRESS.md`'s — and dates it.
+
+**The prior-art table states absences only for pages that were read.** Every cell in the README's
+comparison names what a tool's own documentation says on 2026-09-05, and the notes behind it list
+the pages fetched for each tool. Where a feature is absent the cell reads "not documented" rather
+than "no", because the two are different claims and only one of them is supportable by reading a
+website. That is also why the table's caption carries the date: the honest form of a competitive
+claim is a dated observation, and a tool that ships a confidence interval next quarter makes the
+row wrong rather than making it a lie. The alternative — a tick-and-cross matrix — reads better
+and would have required asserting absences nobody verified.
+
+**The measured band replaces the deferred recommendation, and stays a band.** `docs/assertions.md`
+had refused to publish a `tau` recommendation since Phase 4 on the grounds that nothing had been
+measured. Thirty real answers have been now, so the document prints the band they occupy —
+0.398 to 0.705 — and still declines to name a recommended number, because a band from one corpus
+at one answer length is not a distribution and a reader who copies a threshold out of somebody
+else's domain has learnt nothing about their own. The rejected alternative was the obvious
+midpoint advice ("start around 0.35"), which would have been the first number in this repository
+with nothing behind it but a feeling.
