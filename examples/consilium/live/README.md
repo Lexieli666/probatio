@@ -7,12 +7,19 @@ with no API key anywhere, and committed as tapes so that every number the case s
 reproduced offline at no cost.
 
 ```bash
-pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
+pytest examples/consilium/live/test_live.py -q --cassette-dir examples/consilium/live/cassettes \
        --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5
 ```
 
 That command calls no model, and neither does anything in CI. The recording commands below are the
 only ones that do, and a human runs them deliberately.
+
+Every command in this directory names its test module rather than the directory, because there
+are two suites here: `test_live.py`, Phase 12's, and `test_live_variance.py`, Phase 15's, and they
+keep their tapes and baselines in different places. `pytest examples/consilium/live` would collect
+both and one `--cassette-dir` cannot serve them (DECISIONS 103, which is DECISIONS 87 one level
+down). Every Phase 12 command below was re-run in this form and reproduces its committed output
+byte for byte.
 
 `--probatio-model` is needed on a replay too, and naming the model the tapes were recorded against
 is the whole point of it: these cases name no model in their `params`, so the cassette key takes
@@ -41,9 +48,13 @@ Route A of `docs/CASE_STUDY.md` comes from.
 | `rubrics/faithfulness.md` | Consilium's `judges/faithfulness_v2.md` at commit `109a744`, verbatim from `## System` up to its `## Output`, with a provenance header and a replacement `## Output` mapping v2's per-claim roll-up onto the one JSON object Probatio's judge template asks for |
 | `variants/*.yaml` | `probatio freeze-variants` against `claude-opus-5`, then reviewed by a human who deleted the rewordings that changed the question; each file's header records what was deleted and why |
 | `cassettes/test_live/` | recorded against `claude-opus-5` |
+| `cassettes-n10/test_live_variance/` | Phase 15 experiment A: the same fifteen cases recorded ten times against `claude-opus-5` |
+| `cassettes-judge-x10/judge_repeatability/` | Phase 15 experiment B: ten gradings of each committed opus answer, one interaction a case because the input never changes |
 | `cassettes-haiku/test_live/` | recorded against `claude-haiku-4-5-20251001`, Route B's second model |
 | `results/preflight.json` | one live payload from the Phase 12 preflight, kept so the parser can be checked against a real reply |
 | `results/live-baseline.*`, `results/live-changed.*` | the two offline replays the case study quotes |
+| `results/live-n10.*` | the offline replay of experiment A, which `docs/EVALUATION.md` §8 quotes |
+| `results/judge-repeatability.json` | experiment B, rebuilt from its tapes by `judge_repeatability.py --replay` |
 
 `tests/fixtures/consilium/corpus/` holds copies of the fourteen notes these cases name and
 `tests/fixtures/consilium/faithfulness_v2.md` a copy of the rubric source, so
@@ -70,7 +81,7 @@ two (DECISIONS 52); only an empty one is an error.
 ### 2. Record the suite (live)
 
 ```bash
-pytest examples/consilium/live -q --probatio-provider claude-cli \
+pytest examples/consilium/live/test_live.py -q --probatio-provider claude-cli \
        --probatio-model claude-opus-5 --cassette=record \
        --cassette-dir examples/consilium/live/cassettes \
        --baseline-dir .probatio/baseline-live
@@ -82,7 +93,7 @@ interactions than there are cases.
 ### 3. Record the baselines (offline)
 
 ```bash
-pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
+pytest examples/consilium/live/test_live.py -q --cassette-dir examples/consilium/live/cassettes \
        --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5 --update-baseline
 ```
 
@@ -108,7 +119,7 @@ probatio validate-judge --run-judge --rubric examples/consilium/live/rubrics/fai
 ### 5. The replay the case study quotes (offline, no model)
 
 ```bash
-pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes \
+pytest examples/consilium/live/test_live.py -q --cassette-dir examples/consilium/live/cassettes \
        --baseline-dir .probatio/baseline-live --probatio-model claude-opus-5 \
        --probatio-results examples/consilium/live/results/live-baseline.json \
        --probatio-report examples/consilium/live/results/live-baseline.md
@@ -119,7 +130,7 @@ pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassett
 Record against the second model into its own cassette directory:
 
 ```bash
-pytest examples/consilium/live -q --probatio-provider claude-cli \
+pytest examples/consilium/live/test_live.py -q --probatio-provider claude-cli \
        --probatio-model claude-haiku-4-5-20251001 --probatio-timeout 600 --cassette=record \
        --cassette-dir examples/consilium/live/cassettes-haiku \
        --baseline-dir .probatio/baseline-live
@@ -135,7 +146,8 @@ Then replay those tapes against the **opus** baselines, so snapshot drift is wha
 looks like in a report:
 
 ```bash
-pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes-haiku \
+pytest examples/consilium/live/test_live.py -q \
+       --cassette-dir examples/consilium/live/cassettes-haiku \
        --baseline-dir .probatio/baseline-live --probatio-model claude-haiku-4-5-20251001 \
        --probatio-results examples/consilium/live/results/live-changed.json \
        --probatio-report examples/consilium/live/results/live-changed.md
@@ -155,3 +167,59 @@ python examples/consilium/convert_traces.py \
 
 The committed files are the contract: this must reproduce them byte for byte, and
 `tests/test_consilium_live_suite.py` fails if it does not.
+
+## Phase 15: the variance study seed
+
+Two experiments, both `claude-opus-5`, both recorded into their own tapes so that every statistic
+replays offline afterwards.
+
+### A. The same fifteen cases, answered ten times each (live, 300 calls)
+
+`test_live_variance.py` carries no relation decorator and no `flaky_tolerant` marker: the study
+measures the cases' own verdicts, and the four relations would attach ten variants to every run.
+
+```bash
+pytest examples/consilium/live/test_live_variance.py -q --probatio-provider claude-cli \
+       --probatio-model claude-opus-5 --probatio-timeout 600 --runs 10 --cassette=record \
+       --cassette-dir examples/consilium/live/cassettes-n10 \
+       --baseline-dir .probatio/baseline-live-n10
+```
+
+Recording under `--runs 10` appends one sample per run (DECISIONS 44), so the system-under-test
+call is one interaction with ten samples. The judge call is not: its prompt carries the answer it
+is grading, so a run that produced a different answer is a different cassette key, and a case's
+tape holds one interaction per distinct answer with one grading each.
+
+Record the baselines from the tapes, offline, so that they belong to a single replay rather than
+to whichever recording invocation happened to reach the case first:
+
+```bash
+pytest examples/consilium/live/test_live_variance.py -q --runs 10 \
+       --cassette-dir examples/consilium/live/cassettes-n10 \
+       --baseline-dir .probatio/baseline-live-n10 --probatio-model claude-opus-5 \
+       --update-baseline
+```
+
+Then the replay that produced the committed results, which calls nothing:
+
+```bash
+pytest examples/consilium/live/test_live_variance.py -q --runs 10 \
+       --cassette-dir examples/consilium/live/cassettes-n10 \
+       --baseline-dir .probatio/baseline-live-n10 --probatio-model claude-opus-5 \
+       --probatio-results examples/consilium/live/results/live-n10.json \
+       --probatio-junit examples/consilium/live/results/live-n10.xml \
+       --probatio-report examples/consilium/live/results/live-n10.md
+```
+
+### B. Ten gradings of one unchanging answer (live, 150 calls)
+
+```bash
+python examples/consilium/live/judge_repeatability.py --record --timeout 600
+python examples/consilium/live/judge_repeatability.py --replay   # offline, rebuilds the file
+```
+
+The answer under the judge is the committed `claude-opus-5` completion in `cassettes/test_live/`,
+found by cassette key rather than by position, so experiment B grades exactly what Phase 12
+recorded. Identical input means one cassette key, so each tape holds one interaction with ten
+samples — `tests/test_consilium_judge_repeatability.py` asserts that, and asserts `--replay`
+reproduces the committed JSON byte for byte with the inner provider never called.

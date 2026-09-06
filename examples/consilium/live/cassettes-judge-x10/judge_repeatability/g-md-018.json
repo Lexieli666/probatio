@@ -1,0 +1,897 @@
+{
+  "case_id": "g-md-018",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": 0.09927799999999999,
+          "latency_ms": 12563.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 13435,
+            "duration_ms": 12563,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7059,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09507499999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 967,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim traces to the single red-flag note \u2014 the same-day pregnancy/postpartum headache line with \\\"visual changes, swelling or upper abdominal pain\\\", the thunderclap and emergency bullets, the \\\"pattern is the concern, not the severity\\\" framing, and the accurate statement that the note names warning patterns but does not cover follow-up tests or questions.\"}",
+            "session_id": "33df238d-45d0-4758-aad5-3cd3f10c2cb9",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 158,
+            "total_cost_usd": 0.09927799999999999,
+            "ttft_ms": 11310,
+            "ttft_stream_ms": 1172,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7059,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7059,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7059,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7059,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 967,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 967,
+              "output_tokens_details": {
+                "thinking_tokens": 821
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "c7b95a6e-5121-4efd-b55f-d1e5e73258ed"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim traces to the single red-flag note \u2014 the same-day pregnancy/postpartum headache line with \\\"visual changes, swelling or upper abdominal pain\\\", the thunderclap and emergency bullets, the \\\"pattern is the concern, not the severity\\\" framing, and the accurate statement that the note names warning patterns but does not cover follow-up tests or questions.\"}",
+          "tokens_in": 2,
+          "tokens_out": 967
+        },
+        {
+          "cost_usd": 0.10590799999999999,
+          "latency_ms": 15568.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 16342,
+            "duration_ms": 15568,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7057,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10170499999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1233,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim traces to the single source \u2014 the pregnancy/swelling bullet under \\\"Seek same-day medical assessment\\\", the emergency bullets (thunderclap \\\"even if it then settles completely\\\", neurological features, fever with stiff neck or non-blanching rash, eye pain with red eye and halos), and the framing that \\\"The pattern is the concern, not the severity\\\" \u2014 and the answer's statement that the note names the warning pattern without covering follow-up tests or questions is accurate for this document.}\"}",
+            "session_id": "15aa7894-d72e-4b52-a583-be0196576483",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 118,
+            "total_cost_usd": 0.10590799999999999,
+            "ttft_ms": 13420,
+            "ttft_stream_ms": 1371,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7057,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7057,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7057,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7057,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1233,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1233,
+              "output_tokens_details": {
+                "thinking_tokens": 1045
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "c9507390-08cd-46c5-8584-ba82e3c9ce65"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim traces to the single source \u2014 the pregnancy/swelling bullet under \\\"Seek same-day medical assessment\\\", the emergency bullets (thunderclap \\\"even if it then settles completely\\\", neurological features, fever with stiff neck or non-blanching rash, eye pain with red eye and halos), and the framing that \\\"The pattern is the concern, not the severity\\\" \u2014 and the answer's statement that the note names the warning pattern without covering follow-up tests or questions is accurate for this document.}\"}",
+          "tokens_in": 2,
+          "tokens_out": 1233
+        },
+        {
+          "cost_usd": 0.09995799999999999,
+          "latency_ms": 13204.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 13968,
+            "duration_ms": 13204,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7057,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09575499999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 995,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim traces to the single source \u2014 the pregnancy/postpartum entry under 'Seek same-day medical assessment', the emergency bullets including thunderclap warranting assessment 'even if it then settles completely', the framing that 'The pattern is the concern, not the severity', and the accurate statement that the note names the warning pattern without covering tests or examinations to follow.\"}",
+            "session_id": "8d3797e7-bfc8-4c49-8d8d-f64785b1b429",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 132,
+            "total_cost_usd": 0.09995799999999999,
+            "ttft_ms": 11172,
+            "ttft_stream_ms": 1000,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7057,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7057,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7057,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7057,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 995,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 995,
+              "output_tokens_details": {
+                "thinking_tokens": 847
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "5aa74c4d-5877-47c3-9f31-b2718fb44f93"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim traces to the single source \u2014 the pregnancy/postpartum entry under 'Seek same-day medical assessment', the emergency bullets including thunderclap warranting assessment 'even if it then settles completely', the framing that 'The pattern is the concern, not the severity', and the accurate statement that the note names the warning pattern without covering tests or examinations to follow.\"}",
+          "tokens_in": 2,
+          "tokens_out": 995
+        },
+        {
+          "cost_usd": 0.094153,
+          "latency_ms": 9795.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 10485,
+            "duration_ms": 9795,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7059,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08995,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 762,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling red flag, the emergency escalation items including thunderclap headache warranting assessment even if it settles, the pattern-not-severity framing, and the statement that the note does not cover what tests or questions should follow \u2014 is supported by the single source ('New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain'; 'The pattern is the concern, not the severity').\"}",
+            "session_id": "13402cb3-fdf0-4d0a-94e1-dc9292f1d58d",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 204,
+            "total_cost_usd": 0.094153,
+            "ttft_ms": 7971,
+            "ttft_stream_ms": 1500,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7059,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7059,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7059,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7059,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 762,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 762,
+              "output_tokens_details": {
+                "thinking_tokens": 584
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "4071c119-5b1d-4a51-a7b5-72d63c97a9c6"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling red flag, the emergency escalation items including thunderclap headache warranting assessment even if it settles, the pattern-not-severity framing, and the statement that the note does not cover what tests or questions should follow \u2014 is supported by the single source ('New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain'; 'The pattern is the concern, not the severity').\"}",
+          "tokens_in": 2,
+          "tokens_out": 762
+        },
+        {
+          "cost_usd": 0.117138,
+          "latency_ms": 28187.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 29000,
+            "duration_ms": 28187,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7055,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.11293500000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1683,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling/headache listing, the emergency escalation items, the thunderclap-settles-completely caveat, the \\\"pattern is the concern, not the severity\\\" framing, the not-a-substitute-for-assessment line, and the accurate statement that the note stops at warning patterns without covering tests or questions \u2014 is carried by the single source document, e.g. \\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain.\\\"\"}",
+            "session_id": "31c848ce-8d70-4ed5-aff1-b27cd744c4ea",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 142,
+            "total_cost_usd": 0.117138,
+            "ttft_ms": 26177,
+            "ttft_stream_ms": 5521,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7055,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7055,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7055,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7055,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1683,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1683,
+              "output_tokens_details": {
+                "thinking_tokens": 1486
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "cc6459b8-6608-407f-b0bb-d5012ba7d920"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling/headache listing, the emergency escalation items, the thunderclap-settles-completely caveat, the \\\"pattern is the concern, not the severity\\\" framing, the not-a-substitute-for-assessment line, and the accurate statement that the note stops at warning patterns without covering tests or questions \u2014 is carried by the single source document, e.g. \\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 1683
+        },
+        {
+          "cost_usd": 0.09747299999999999,
+          "latency_ms": 12034.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 12688,
+            "duration_ms": 12034,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7061,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09326999999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 894,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling red flag, the emergency thunderclap and neurological/meningitic/ocular features, the 'pattern is the concern, not the severity' framing, and the accurate statement that the note stops at warning patterns without covering tests or examinations \u2014 is drawn directly from the single source document.\"}",
+            "session_id": "68b494cb-415b-486e-b8ca-61d5ad7350fa",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 240,
+            "total_cost_usd": 0.09747299999999999,
+            "ttft_ms": 10320,
+            "ttft_stream_ms": 1055,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7061,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7061,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7061,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7061,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 894,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 894,
+              "output_tokens_details": {
+                "thinking_tokens": 760
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "9f118332-cfa8-4bb5-93e8-2829878bd158"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling red flag, the emergency thunderclap and neurological/meningitic/ocular features, the 'pattern is the concern, not the severity' framing, and the accurate statement that the note stops at warning patterns without covering tests or examinations \u2014 is drawn directly from the single source document.\"}",
+          "tokens_in": 2,
+          "tokens_out": 894
+        },
+        {
+          "cost_usd": 0.09634299999999998,
+          "latency_ms": 10658.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 11549,
+            "duration_ms": 10658,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004198,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7061,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09214499999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 849,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim traces to the single source \u2014 the pregnancy/postpartum same-day line (\\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain\\\"), the thunderclap and other emergency bullets, the \\\"pattern is the concern, not the severity\\\" framing, and the accurate statement that the note names warning patterns without covering what tests or questions should follow.\"}",
+            "session_id": "4cfe9d70-6933-44d8-a5d2-bcd9f3c93aa0",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 108,
+            "total_cost_usd": 0.09634299999999998,
+            "ttft_ms": 9302,
+            "ttft_stream_ms": 827,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7061,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7061,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7061,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7061,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 849,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 849,
+              "output_tokens_details": {
+                "thinking_tokens": 686
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "a1449044-4b4a-49a6-b054-7ba15ef7a7e8"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim traces to the single source \u2014 the pregnancy/postpartum same-day line (\\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain\\\"), the thunderclap and other emergency bullets, the \\\"pattern is the concern, not the severity\\\" framing, and the accurate statement that the note names warning patterns without covering what tests or questions should follow.\"}",
+          "tokens_in": 2,
+          "tokens_out": 849
+        },
+        {
+          "cost_usd": 0.109118,
+          "latency_ms": 18249.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 19263,
+            "duration_ms": 18249,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7053,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10491500000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1363,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy-headache-with-swelling listing, the four emergency escalation items, the thunderclap-settles-completely caveat, the \\\"pattern is the concern, not the severity\\\" framing, and the stated absence of any test or question guidance \u2014 is carried by verbatim spans in the single source document, e.g. \\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain.\\\"\"}",
+            "session_id": "8273f3a8-1088-44fb-8360-8453c5502fc1",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 94,
+            "total_cost_usd": 0.109118,
+            "ttft_ms": 16025,
+            "ttft_stream_ms": 888,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7053,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7053,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7053,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7053,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1363,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1363,
+              "output_tokens_details": {
+                "thinking_tokens": 1184
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "55664b04-7c5c-41cd-ab1a-e675d0d7d4e5"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy-headache-with-swelling listing, the four emergency escalation items, the thunderclap-settles-completely caveat, the \\\"pattern is the concern, not the severity\\\" framing, and the stated absence of any test or question guidance \u2014 is carried by verbatim spans in the single source document, e.g. \\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 1363
+        },
+        {
+          "cost_usd": 0.111833,
+          "latency_ms": 19219.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 20063,
+            "duration_ms": 19219,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7057,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10763,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1470,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling/headache entry, the four emergency escalation patterns, the thunderclap 'even if it settles' point, the 'pattern is the concern, not the severity' framing, and the statement that the note names when to seek assessment but not what tests or questions follow \u2014 is carried by the single source, e.g. \\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain.\\\"\"}",
+            "session_id": "b3376e51-1276-44bd-958c-760760dae81c",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 199,
+            "total_cost_usd": 0.111833,
+            "ttft_ms": 17230,
+            "ttft_stream_ms": 987,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7057,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7057,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7057,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7057,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1470,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1470,
+              "output_tokens_details": {
+                "thinking_tokens": 1289
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "b8c80807-f5b8-46fd-9845-a163af72fa49"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the same-day pregnancy/swelling/headache entry, the four emergency escalation patterns, the thunderclap 'even if it settles' point, the 'pattern is the concern, not the severity' framing, and the statement that the note names when to seek assessment but not what tests or questions follow \u2014 is carried by the single source, e.g. \\\"New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 1470
+        },
+        {
+          "cost_usd": 0.09920799999999999,
+          "latency_ms": 12851.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 13585,
+            "duration_ms": 12851,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004203,
+                "inputTokens": 4123,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7057,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09500499999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 965,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim traces to the source \u2014 the pregnancy/swelling same-day line, the thunderclap and other emergency features, the \\\"pattern is the concern, not the severity\\\" framing, and the accurate observation that the note names warning patterns but no tests or examinations (\\\"This system does not diagnose\\\").\"}",
+            "session_id": "a15550e2-1bcf-4bf4-8291-fa6809502cd8",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 161,
+            "total_cost_usd": 0.09920799999999999,
+            "ttft_ms": 11467,
+            "ttft_stream_ms": 1005,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7057,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7057,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7057,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7057,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 965,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 965,
+              "output_tokens_details": {
+                "thinking_tokens": 840
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "f84438ea-f6a4-46e3-a20a-51a775746ae7"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim traces to the source \u2014 the pregnancy/swelling same-day line, the thunderclap and other emergency features, the \\\"pattern is the concern, not the severity\\\" framing, and the accurate observation that the note names warning patterns but no tests or examinations (\\\"This system does not diagnose\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 965
+        }
+      ],
+      "key": "4f46599b49e5e50a",
+      "model": "claude-opus-5",
+      "params": {},
+      "prompt": "You are grading one output of a system under test against a rubric. Apply the rubric exactly as\nwritten; do not add criteria of your own.\n\n## Rubric\n\n# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)\n\n<!-- Provenance: the sections from \"## System\" to \"### Evidence for every verdict ...\" below are\ncopied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That\nfile's \"## Output\" section, which asks for a per-claim JSON list, is replaced by the \"## Output\"\nsection at the end, because Probatio's judge template supplies its own output instruction. In\nProbatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under \"Input\nthe system was given\" and the ANSWER under \"Output under test\". v2's rationale header (why v2\nexists, the round-1 numbers) is omitted here; it is in the source file. -->\n\n## System\n\nYou are grading whether an answer is supported by the source documents it was given. You are not\ngrading whether the answer is good, well written, complete, or clinically correct. You are grading\none thing: does each factual claim in the answer appear in the sources.\n\n## Task\n\nYou will be given:\n\n- QUESTION: what the user asked.\n- SOURCES: numbered excerpts from reference documents.\n- ANSWER: the answer that was delivered.\n\nWork in two steps. First list the answer's factual claims. Then give each one a verdict.\n\n### Step 1 \u2014 what is a claim\n\nA **factual claim** is a statement that asserts something checkable about the world: a fact, a\nthreshold or number, a mechanism, a course of action, or something guidance is said to describe.\n\nThe following are **not claims**. Do not list them, and do not grade them:\n\n- greetings, sign-offs, and offers to help further;\n- the disclaimer, the escalation banner, and any instruction to seek care or call emergency\n  services;\n- any text in square brackets beginning with \"removed:\" \u2014 that is a redaction marker;\n- **summary, framing and transition sentences**, whose work is to open, close or connect rather\n  than to assert: \"Here is what guidance describes\", \"In summary\", \"Putting those together\",\n  \"There are a few things worth knowing here\";\n- **hedges and statements of variability that carry no specific fact**: \"this depends on your\n  situation\", \"recommendations differ between people\", \"your clinician can advise on the details\";\n- **meta-commentary that restates something you have already listed**. If two sentences assert the\n  same fact, list it once. A closing paragraph that repeats the body of the answer adds no claims;\n- **exhortations that assert nothing checkable**: \"do not leave this unaddressed\", \"take it\n  seriously\", \"it is worth acting on\".\n\nIf you are unsure whether a sentence carries a checkable fact, it is **not** a claim. Grading\ntransition and summary sentences as unsupported was the single largest source of error in the\nprevious version of this prompt: one such sentence flips the whole answer, because the answer-level\nlabel is `supported` only when every claim is.\n\n### Step 2 \u2014 verdicts\n\n- `supported` \u2014 the sources state the claim, or it follows directly from them.\n- `unsupported` \u2014 the claim is not in these sources. This includes a claim that is *true in\n  general* but absent from them. You are grading grounding, not correctness.\n- `contradicted` \u2014 the sources say something incompatible with the claim.\n\n**Paraphrase is support.** The claim does not have to reuse the source's wording, its sentence\nstructure, or its level of detail. A claim that restates a source in different words is\n`supported`. So is a claim that **aggregates or generalizes** several source statements into one\nsentence, as long as every part it asserts appears somewhere in the sources \u2014 cite the source\ncarrying the main part. Requiring the answer to echo the source is grading style, not grounding.\n\n**A rationale the sources do not give is a separate claim.** Where the sources state a rule and the\nanswer explains *why* the rule exists \u2014 in terms of billing, reimbursement, record complexity, or\nany motivation the sources are silent on \u2014 the rule is one claim and is `supported`, and the\nrationale is a second claim and is `unsupported`. Do not let the supported half carry the other.\n\n### The specific-attribute check\n\nRun this before you write `supported`. **Topical overlap is not support**: a claim and a source can\nbe about the same document, the same condition and the same paragraph and still not match. Check\nthat the source agrees with the claim on each of:\n\n- the **object** the fact attaches to \u2014 which measure, which drug class, which body system, which\n  test;\n- the **threshold or number** \u2014 the value, the unit, and the direction of the comparison;\n- the **mechanism or cause** it names;\n- the **population or condition** it applies to.\n\nA claim that takes a fact the sources state about one object, threshold, mechanism or population\nand attaches it to a **different** one is `contradicted`, not `supported`. Worked example: the\nsources describe an action plan built on daily weight change and fluid-retention warning signs, and\nthe answer says patients are given an action plan for salt intake. Same note, same condition, wrong\nobject \u2014 that is `contradicted`.\n\n### Claims about the sources themselves\n\nA sentence asserting what the SOURCES do or do not contain \u2014 \"the passage does not list the\nspecific classes\", \"the retrieved material does not name a threshold\" \u2014 **is a claim**, and it is\nchecked against the sources rather than waved through. Read the sources and decide. If a source\ndoes contain what the answer says is absent, the claim is `contradicted`.\n\n### Evidence for every verdict that is not `unsupported`\n\nEvery claim you mark `supported` must carry **the number of the source that supports it** and a\n**short verbatim span copied from that source** \u2014 at most 25 words \u2014 in `quote`. If you cannot copy\na span that carries the claim, the verdict is not `supported`.\n\nA `contradicted` claim carries the number of the source it contradicts and the span that\ncontradicts it. An `unsupported` claim carries `\"source\": null` and an empty `quote`.\n\n## Output\n\nProbatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as\nfollows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer\ncontains no factual claims. `verdict` is `\"pass\"` when every listed claim is `supported` (or there\nare no claims) and `\"fail\"` otherwise, which is v2's answer-level roll-up. `rationale` is one\nsentence naming the first `unsupported` or `contradicted` claim and the source span that decides\nit, or stating that every claim is supported.\n\n## Input the system was given\n\n{\n  \"documents\": [\n    \"---\\ndoc_id: red-flag-sudden-severe-headache\\ncategory: red_flag\\ntitle: \\\"Sudden severe headache and other dangerous headache patterns\\\"\\nsource: \\\"Emergency medicine and neurology society guidance (educational summary)\\\"\\nlast_reviewed: 2026-08-09\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## Call emergency services immediately\\n\\n- A headache that comes on abruptly and reaches maximum intensity within about a minute \u2014 often\\n  described as the worst headache of one's life, or as being hit on the head. This is a thunderclap\\n  headache.\\n- Headache with fever and a stiff neck, or with a rash that does not fade under pressure.\\n- Headache with new confusion, drowsiness, seizure, weakness, numbness, difficulty speaking, or\\n  visual loss.\\n- Headache after a head injury, particularly with vomiting, drowsiness or worsening over hours.\\n- Headache with sudden severe eye pain, a red eye, and blurred vision or halos around lights.\\n\\n## Seek same-day medical assessment\\n\\n- A new type of headache beginning after age 50.\\n- Headache that steadily worsens over days or weeks, or that is consistently worse on waking, on\\n  lying flat, or on coughing, straining or bending.\\n- New headache in someone with cancer, HIV, immunosuppression, or on anticoagulation.\\n- New headache in pregnancy or the postpartum period, particularly with visual changes, swelling or\\n  upper abdominal pain.\\n- Headache with scalp tenderness or jaw pain on chewing in someone over 50.\\n\\n## Why thunderclap headache is treated as an emergency\\n\\nThe pattern is the concern, not the severity. A headache that reaches peak intensity almost\\ninstantly can indicate bleeding around the brain from a ruptured aneurysm, and several other serious\\ncauses present the same way. The mortality is high and depends on how quickly it is treated.\\n\\nThe critical point is that a thunderclap headache warrants emergency assessment **even if it then\\nsettles completely**, including where simple painkillers appear to have relieved it. Resolution does\\nnot exclude the diagnosis, and a warning bleed can precede a much larger one by days.\\n\\n## Why the others are on the list\\n\\nFever with a stiff neck raises meningitis; a non-blanching rash raises meningococcal infection.\\nHeadache worse on waking or on straining raises raised pressure inside the skull. Scalp tenderness\\nand jaw claudication over 50 raise giant cell arteritis, which can cause irreversible blindness\\nwithin days and is one of the few headache causes where hours of delay change the outcome\\npermanently. Eye pain with a red eye and halos raises acute angle-closure glaucoma, also\\nsight-threatening.\\n\\n## What this note is not for\\n\\nMost headaches are not dangerous. Migraine and tension-type headache are common, recurrent, and\\nrecognizable by pattern, and they are covered by the migraine notes in this corpus. The purpose here\\nis to identify the minority of presentations where the pattern itself \u2014 sudden onset, new type,\\nprogressive course, or accompanying neurological or systemic features \u2014 is the warning, independent\\nof how severe the pain feels.\\n\\nThis system does not diagnose. Any presentation matching this note is escalated, and no answer it\\nproduces is a substitute for emergency assessment.\\n\"\n  ],\n  \"question\": \"I am 34 weeks pregnant with swelling in my hands and a headache that will not shift. How urgent is this, and what should I be asking about?\"\n}\n\n## Output under test\n\n**This needs medical attention today \u2014 please contact your maternity unit or doctor now, not tomorrow.**\n\nBased on the one document I have:\n\n**Why it's urgent.** The red-flag note lists \"new headache in pregnancy or the postpartum period, particularly with visual changes, swelling or upper abdominal pain\" under **seek same-day medical assessment**. You have two of those three features together \u2014 a headache that won't shift plus swelling in your hands \u2014 so this falls squarely in the same-day category.\n\n**Escalate to emergency services immediately if any of these appear**, per the same note:\n- The headache came on abruptly and peaked within about a minute (thunderclap pattern) \u2014 this warrants emergency assessment *even if it later settles completely*, including if painkillers seem to have worked\n- New confusion, drowsiness, seizure, weakness, numbness, difficulty speaking, or visual loss\n- Fever with a stiff neck, or a rash that doesn't fade under pressure\n- Sudden severe eye pain with a red eye and blurred vision or halos around lights\n\n**What to ask about.** Here I have to be straightforward with you: the document I'm working from identifies *when* this pattern needs assessment, but it does not cover what tests, questions, or examinations should follow. It names the warning pattern and stops there. So I can't tell you from these documents what to ask your clinician to check.\n\nWhat I can say is that the note's own framing is that the *pattern* is the concern, not how severe the pain feels \u2014 so when you call, describe the combination (34 weeks pregnant, persistent headache, hand swelling) rather than rating the pain, and mention whether you've had any visual changes or upper abdominal pain, since those are the other features on the list.\n\nNothing here is a diagnosis, and this note explicitly isn't a substitute for being assessed. Please make the call now.\n\n## Your answer\n\nReply with one JSON object and nothing else, in exactly this form:\n\n{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"<one sentence>\"}\n\n\"verdict\" is \"pass\" or \"fail\", \"score\" is a number from 0 to 1, and \"rationale\" is one sentence.\nDo not wrap the object in a code fence and do not write anything before or after it.\n",
+      "system": null
+    }
+  ],
+  "model": "claude-opus-5",
+  "provider": "claude-cli",
+  "recorded": "2026-09-06T23:21:26Z"
+}

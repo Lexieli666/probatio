@@ -1,0 +1,552 @@
+{
+  "cases": [
+    {
+      "case_id": "g-cc-001",
+      "n": 10,
+      "pass_rate": 0.9,
+      "passes": 9,
+      "scores": [
+        1.0,
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "pass",
+        "unparsable",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.59585,
+        0.982124
+      ]
+    },
+    {
+      "case_id": "g-cc-002",
+      "n": 10,
+      "pass_rate": 0.8,
+      "passes": 8,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        null,
+        1.0,
+        null
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "unparsable",
+        "pass",
+        "unparsable"
+      ],
+      "wilson_95": [
+        0.490162,
+        0.943318
+      ]
+    },
+    {
+      "case_id": "g-cc-017",
+      "n": 10,
+      "pass_rate": 0.7,
+      "passes": 7,
+      "scores": [
+        1.0,
+        1.0,
+        null,
+        null,
+        1.0,
+        1.0,
+        null,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "pass",
+        "pass",
+        "unparsable",
+        "unparsable",
+        "pass",
+        "pass",
+        "unparsable",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.396778,
+        0.892209
+      ]
+    },
+    {
+      "case_id": "g-ge-001",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-ge-002",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-ge-024",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-gh-001",
+      "n": 10,
+      "pass_rate": 0.9,
+      "passes": 9,
+      "scores": [
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "unparsable",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.59585,
+        0.982124
+      ]
+    },
+    {
+      "case_id": "g-gh-002",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-gh-017",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-md-017",
+      "n": 10,
+      "pass_rate": 0.9,
+      "passes": 9,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "unparsable",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.59585,
+        0.982124
+      ]
+    },
+    {
+      "case_id": "g-md-018",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-md-021",
+      "n": 10,
+      "pass_rate": 0.9,
+      "passes": 9,
+      "scores": [
+        null,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "unparsable",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.59585,
+        0.982124
+      ]
+    },
+    {
+      "case_id": "g-su-001",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    },
+    {
+      "case_id": "g-su-002",
+      "n": 10,
+      "pass_rate": 0.3,
+      "passes": 3,
+      "scores": [
+        0.92,
+        0.92,
+        0.89,
+        0.91,
+        1.0,
+        0.93,
+        0.89,
+        1.0,
+        0.89,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": false,
+      "verdicts": [
+        "fail",
+        "fail",
+        "fail",
+        "fail",
+        "pass",
+        "fail",
+        "fail",
+        "pass",
+        "fail",
+        "pass"
+      ],
+      "wilson_95": [
+        0.107791,
+        0.603222
+      ]
+    },
+    {
+      "case_id": "g-su-003",
+      "n": 10,
+      "pass_rate": 1.0,
+      "passes": 10,
+      "scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "threshold": 1.0,
+      "unanimous": true,
+      "verdicts": [
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass",
+        "pass"
+      ],
+      "wilson_95": [
+        0.722467,
+        1.0
+      ]
+    }
+  ],
+  "cases_not_unanimous": 7,
+  "gradings_per_case": 10,
+  "judge_model": "claude-opus-5",
+  "judge_template_hash": "eb24d6f49d7b8996",
+  "rubric": "faithfulness",
+  "rubric_hash": "2bfc999b338b0130",
+  "source_cassettes": "examples/consilium/live/cassettes/test_live",
+  "tapes": "examples/consilium/live/cassettes-judge-x10/judge_repeatability"
+}

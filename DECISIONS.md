@@ -2289,3 +2289,48 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   would hide a genuinely pinned case in a suite that also grades. Leaving it and explaining the
   discrepancy in `docs/EVALUATION.md`, which publishes a committed artefact that contradicts its
   own table and asks the reader to trust the prose over the run.
+
+## 107. An unparsable judge reply in experiment B is a verdict of `unparsable`, not a re-ask
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** DECISIONS 92 has `validate-judge --run-judge` re-ask a row whose reply is not a verdict,
+  up to three times. Experiment B grades the same answer ten times through a recording cassette.
+  Should it re-ask too?
+- **A:** No. The reply is recorded as the sample it is, the grading is reported as the verdict
+  string `unparsable` with a null score, and it counts as a failure to pass. The count of
+  non-unanimous cases therefore counts a case whose judge answered nine times and did not answer
+  once.
+- **Why:** Two things differ from DECISIONS 92's situation. Mechanically, a re-ask through a
+  recording cassette appends an eleventh sample under the same key, so the tape no longer holds
+  ten gradings and `--replay` no longer reproduces the study; the invariant that each tape is one
+  interaction with exactly ten samples is what the test checks and what makes the file
+  reproducible. Substantively, DECISIONS 92 re-asks because there the row is a comparison against
+  a human label and a non-answer carries no judgement to compare — the measurement is of
+  agreement, and a missing verdict is missing data. Here the measurement is *whether the judge
+  says the same thing twice about the same text*, and a reply that is not a verdict is one of the
+  things it can say. Retrying it away would be measuring the judge's repeatability after removing
+  the least repeatable outcome. Rejected alternative: stopping the study, which throws away the
+  gradings that did work for the reason DECISIONS 92 already rejected.
+
+## 108. Experiment B is a script that reads its answer off the tape by cassette key
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** Experiment B needs "the committed opus answer" for each case. A tape holds the
+  system-under-test call, the judge call, and the two of those for every one of the case's
+  relation variants — 278 interactions across the fifteen files. Which one is the answer, and how
+  does a script that must not call a model find it?
+- **A:** By key. `recorded_answer` recomputes
+  `interaction_key(prompt=build_prompt(case), system=case.system, params=case.params,
+  model="claude-opus-5")` — the key the unmodified case's system-under-test call had, with no
+  judge template — and takes the first sample of the interaction that matches. A tape with no such
+  interaction is a `ProbatioConfigError` saying the cases and the tapes have drifted apart, not a
+  fallback to the first interaction in the file.
+- **Why:** Position is not identity. The interactions are in the order the recording made them,
+  which is the order the relations happened to fire, and a file's first interaction is the
+  original case's answer only by convention. Recomputing the key uses the same function the
+  recording used, so the two agree by construction, and a case edited after the tape was recorded
+  fails loudly instead of grading a variant's answer under the original's name. The script imports
+  `build_prompt` from `app_live` for that, which is the same import `test_live.py` makes and works
+  for the same reason (DECISIONS 88): a script's own directory is on `sys.path`.
+  It is a script rather than a test for the reason every live step here is a script — `CLAUDE.md`
+  forbids a live call from anything `pytest` runs — and the test beside it runs only `--replay`.

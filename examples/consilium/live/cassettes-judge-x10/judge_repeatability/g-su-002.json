@@ -1,0 +1,897 @@
+{
+  "case_id": "g-su-002",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": 0.103323,
+          "latency_ms": 13848.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 14716,
+            "duration_ms": 13848,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041930000000000005,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7102,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.09913,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1112,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.92, \"rationale\": \"All claims trace to the source except \\\"His age \u2014 62 puts him in a group where this is taken seriously\\\", which asserts an age-based risk grouping the note never states (it mentions \\\"older adults\\\" only as having relatively more atypical presentations, with no age threshold).\"}",
+            "session_id": "6dd69375-1844-406a-8e7f-43d10ad95398",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 86,
+            "total_cost_usd": 0.103323,
+            "ttft_ms": 12593,
+            "ttft_stream_ms": 773,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7102,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7102,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7102,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7102,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1112,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1112,
+              "output_tokens_details": {
+                "thinking_tokens": 1001
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "c0f5bd64-2d7e-41a1-b5a1-9f2a51f60b71"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.92, \"rationale\": \"All claims trace to the source except \\\"His age \u2014 62 puts him in a group where this is taken seriously\\\", which asserts an age-based risk grouping the note never states (it mentions \\\"older adults\\\" only as having relatively more atypical presentations, with no age threshold).\"}",
+          "tokens_in": 2,
+          "tokens_out": 1112
+        },
+        {
+          "cost_usd": 0.10750800000000002,
+          "latency_ms": 16370.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 17658,
+            "duration_ms": 16370,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004198,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7100,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10331000000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1280,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.92, \"rationale\": \"All claims trace to the note except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the source lists risk factors as \\\"known coronary artery disease, diabetes, or several cardiovascular risk factors\\\" and mentions older adults only for atypical presentation, never assigning risk-group significance to age 62.\"}",
+            "session_id": "53954614-27e8-4824-bc2e-bcaa83332bd4",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 130,
+            "total_cost_usd": 0.10750800000000002,
+            "ttft_ms": 15055,
+            "ttft_stream_ms": 939,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7100,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7100,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7100,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7100,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1280,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1280,
+              "output_tokens_details": {
+                "thinking_tokens": 1153
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "c5a137bc-0c2d-4ea0-9a86-3002f1d07e94"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.92, \"rationale\": \"All claims trace to the note except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the source lists risk factors as \\\"known coronary artery disease, diabetes, or several cardiovascular risk factors\\\" and mentions older adults only for atypical presentation, never assigning risk-group significance to age 62.\"}",
+          "tokens_in": 2,
+          "tokens_out": 1280
+        },
+        {
+          "cost_usd": 0.105613,
+          "latency_ms": 17015.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 17817,
+            "duration_ms": 17015,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041930000000000005,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7096,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10142,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1206,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.89, \"rationale\": \"All claims trace to the source except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the note names coronary artery disease, diabetes or several cardiovascular risk factors as the risk list and mentions only \\\"older adults\\\" for atypical presentations, giving no age criterion, so the age-based claim is unsupported.\"}",
+            "session_id": "f0e130a1-019e-4f44-a91f-23b5d722578a",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 184,
+            "total_cost_usd": 0.105613,
+            "ttft_ms": 15669,
+            "ttft_stream_ms": 2825,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7096,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7096,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7096,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7096,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1206,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1206,
+              "output_tokens_details": {
+                "thinking_tokens": 1076
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "8c4c7aa1-0210-4d29-9392-7bd74ec7341e"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.89, \"rationale\": \"All claims trace to the source except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the note names coronary artery disease, diabetes or several cardiovascular risk factors as the risk list and mentions only \\\"older adults\\\" for atypical presentations, giving no age criterion, so the age-based claim is unsupported.\"}",
+          "tokens_in": 2,
+          "tokens_out": 1206
+        },
+        {
+          "cost_usd": 0.10729300000000001,
+          "latency_ms": 16120.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 16999,
+            "duration_ms": 16120,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041930000000000005,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7104,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10310000000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1270,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.91, \"rationale\": \"Every claim is grounded in the note (arm/shoulder/jaw radiation, cold sweat, \\\"the most common and most costly error is waiting\\\", the ECG/en-route treatment/routing rationale for calling an ambulance, \\\"A false alarm is a good outcome\\\", the while-waiting steps, and \\\"The absence of classic pain is not reassuring\\\") except the claim that being 62 \\\"puts him in a group where this is taken seriously\\\", which the sources do not state \u2014 they name coronary artery disease, diabetes or several cardiovascular risk factors, and mention \\\"older adults\\\" only as a group with atypical presentations, never an age threshold.\"}",
+            "session_id": "9c34b4c9-3728-4f04-9910-58edd1620ce1",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 123,
+            "total_cost_usd": 0.10729300000000001,
+            "ttft_ms": 13762,
+            "ttft_stream_ms": 867,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7104,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7104,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7104,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7104,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1270,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1270,
+              "output_tokens_details": {
+                "thinking_tokens": 1034
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "36709f45-5201-4606-b6e7-bf74cc58186d"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.91, \"rationale\": \"Every claim is grounded in the note (arm/shoulder/jaw radiation, cold sweat, \\\"the most common and most costly error is waiting\\\", the ECG/en-route treatment/routing rationale for calling an ambulance, \\\"A false alarm is a good outcome\\\", the while-waiting steps, and \\\"The absence of classic pain is not reassuring\\\") except the claim that being 62 \\\"puts him in a group where this is taken seriously\\\", which the sources do not state \u2014 they name coronary artery disease, diabetes or several cardiovascular risk factors, and mention \\\"older adults\\\" only as a group with atypical presentations, never an age threshold.\"}",
+          "tokens_in": 2,
+          "tokens_out": 1270
+        },
+        {
+          "cost_usd": 0.12340300000000001,
+          "latency_ms": 23429.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 24619,
+            "duration_ms": 23429,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004198,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7102,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.119205,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1915,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 arm/shoulder/jaw radiation, cold sweat as an accompanying sign, waiting as the most common and costly error, progressive muscle death from occlusion, the ECG/treatment-en-route/capable-hospital advantages of ambulance over self-transport, the deliberately low threshold and false alarm as a good outcome, the while-waiting steps and dispatcher-guided compressions, and the atypical presentations that make absence of classic pain unreassuring \u2014 is stated in the single source note, e.g. \\\"Discomfort spreading to one or both arms, the shoulders, neck, jaw, back, or upper abdomen.\\\"\"}",
+            "session_id": "3d8f7d51-80ba-496f-864a-e052012067b1",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 150,
+            "total_cost_usd": 0.12340300000000001,
+            "ttft_ms": 20436,
+            "ttft_stream_ms": 1439,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7102,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7102,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7102,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7102,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1915,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1915,
+              "output_tokens_details": {
+                "thinking_tokens": 1674
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "9474a2e6-d2b3-4169-bdfc-1fe917b45cd4"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 arm/shoulder/jaw radiation, cold sweat as an accompanying sign, waiting as the most common and costly error, progressive muscle death from occlusion, the ECG/treatment-en-route/capable-hospital advantages of ambulance over self-transport, the deliberately low threshold and false alarm as a good outcome, the while-waiting steps and dispatcher-guided compressions, and the atypical presentations that make absence of classic pain unreassuring \u2014 is stated in the single source note, e.g. \\\"Discomfort spreading to one or both arms, the shoulders, neck, jaw, back, or upper abdomen.\\\"\"}",
+          "tokens_in": 2,
+          "tokens_out": 1915
+        },
+        {
+          "cost_usd": 0.11738300000000002,
+          "latency_ms": 20311.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 21162,
+            "duration_ms": 20311,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004198,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7100,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.11318500000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1675,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.93, \"rationale\": \"All claims trace to the source (arm/shoulder/jaw radiation, cold sweat, \\\"most common and most costly error is waiting\\\", ECG-en-route and self-transport risk, false alarm being a good outcome, the while-waiting steps and dispatcher-guided compressions, and atypical presentations) except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the note names coronary disease, diabetes or several cardiovascular risk factors and mentions \\\"older adults\\\" only as having more atypical presentations, never an age-based threshold, so that claim is unsupported.}\"}",
+            "session_id": "6b653049-eb93-4a0a-aa98-9c80b4e11296",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 98,
+            "total_cost_usd": 0.11738300000000002,
+            "ttft_ms": 17541,
+            "ttft_stream_ms": 942,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7100,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7100,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7100,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7100,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1675,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1675,
+              "output_tokens_details": {
+                "thinking_tokens": 1458
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "8797b2f5-28a1-4d2a-9b26-33c32282d8e1"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.93, \"rationale\": \"All claims trace to the source (arm/shoulder/jaw radiation, cold sweat, \\\"most common and most costly error is waiting\\\", ECG-en-route and self-transport risk, false alarm being a good outcome, the while-waiting steps and dispatcher-guided compressions, and atypical presentations) except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the note names coronary disease, diabetes or several cardiovascular risk factors and mentions \\\"older adults\\\" only as having more atypical presentations, never an age-based threshold, so that claim is unsupported.}\"}",
+          "tokens_in": 2,
+          "tokens_out": 1675
+        },
+        {
+          "cost_usd": 0.10845300000000002,
+          "latency_ms": 17003.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 17934,
+            "duration_ms": 17003,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041930000000000005,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7100,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10426000000000002,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1318,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.89, \"rationale\": \"All claims trace to the note except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the source names known coronary artery disease, diabetes, or several cardiovascular risk factors as the escalation criteria and mentions older adults only in the context of atypical presentations, so age as a risk group is unsupported.\"}",
+            "session_id": "fa920d99-b314-4e7b-b02e-0ce21a8acedc",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 157,
+            "total_cost_usd": 0.10845300000000002,
+            "ttft_ms": 15761,
+            "ttft_stream_ms": 940,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7100,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7100,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7100,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7100,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1318,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1318,
+              "output_tokens_details": {
+                "thinking_tokens": 1192
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "3a0e7ae5-f97b-4438-a10c-3bb94dd066ff"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.89, \"rationale\": \"All claims trace to the note except \\\"62 puts him in a group where this is taken seriously\\\" \u2014 the source names known coronary artery disease, diabetes, or several cardiovascular risk factors as the escalation criteria and mentions older adults only in the context of atypical presentations, so age as a risk group is unsupported.\"}",
+          "tokens_in": 2,
+          "tokens_out": 1318
+        },
+        {
+          "cost_usd": 0.10830300000000001,
+          "latency_ms": 16400.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 17288,
+            "duration_ms": 16400,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004198,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7102,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.104105,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1311,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 arm/shoulder/jaw radiation, cold sweat, waiting as the costliest error, progressive muscle death, the ambulance-versus-self-transport rationale, the low threshold and false-alarm framing, the while-waiting steps, and atypical presentations including relevance in older adults \u2014 is traceable to the red-flag chest pain note (e.g. \\\"Discomfort spreading to one or both arms, the shoulders, neck, jaw, back, or upper abdomen\\\" and \\\"Self-transport loses all three\\\").\"}",
+            "session_id": "2bdc06df-2c1f-45b1-b4a7-a9f4fd5c7058",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 111,
+            "total_cost_usd": 0.10830300000000001,
+            "ttft_ms": 14355,
+            "ttft_stream_ms": 841,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7102,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7102,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7102,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7102,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1311,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1311,
+              "output_tokens_details": {
+                "thinking_tokens": 1106
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "eb643bdc-f8fb-4253-8a29-aed1df10534d"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 arm/shoulder/jaw radiation, cold sweat, waiting as the costliest error, progressive muscle death, the ambulance-versus-self-transport rationale, the low threshold and false-alarm framing, the while-waiting steps, and atypical presentations including relevance in older adults \u2014 is traceable to the red-flag chest pain note (e.g. \\\"Discomfort spreading to one or both arms, the shoulders, neck, jaw, back, or upper abdomen\\\" and \\\"Self-transport loses all three\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 1311
+        },
+        {
+          "cost_usd": 0.109663,
+          "latency_ms": 15924.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 16939,
+            "duration_ms": 15924,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004208,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 18,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7102,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.105455,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1365,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"fail\", \"score\": 0.89, \"rationale\": \"All claims trace to the note (arm/shoulder/jaw radiation, cold sweat, \\\"the most common and most costly error is waiting\\\", the ECG/treatment/routing rationale for calling an ambulance, \\\"A false alarm is a good outcome\\\", the while-waiting steps, and the atypical-presentation list) except the claim that his age of 62 \\\"puts him in a group where this is taken seriously\\\", which the source never states \u2014 it names only known coronary artery disease, diabetes, or several cardiovascular risk factors, and mentions \\\"older adults\\\" only as a group with atypical presentations, with no age threshold.\"}",
+            "session_id": "a6d484ab-1f14-4a86-91f6-fbacd6a98231",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 116,
+            "total_cost_usd": 0.109663,
+            "ttft_ms": 13526,
+            "ttft_stream_ms": 822,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7102,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7102,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7102,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7102,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1365,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1365,
+              "output_tokens_details": {
+                "thinking_tokens": 1139
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "7d20c1fd-5087-4913-b32c-8a6bbc5507c3"
+          },
+          "text": "{\"verdict\": \"fail\", \"score\": 0.89, \"rationale\": \"All claims trace to the note (arm/shoulder/jaw radiation, cold sweat, \\\"the most common and most costly error is waiting\\\", the ECG/treatment/routing rationale for calling an ambulance, \\\"A false alarm is a good outcome\\\", the while-waiting steps, and the atypical-presentation list) except the claim that his age of 62 \\\"puts him in a group where this is taken seriously\\\", which the source never states \u2014 it names only known coronary artery disease, diabetes, or several cardiovascular risk factors, and mentions \\\"older adults\\\" only as a group with atypical presentations, with no age threshold.\"}",
+          "tokens_in": 2,
+          "tokens_out": 1365
+        },
+        {
+          "cost_usd": 0.11139800000000001,
+          "latency_ms": 19633.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 20598,
+            "duration_ms": 19633,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.0041930000000000005,
+                "inputTokens": 4118,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 7102,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.10720500000000001,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 1435,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 arm/shoulder/jaw radiation, cold sweat as an accompanying sign, older age as a factor, the danger of waiting and progressive muscle death, calling an ambulance for ECG/en-route treatment/routing versus self-transport, the deliberately low threshold and false alarm being a good outcome, the while-waiting steps and dispatcher-guided compressions, and the non-reassurance of absent classic chest pain \u2014 is a direct paraphrase of the red-flag chest pain note (e.g. \\\"Paramedics can record an ECG, begin treatment on the way, and route to a hospital capable of intervention. Self-transport loses all three\\\").\"}",
+            "session_id": "5db52b8c-c892-43f5-838b-67d63b3eef41",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 118,
+            "total_cost_usd": 0.11139800000000001,
+            "ttft_ms": 17187,
+            "ttft_stream_ms": 882,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 7102,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 7102,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 7102,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 7102,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 1435,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 1435,
+              "output_tokens_details": {
+                "thinking_tokens": 1187
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "b3110754-c257-4782-899c-b2fc5d5650cb"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 arm/shoulder/jaw radiation, cold sweat as an accompanying sign, older age as a factor, the danger of waiting and progressive muscle death, calling an ambulance for ECG/en-route treatment/routing versus self-transport, the deliberately low threshold and false alarm being a good outcome, the while-waiting steps and dispatcher-guided compressions, and the non-reassurance of absent classic chest pain \u2014 is a direct paraphrase of the red-flag chest pain note (e.g. \\\"Paramedics can record an ECG, begin treatment on the way, and route to a hospital capable of intervention. Self-transport loses all three\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 1435
+        }
+      ],
+      "key": "8227faf6def43bc2",
+      "model": "claude-opus-5",
+      "params": {},
+      "prompt": "You are grading one output of a system under test against a rubric. Apply the rubric exactly as\nwritten; do not add criteria of your own.\n\n## Rubric\n\n# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)\n\n<!-- Provenance: the sections from \"## System\" to \"### Evidence for every verdict ...\" below are\ncopied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That\nfile's \"## Output\" section, which asks for a per-claim JSON list, is replaced by the \"## Output\"\nsection at the end, because Probatio's judge template supplies its own output instruction. In\nProbatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under \"Input\nthe system was given\" and the ANSWER under \"Output under test\". v2's rationale header (why v2\nexists, the round-1 numbers) is omitted here; it is in the source file. -->\n\n## System\n\nYou are grading whether an answer is supported by the source documents it was given. You are not\ngrading whether the answer is good, well written, complete, or clinically correct. You are grading\none thing: does each factual claim in the answer appear in the sources.\n\n## Task\n\nYou will be given:\n\n- QUESTION: what the user asked.\n- SOURCES: numbered excerpts from reference documents.\n- ANSWER: the answer that was delivered.\n\nWork in two steps. First list the answer's factual claims. Then give each one a verdict.\n\n### Step 1 \u2014 what is a claim\n\nA **factual claim** is a statement that asserts something checkable about the world: a fact, a\nthreshold or number, a mechanism, a course of action, or something guidance is said to describe.\n\nThe following are **not claims**. Do not list them, and do not grade them:\n\n- greetings, sign-offs, and offers to help further;\n- the disclaimer, the escalation banner, and any instruction to seek care or call emergency\n  services;\n- any text in square brackets beginning with \"removed:\" \u2014 that is a redaction marker;\n- **summary, framing and transition sentences**, whose work is to open, close or connect rather\n  than to assert: \"Here is what guidance describes\", \"In summary\", \"Putting those together\",\n  \"There are a few things worth knowing here\";\n- **hedges and statements of variability that carry no specific fact**: \"this depends on your\n  situation\", \"recommendations differ between people\", \"your clinician can advise on the details\";\n- **meta-commentary that restates something you have already listed**. If two sentences assert the\n  same fact, list it once. A closing paragraph that repeats the body of the answer adds no claims;\n- **exhortations that assert nothing checkable**: \"do not leave this unaddressed\", \"take it\n  seriously\", \"it is worth acting on\".\n\nIf you are unsure whether a sentence carries a checkable fact, it is **not** a claim. Grading\ntransition and summary sentences as unsupported was the single largest source of error in the\nprevious version of this prompt: one such sentence flips the whole answer, because the answer-level\nlabel is `supported` only when every claim is.\n\n### Step 2 \u2014 verdicts\n\n- `supported` \u2014 the sources state the claim, or it follows directly from them.\n- `unsupported` \u2014 the claim is not in these sources. This includes a claim that is *true in\n  general* but absent from them. You are grading grounding, not correctness.\n- `contradicted` \u2014 the sources say something incompatible with the claim.\n\n**Paraphrase is support.** The claim does not have to reuse the source's wording, its sentence\nstructure, or its level of detail. A claim that restates a source in different words is\n`supported`. So is a claim that **aggregates or generalizes** several source statements into one\nsentence, as long as every part it asserts appears somewhere in the sources \u2014 cite the source\ncarrying the main part. Requiring the answer to echo the source is grading style, not grounding.\n\n**A rationale the sources do not give is a separate claim.** Where the sources state a rule and the\nanswer explains *why* the rule exists \u2014 in terms of billing, reimbursement, record complexity, or\nany motivation the sources are silent on \u2014 the rule is one claim and is `supported`, and the\nrationale is a second claim and is `unsupported`. Do not let the supported half carry the other.\n\n### The specific-attribute check\n\nRun this before you write `supported`. **Topical overlap is not support**: a claim and a source can\nbe about the same document, the same condition and the same paragraph and still not match. Check\nthat the source agrees with the claim on each of:\n\n- the **object** the fact attaches to \u2014 which measure, which drug class, which body system, which\n  test;\n- the **threshold or number** \u2014 the value, the unit, and the direction of the comparison;\n- the **mechanism or cause** it names;\n- the **population or condition** it applies to.\n\nA claim that takes a fact the sources state about one object, threshold, mechanism or population\nand attaches it to a **different** one is `contradicted`, not `supported`. Worked example: the\nsources describe an action plan built on daily weight change and fluid-retention warning signs, and\nthe answer says patients are given an action plan for salt intake. Same note, same condition, wrong\nobject \u2014 that is `contradicted`.\n\n### Claims about the sources themselves\n\nA sentence asserting what the SOURCES do or do not contain \u2014 \"the passage does not list the\nspecific classes\", \"the retrieved material does not name a threshold\" \u2014 **is a claim**, and it is\nchecked against the sources rather than waved through. Read the sources and decide. If a source\ndoes contain what the answer says is absent, the claim is `contradicted`.\n\n### Evidence for every verdict that is not `unsupported`\n\nEvery claim you mark `supported` must carry **the number of the source that supports it** and a\n**short verbatim span copied from that source** \u2014 at most 25 words \u2014 in `quote`. If you cannot copy\na span that carries the claim, the verdict is not `supported`.\n\nA `contradicted` claim carries the number of the source it contradicts and the span that\ncontradicts it. An `unsupported` claim carries `\"source\": null` and an empty `quote`.\n\n## Output\n\nProbatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as\nfollows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer\ncontains no factual claims. `verdict` is `\"pass\"` when every listed claim is `supported` (or there\nare no claims) and `\"fail\"` otherwise, which is v2's answer-level roll-up. `rationale` is one\nsentence naming the first `unsupported` or `contradicted` claim and the source span that decides\nit, or stating that every claim is supported.\n\n## Input the system was given\n\n{\n  \"documents\": [\n    \"---\\ndoc_id: red-flag-chest-pain\\ncategory: red_flag\\ntitle: \\\"Chest pain that may indicate a heart attack\\\"\\nsource: \\\"Emergency medicine and cardiology society guidance (educational summary)\\\"\\nlast_reviewed: 2026-08-09\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## Call emergency services immediately\\n\\nChest discomfort with any of the following is treated as a possible heart attack until proven\\notherwise:\\n\\n- Pressure, tightness, squeezing, heaviness or burning in the center or left of the chest, lasting\\n  more than a few minutes, or going away and coming back.\\n- Discomfort spreading to one or both arms, the shoulders, neck, jaw, back, or upper abdomen.\\n- Chest discomfort with breathlessness, cold sweat, nausea or vomiting, light-headedness, or a sense\\n  of impending doom.\\n- Chest discomfort at rest, or brought on by less exertion than usual in someone with known angina.\\n- Any chest discomfort in someone with known coronary artery disease, diabetes, or several\\n  cardiovascular risk factors.\\n\\nEmergency services are called rather than arranging transport privately. Paramedics can record an\\nECG, begin treatment on the way, and route to a hospital capable of intervention. Self-transport\\nloses all three, and it is dangerous if the person deteriorates during the journey.\\n\\n## Why the threshold is set low\\n\\nTime is the determining factor in the outcome of a heart attack: heart muscle dies progressively\\nfrom the moment the artery occludes, and treatment that restores flow early preserves function that\\ncannot be recovered later. The most common and most costly error is waiting \u2014 to see whether it\\nsettles, to avoid embarrassment at a false alarm, or because the discomfort is mild.\\n\\nA false alarm is a good outcome. This is the clearest case in medicine where over-escalation is the\\ncorrect policy, and it is why this system escalates on the possibility rather than the probability.\\n\\n## Presentations that are missed\\n\\nNot all heart attacks present with severe chest pain. Breathlessness alone, unusual fatigue,\\nindigestion-like discomfort, nausea, or discomfort felt mainly in the jaw, back or upper abdomen are\\nrecognized presentations, and are relatively more common in women, in older adults, and in people\\nwith diabetes, in whom nerve damage can blunt pain. The absence of classic pain is not reassuring.\\n\\nHeartburn and cardiac pain are not reliably distinguishable by how they feel, and a history of\\nreflux does not exclude a cardiac cause. Antacid relief does not rule it out either.\\n\\n## Other emergencies presenting as chest pain\\n\\nSudden tearing chest or back pain, sudden pleuritic chest pain with breathlessness, and chest pain\\nwith collapse can indicate aortic dissection, pulmonary embolism, or another immediately\\nlife-threatening condition. All are emergencies, and none is distinguishable from cardiac pain\\nwithout assessment.\\n\\n## While waiting\\n\\nStay with the person, keep them still and seated or resting, and be ready to describe when the\\nsymptoms started. If the person becomes unresponsive and is not breathing normally, emergency\\ndispatchers can guide chest compressions over the phone.\\n\\nThis system does not diagnose. Any presentation matching this note is escalated, and no answer it\\nproduces is a substitute for emergency assessment.\\n\"\n  ],\n  \"question\": \"my dads left arm has gone all achy n hes gone grey and sweaty, hes 62, is that somethin to worry about\"\n}\n\n## Output under test\n\n**Yes \u2014 this needs emergency services right now. Call them immediately (911 or your local emergency number). Do not drive him yourself.**\n\nWhat you're describing matches the pattern the guidance treats as a possible heart attack until proven otherwise:\n\n- **Aching in the arm** \u2014 discomfort spreading to one or both arms, the shoulders, neck, jaw, back or upper abdomen counts, even without dramatic chest pain.\n- **Grey, sweaty appearance** \u2014 cold sweat is one of the listed accompanying signs.\n- **His age** \u2014 62 puts him in a group where this is taken seriously.\n\nA couple of points from the guidance that matter here:\n\n**Don't wait to see if it settles.** Waiting is described as the most common and most costly error \u2014 heart muscle dies progressively from the moment an artery blocks, and treatment that restores flow early preserves function that can't be recovered later.\n\n**Call an ambulance rather than driving him.** Paramedics can record an ECG, start treatment on the way, and take him to a hospital equipped to intervene. Self-transport loses all three and is dangerous if he deteriorates in the car.\n\n**A false alarm is a good outcome.** The threshold is deliberately set low. Don't hold back over embarrassment.\n\n**While you wait:** stay with him, keep him still and resting (seated or lying), and be ready to tell the dispatcher when the symptoms started. If he becomes unresponsive and isn't breathing normally, the dispatcher can talk you through chest compressions over the phone.\n\nAlso worth knowing: the absence of classic crushing chest pain is *not* reassuring. Arm ache, breathlessness, nausea, unusual fatigue, or indigestion-like discomfort are all recognised presentations.\n\nPlease call now.\n\n*(I'm working from an educational reference note, not making a diagnosis \u2014 nothing here substitutes for emergency assessment.)*\n\n## Your answer\n\nReply with one JSON object and nothing else, in exactly this form:\n\n{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"<one sentence>\"}\n\n\"verdict\" is \"pass\" or \"fail\", \"score\" is a number from 0 to 1, and \"rationale\" is one sentence.\nDo not wrap the object in a code fence and do not write anything before or after it.\n",
+      "system": null
+    }
+  ],
+  "model": "claude-opus-5",
+  "provider": "claude-cli",
+  "recorded": "2026-09-06T23:04:44Z"
+}

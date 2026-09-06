@@ -1,0 +1,897 @@
+{
+  "case_id": "g-su-003",
+  "interactions": [
+    {
+      "completions": [
+        {
+          "cost_usd": 0.08736,
+          "latency_ms": 7096.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 7996,
+            "duration_ms": 7096,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.00405,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 19,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6835,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08331,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 586,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the face/speech stroke signs, the TIA resolution-is-not-reassurance passage including the 48-hour peak, the last-known-well timing, the no-aspirin/food/drink and imaging rationale, no driving, resting/observation/medication list and anticoagulant note, and the note's self-description \u2014 is directly stated in source 1 (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+            "session_id": "f3674b6d-e07c-49fa-805e-ec710ee8e89f",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 112,
+            "total_cost_usd": 0.08736,
+            "ttft_ms": 5449,
+            "ttft_stream_ms": 1188,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6835,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6835,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6835,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6835,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 586,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 586,
+              "output_tokens_details": {
+                "thinking_tokens": 401
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "542d39d6-b8d5-4942-96ec-92f8a2c3c1ee"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the face/speech stroke signs, the TIA resolution-is-not-reassurance passage including the 48-hour peak, the last-known-well timing, the no-aspirin/food/drink and imaging rationale, no driving, resting/observation/medication list and anticoagulant note, and the note's self-description \u2014 is directly stated in source 1 (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 586
+        },
+        {
+          "cost_usd": 0.08815999999999999,
+          "latency_ms": 7358.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 8331,
+            "duration_ms": 7358,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.00405,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 19,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6835,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08410999999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 618,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST face/speech signs, TIA resolution with raised risk highest in the first 48 hours, last-known-well time as the most useful information, no food/drink/aspirin because clot-vs-bleed needs imaging, no driving, observation and medication/anticoagulant list, and the note's own non-diagnostic disclaimer \u2014 is stated in the stroke red-flag document (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+            "session_id": "9b54705c-d651-475f-bcbc-075ff62ca401",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 181,
+            "total_cost_usd": 0.08815999999999999,
+            "ttft_ms": 5326,
+            "ttft_stream_ms": 1008,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6835,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6835,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6835,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6835,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 618,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 618,
+              "output_tokens_details": {
+                "thinking_tokens": 420
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "1ce80541-3880-4567-8ad8-c315120818ae"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST face/speech signs, TIA resolution with raised risk highest in the first 48 hours, last-known-well time as the most useful information, no food/drink/aspirin because clot-vs-bleed needs imaging, no driving, observation and medication/anticoagulant list, and the note's own non-diagnostic disclaimer \u2014 is stated in the stroke red-flag document (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 618
+        },
+        {
+          "cost_usd": 0.08919,
+          "latency_ms": 7735.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 8536,
+            "duration_ms": 7735,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004030000000000001,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6835,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08516,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 660,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST-type face and speech signs, the TIA/48-hour risk framing, last-known-well timing, the no food/drink/aspirin and no-driving instructions, observation and anticoagulant reporting, and the note's self-description as non-diagnostic \u2014 is stated in the single source document, e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\".\"}",
+            "session_id": "f2f27f42-3b17-48d0-92c3-b5aa33fe0686",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 104,
+            "total_cost_usd": 0.08919,
+            "ttft_ms": 5438,
+            "ttft_stream_ms": 840,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6835,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6835,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6835,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6835,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 660,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 660,
+              "output_tokens_details": {
+                "thinking_tokens": 491
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "54ddcf71-fbc3-44fe-9cd0-7d739bf87707"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST-type face and speech signs, the TIA/48-hour risk framing, last-known-well timing, the no food/drink/aspirin and no-driving instructions, observation and anticoagulant reporting, and the note's self-description as non-diagnostic \u2014 is stated in the single source document, e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\".\"}",
+          "tokens_in": 2,
+          "tokens_out": 660
+        },
+        {
+          "cost_usd": 0.091665,
+          "latency_ms": 9033.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9971,
+            "duration_ms": 9033,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004035,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6837,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08763,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 758,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the FAST face/speech signs, TIA resolution not being reassurance with risk highest in the first 48 hours, time of onset/last-known-well as the most useful information, no aspirin/food/drink pending imaging, no driving, rest and gather medications with anticoagulant use flagged, and the note's own non-diagnostic disclaimer \u2014 is stated in source 1.\"}",
+            "session_id": "757eeb76-beb8-460f-a45c-8b67d19fe09a",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 192,
+            "total_cost_usd": 0.091665,
+            "ttft_ms": 7349,
+            "ttft_stream_ms": 991,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6837,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6837,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6837,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6837,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 758,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 758,
+              "output_tokens_details": {
+                "thinking_tokens": 605
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "3ae6df8b-a904-4936-b7ad-4c29b305dbd5"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every listed claim \u2014 the FAST face/speech signs, TIA resolution not being reassurance with risk highest in the first 48 hours, time of onset/last-known-well as the most useful information, no aspirin/food/drink pending imaging, no driving, rest and gather medications with anticoagulant use flagged, and the note's own non-diagnostic disclaimer \u2014 is stated in source 1.\"}",
+          "tokens_in": 2,
+          "tokens_out": 758
+        },
+        {
+          "cost_usd": 0.08696999999999999,
+          "latency_ms": 7078.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 7929,
+            "duration_ms": 7078,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004025,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 14,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6841,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08294499999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 569,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim \u2014 TIA resolution still being an emergency with risk highest in the first 48 hours, the last-known-well timing rule, no food/drink/aspirin pending imaging, no driving, and gathering medications including anticoagulants \u2014 is stated in the stroke red-flag note (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+            "session_id": "0c670619-1492-4fce-855e-1537ffff0875",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 124,
+            "total_cost_usd": 0.08696999999999999,
+            "ttft_ms": 5274,
+            "ttft_stream_ms": 918,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6841,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6841,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6841,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6841,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 569,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 569,
+              "output_tokens_details": {
+                "thinking_tokens": 410
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "ae321af9-1a57-46a1-8c9a-b1b1c9a7cf4e"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every claim \u2014 TIA resolution still being an emergency with risk highest in the first 48 hours, the last-known-well timing rule, no food/drink/aspirin pending imaging, no driving, and gathering medications including anticoagulants \u2014 is stated in the stroke red-flag note (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 569
+        },
+        {
+          "cost_usd": 0.08756,
+          "latency_ms": 6973.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 7774,
+            "duration_ms": 6973,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004030000000000001,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6837,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08353,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 594,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 TIA resolution still being an emergency with risk highest in the first 48 hours, last-known-well time being the most useful information, the no food/drink/aspirin and no driving instructions, the clot-vs-bleed imaging rationale, observation and anticoagulant reporting, and the note's own non-diagnostic disclaimer \u2014 is stated in the single source document.\"}",
+            "session_id": "d9ea3839-d117-41ce-83c7-bf246769c15b",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 114,
+            "total_cost_usd": 0.08756,
+            "ttft_ms": 5201,
+            "ttft_stream_ms": 895,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6837,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6837,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6837,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6837,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 594,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 594,
+              "output_tokens_details": {
+                "thinking_tokens": 445
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "030c2676-097d-4b13-8e89-7e758232cae4"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 TIA resolution still being an emergency with risk highest in the first 48 hours, last-known-well time being the most useful information, the no food/drink/aspirin and no driving instructions, the clot-vs-bleed imaging rationale, observation and anticoagulant reporting, and the note's own non-diagnostic disclaimer \u2014 is stated in the single source document.\"}",
+          "tokens_in": 2,
+          "tokens_out": 594
+        },
+        {
+          "cost_usd": 0.08741499999999999,
+          "latency_ms": 7069.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 7928,
+            "duration_ms": 7069,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004035,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6837,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08338,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 588,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 one-sided facial droop and speech difficulty as stroke warning signs, resolving symptoms as possible TIA with risk highest in the first 48 hours, last-known-well time being the most useful information, withholding food/drink/aspirin pending imaging, not driving, observation and medication list including anticoagulants, and the note's own non-diagnostic disclaimer \u2014 is stated in the red-flag stroke source.\"}",
+            "session_id": "68447614-2fdc-4c25-ad7e-61882699037b",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 88,
+            "total_cost_usd": 0.08741499999999999,
+            "ttft_ms": 5095,
+            "ttft_stream_ms": 851,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6837,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6837,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6837,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6837,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 588,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 588,
+              "output_tokens_details": {
+                "thinking_tokens": 422
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "92206e92-8f74-4392-a06b-513c56efd1e9"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 one-sided facial droop and speech difficulty as stroke warning signs, resolving symptoms as possible TIA with risk highest in the first 48 hours, last-known-well time being the most useful information, withholding food/drink/aspirin pending imaging, not driving, observation and medication list including anticoagulants, and the note's own non-diagnostic disclaimer \u2014 is stated in the red-flag stroke source.\"}",
+          "tokens_in": 2,
+          "tokens_out": 588
+        },
+        {
+          "cost_usd": 0.08903,
+          "latency_ms": 8289.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 9063,
+            "duration_ms": 8289,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004030000000000001,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 15,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6839,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08499999999999999,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 652,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST-matching symptoms, the TIA framing with substantially raised risk highest in the first 48 hours, the last-known-well timing rule, the no-aspirin/food/drink and no-driving instructions, and the observation and anticoagulant advice \u2014 is stated in the stroke red-flag note (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+            "session_id": "d1e50cbb-f79d-4d36-8ccb-c5fe9727f048",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 117,
+            "total_cost_usd": 0.08903,
+            "ttft_ms": 6528,
+            "ttft_stream_ms": 846,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6839,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6839,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6839,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6839,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 652,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 652,
+              "output_tokens_details": {
+                "thinking_tokens": 479
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "92d2673f-0a6d-42d8-8181-3666aee029e8"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST-matching symptoms, the TIA framing with substantially raised risk highest in the first 48 hours, the last-known-well timing rule, the no-aspirin/food/drink and no-driving instructions, and the observation and anticoagulant advice \u2014 is stated in the stroke red-flag note (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 652
+        },
+        {
+          "cost_usd": 0.08788,
+          "latency_ms": 7612.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 8455,
+            "duration_ms": 7612,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004035,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6841,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.083845,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 605,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST-style face and speech warning signs, the TIA framing with risk highest in the first 48 hours, last-known-well as the most useful information, the no-aspirin/food/drink and no-driving instructions, the clot-versus-bleed imaging rationale, and the observation/medication-list and anticoagulant points \u2014 is stated in the stroke red-flag source, e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\".\"}",
+            "session_id": "9d957f03-259e-4cc9-9613-602e32d13cdd",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 126,
+            "total_cost_usd": 0.08788,
+            "ttft_ms": 4978,
+            "ttft_stream_ms": 972,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6841,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6841,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6841,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6841,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 605,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 605,
+              "output_tokens_details": {
+                "thinking_tokens": 412
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "2860472c-a540-47ae-98f3-4ed7e73cfe19"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the FAST-style face and speech warning signs, the TIA framing with risk highest in the first 48 hours, last-known-well as the most useful information, the no-aspirin/food/drink and no-driving instructions, the clot-versus-bleed imaging rationale, and the observation/medication-list and anticoagulant points \u2014 is stated in the stroke red-flag source, e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\".\"}",
+          "tokens_in": 2,
+          "tokens_out": 605
+        },
+        {
+          "cost_usd": 0.08738499999999999,
+          "latency_ms": 7161.0,
+          "model": "claude-opus-5",
+          "raw": {
+            "api_error_status": null,
+            "duration_api_ms": 8103,
+            "duration_ms": 7161,
+            "fast_mode_disabled_reason": "sdk_opt_in_required",
+            "fast_mode_state": "off",
+            "is_error": false,
+            "modelUsage": {
+              "claude-haiku-4-5-20251001": {
+                "cacheCreationInputTokens": 0,
+                "cacheReadInputTokens": 0,
+                "canonicalModel": "claude-haiku-4-5",
+                "contextWindow": 200000,
+                "costUSD": 0.004035,
+                "inputTokens": 3955,
+                "maxOutputTokens": 32000,
+                "outputTokens": 16,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              },
+              "claude-opus-5": {
+                "cacheCreationInputTokens": 6839,
+                "cacheReadInputTokens": 600,
+                "canonicalModel": "claude-opus-5",
+                "contextWindow": 1000000,
+                "costUSD": 0.08335,
+                "inputTokens": 2,
+                "maxOutputTokens": 64000,
+                "outputTokens": 586,
+                "provider": "firstParty",
+                "webSearchRequests": 0
+              }
+            },
+            "num_turns": 1,
+            "permission_denials": [],
+            "result": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 TIA after resolving symptoms with risk highest in the first 48 hours, last-known-well time being the most useful information, no food/drink/aspirin because clot-versus-bleed requires imaging, no driving, resting under observation, gathering medications and flagging anticoagulants, and the note's own non-diagnostic disclaimer \u2014 is stated in the stroke red-flag source (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+            "session_id": "04db01d8-2242-4afd-842a-19a51bb305a4",
+            "stop_reason": "end_turn",
+            "subtype": "success",
+            "terminal_reason": "completed",
+            "time_to_request_ms": 99,
+            "total_cost_usd": 0.08738499999999999,
+            "ttft_ms": 5257,
+            "ttft_stream_ms": 952,
+            "type": "result",
+            "usage": {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 6839,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 6839,
+              "cache_read_input_tokens": 600,
+              "inference_geo": "not_available",
+              "input_tokens": 2,
+              "iterations": [
+                {
+                  "cache_creation": {
+                    "ephemeral_1h_input_tokens": 6839,
+                    "ephemeral_5m_input_tokens": 0
+                  },
+                  "cache_creation_input_tokens": 6839,
+                  "cache_read_input_tokens": 600,
+                  "input_tokens": 2,
+                  "output_tokens": 586,
+                  "type": "message"
+                }
+              ],
+              "output_tokens": 586,
+              "output_tokens_details": {
+                "thinking_tokens": 388
+              },
+              "server_tool_use": {
+                "web_fetch_requests": 0,
+                "web_search_requests": 0
+              },
+              "service_tier": "standard",
+              "speed": "standard"
+            },
+            "uuid": "ae75442b-7eb9-4ba3-9481-967f21173b51"
+          },
+          "text": "{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 TIA after resolving symptoms with risk highest in the first 48 hours, last-known-well time being the most useful information, no food/drink/aspirin because clot-versus-bleed requires imaging, no driving, resting under observation, gathering medications and flagging anticoagulants, and the note's own non-diagnostic disclaimer \u2014 is stated in the stroke red-flag source (e.g. \\\"the risk of a full stroke in the following days is substantially raised, and it is highest in the first 48 hours\\\").\"}",
+          "tokens_in": 2,
+          "tokens_out": 586
+        }
+      ],
+      "key": "3b2e5127f0af47b2",
+      "model": "claude-opus-5",
+      "params": {},
+      "prompt": "You are grading one output of a system under test against a rubric. Apply the rubric exactly as\nwritten; do not add criteria of your own.\n\n## Rubric\n\n# Faithfulness (Consilium `faithfulness_v2`, adapted for Probatio)\n\n<!-- Provenance: the sections from \"## System\" to \"### Evidence for every verdict ...\" below are\ncopied verbatim from Consilium-Health judges/faithfulness_v2.md (repository commit 109a744). That\nfile's \"## Output\" section, which asks for a per-claim JSON list, is replaced by the \"## Output\"\nsection at the end, because Probatio's judge template supplies its own output instruction. In\nProbatio's template the case input (QUESTION and the documents, i.e. SOURCES) appears under \"Input\nthe system was given\" and the ANSWER under \"Output under test\". v2's rationale header (why v2\nexists, the round-1 numbers) is omitted here; it is in the source file. -->\n\n## System\n\nYou are grading whether an answer is supported by the source documents it was given. You are not\ngrading whether the answer is good, well written, complete, or clinically correct. You are grading\none thing: does each factual claim in the answer appear in the sources.\n\n## Task\n\nYou will be given:\n\n- QUESTION: what the user asked.\n- SOURCES: numbered excerpts from reference documents.\n- ANSWER: the answer that was delivered.\n\nWork in two steps. First list the answer's factual claims. Then give each one a verdict.\n\n### Step 1 \u2014 what is a claim\n\nA **factual claim** is a statement that asserts something checkable about the world: a fact, a\nthreshold or number, a mechanism, a course of action, or something guidance is said to describe.\n\nThe following are **not claims**. Do not list them, and do not grade them:\n\n- greetings, sign-offs, and offers to help further;\n- the disclaimer, the escalation banner, and any instruction to seek care or call emergency\n  services;\n- any text in square brackets beginning with \"removed:\" \u2014 that is a redaction marker;\n- **summary, framing and transition sentences**, whose work is to open, close or connect rather\n  than to assert: \"Here is what guidance describes\", \"In summary\", \"Putting those together\",\n  \"There are a few things worth knowing here\";\n- **hedges and statements of variability that carry no specific fact**: \"this depends on your\n  situation\", \"recommendations differ between people\", \"your clinician can advise on the details\";\n- **meta-commentary that restates something you have already listed**. If two sentences assert the\n  same fact, list it once. A closing paragraph that repeats the body of the answer adds no claims;\n- **exhortations that assert nothing checkable**: \"do not leave this unaddressed\", \"take it\n  seriously\", \"it is worth acting on\".\n\nIf you are unsure whether a sentence carries a checkable fact, it is **not** a claim. Grading\ntransition and summary sentences as unsupported was the single largest source of error in the\nprevious version of this prompt: one such sentence flips the whole answer, because the answer-level\nlabel is `supported` only when every claim is.\n\n### Step 2 \u2014 verdicts\n\n- `supported` \u2014 the sources state the claim, or it follows directly from them.\n- `unsupported` \u2014 the claim is not in these sources. This includes a claim that is *true in\n  general* but absent from them. You are grading grounding, not correctness.\n- `contradicted` \u2014 the sources say something incompatible with the claim.\n\n**Paraphrase is support.** The claim does not have to reuse the source's wording, its sentence\nstructure, or its level of detail. A claim that restates a source in different words is\n`supported`. So is a claim that **aggregates or generalizes** several source statements into one\nsentence, as long as every part it asserts appears somewhere in the sources \u2014 cite the source\ncarrying the main part. Requiring the answer to echo the source is grading style, not grounding.\n\n**A rationale the sources do not give is a separate claim.** Where the sources state a rule and the\nanswer explains *why* the rule exists \u2014 in terms of billing, reimbursement, record complexity, or\nany motivation the sources are silent on \u2014 the rule is one claim and is `supported`, and the\nrationale is a second claim and is `unsupported`. Do not let the supported half carry the other.\n\n### The specific-attribute check\n\nRun this before you write `supported`. **Topical overlap is not support**: a claim and a source can\nbe about the same document, the same condition and the same paragraph and still not match. Check\nthat the source agrees with the claim on each of:\n\n- the **object** the fact attaches to \u2014 which measure, which drug class, which body system, which\n  test;\n- the **threshold or number** \u2014 the value, the unit, and the direction of the comparison;\n- the **mechanism or cause** it names;\n- the **population or condition** it applies to.\n\nA claim that takes a fact the sources state about one object, threshold, mechanism or population\nand attaches it to a **different** one is `contradicted`, not `supported`. Worked example: the\nsources describe an action plan built on daily weight change and fluid-retention warning signs, and\nthe answer says patients are given an action plan for salt intake. Same note, same condition, wrong\nobject \u2014 that is `contradicted`.\n\n### Claims about the sources themselves\n\nA sentence asserting what the SOURCES do or do not contain \u2014 \"the passage does not list the\nspecific classes\", \"the retrieved material does not name a threshold\" \u2014 **is a claim**, and it is\nchecked against the sources rather than waved through. Read the sources and decide. If a source\ndoes contain what the answer says is absent, the claim is `contradicted`.\n\n### Evidence for every verdict that is not `unsupported`\n\nEvery claim you mark `supported` must carry **the number of the source that supports it** and a\n**short verbatim span copied from that source** \u2014 at most 25 words \u2014 in `quote`. If you cannot copy\na span that carries the claim, the verdict is not `supported`.\n\nA `contradicted` claim carries the number of the source it contradicts and the span that\ncontradicts it. An `unsupported` claim carries `\"source\": null` and an empty `quote`.\n\n## Output\n\nProbatio's template asks for one JSON object with `verdict`, `score` and `rationale`. Fill it as\nfollows. `score` is `supported / total` over the claims you listed, and `1.0` when the answer\ncontains no factual claims. `verdict` is `\"pass\"` when every listed claim is `supported` (or there\nare no claims) and `\"fail\"` otherwise, which is v2's answer-level roll-up. `rationale` is one\nsentence naming the first `unsupported` or `contradicted` claim and the source span that decides\nit, or stating that every claim is supported.\n\n## Input the system was given\n\n{\n  \"documents\": [\n    \"---\\ndoc_id: red-flag-stroke-symptoms\\ncategory: red_flag\\ntitle: \\\"Sudden neurological symptoms that may indicate a stroke\\\"\\nsource: \\\"Stroke association and emergency medicine guidance (educational summary)\\\"\\nlast_reviewed: 2026-08-09\\n---\\n\\n> **Educational summary \u2014 not medical advice.** This note is reference material for a software\\n> project. It does not diagnose or treat, and it must not be used for real medical decisions.\\n\\n## Call emergency services immediately\\n\\nAny sudden onset of the following is treated as a stroke until proven otherwise:\\n\\n- **Face** \u2014 drooping on one side, or an uneven smile.\\n- **Arm** \u2014 weakness or numbness in one arm, or one arm drifting downward when both are raised.\\n- **Speech** \u2014 slurred speech, difficulty finding words, or difficulty understanding others.\\n- **Time** \u2014 note the time symptoms began, or the last time the person was known to be well, and\\n  call emergency services now.\\n\\nSymptoms beyond the four above that carry the same urgency: sudden numbness or weakness of the leg\\nor of one whole side; sudden confusion; sudden loss or blurring of vision in one or both eyes;\\nsudden difficulty walking, dizziness, or loss of balance and coordination; and sudden severe\\nheadache with no known cause.\\n\\n## Why the time of onset matters so much\\n\\nTreatments that restore blood flow to the brain \u2014 clot-dissolving drugs and mechanical clot removal\\n\u2014 are effective only within a limited window from symptom onset, and their benefit falls steeply\\nwith every passing minute. The single most useful piece of information a caller can provide is when\\nthe person was last known to be well. Where symptoms were present on waking, the relevant time is\\nwhen the person was last seen normal, not when they woke.\\n\\nBrain tissue is lost continuously while an artery is blocked. This is the reason emergency services\\nare called rather than waiting for a routine appointment or driving to a clinic, and the reason a\\nstroke is treated as time-critical in the same way as a heart attack.\\n\\n## Symptoms that resolve are still an emergency\\n\\nSymptoms that disappear within minutes may indicate a transient ischemic attack. The event itself\\nhas ended, but the risk of a full stroke in the following days is substantially raised, and it is\\nhighest in the first 48 hours. Resolution is not reassurance and does not convert this into a\\nroutine appointment \u2014 urgent assessment is what reduces the subsequent risk.\\n\\n## What not to do\\n\\nDo not give food, drink, or medication, including aspirin, to someone with suspected stroke:\\nswallowing may be impaired, and the type of stroke \u2014 clot or bleed \u2014 determines the treatment and\\ncannot be established without imaging. Do not wait to see whether symptoms improve. Do not let the\\nperson drive.\\n\\n## While waiting\\n\\nKeep the person resting, comfortable and observed, note the time of onset and what was observed, and\\ngather a list of their medications if it can be done without leaving them unattended. Anticoagulant\\nuse is particularly important for the receiving team to know.\\n\\nThis system does not diagnose. Any presentation matching this note is escalated, and no answer it\\nproduces is a substitute for emergency assessment.\\n\"\n  ],\n  \"question\": \"my face on one sied went funny this morning and my speach came out wrong for about ten minits, its ok now\"\n}\n\n## Output under test\n\n**This may be an emergency. Please call emergency services now \u2014 do not wait, and do not drive yourself.**\n\nWhat you describe \u2014 sudden one-sided face changes and speech that came out wrong \u2014 matches the warning signs of a stroke. According to the guidance I have:\n\n- **Symptoms that resolve are still an emergency.** Symptoms that disappear within minutes may indicate a transient ischemic attack. The event has ended, but the risk of a full stroke in the following days is substantially raised, and it is **highest in the first 48 hours**. The fact that you feel okay now is not reassurance, and it does not turn this into something that can wait for a routine appointment. Urgent assessment is what reduces the risk.\n\n**Tell them the time it started** \u2014 this morning, as precisely as you can recall, or the last time you were known to be well. That is the single most useful piece of information. If you noticed it on waking, the relevant time is when you were last seen normal, not when you woke.\n\n**In the meantime:**\n- Do not take aspirin or any other medication, and avoid food and drink. The type of stroke \u2014 clot or bleed \u2014 determines treatment and can't be established without imaging.\n- Do not drive.\n- Rest, stay where someone can observe you, and gather a list of your medications if you can. If you take an anticoagulant (blood thinner), make sure the medical team knows.\n\nI'm working only from an educational reference note, which explicitly states it does not diagnose and is not a substitute for emergency assessment. Please get seen now.\n\n## Your answer\n\nReply with one JSON object and nothing else, in exactly this form:\n\n{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"<one sentence>\"}\n\n\"verdict\" is \"pass\" or \"fail\", \"score\" is a number from 0 to 1, and \"rationale\" is one sentence.\nDo not wrap the object in a code fence and do not write anything before or after it.\n",
+      "system": null
+    }
+  ],
+  "model": "claude-opus-5",
+  "provider": "claude-cli",
+  "recorded": "2026-09-06T23:06:10Z"
+}
