@@ -8,7 +8,7 @@ import probatio
 
 
 def test_version_string() -> None:
-    assert probatio.__version__ == "0.1.0.dev0"
+    assert probatio.__version__ == "0.1.0"
 
 
 def test_plugin_module_imports_cleanly() -> None:

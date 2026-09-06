@@ -44,6 +44,7 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/Lexieli666/probatio"
 Repository = "https://github.com/Lexieli666/probatio"
+Changelog = "https://github.com/Lexieli666/probatio/blob/main/CHANGELOG.md"
 
 [project.entry-points.pytest11]
 probatio = "probatio.plugin"
@@ -58,7 +59,12 @@ path = "src/probatio/__init__.py"
 packages = ["src/probatio"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/probatio", "tests", "README.md", "LICENSE", "pyproject.toml"]
+# The package, its licence and the two documents a user reads before installing. Neither
+# `tests/` nor `examples/` ships: the suite is inseparable from `examples/`, `docs/`,
+# `.probatio/` and this repository's git history, so a test tree extracted from an sdist does
+# not collect (DECISIONS 100). The auditable source is the tagged repository.
+include = ["src/probatio", "README.md", "CHANGELOG.md", "LICENSE", "pyproject.toml"]
+exclude = ["examples", "tests"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"

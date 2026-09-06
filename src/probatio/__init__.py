@@ -40,7 +40,7 @@ from .metamorphic import (
 from .providers import Completion, FakeProvider, Provider, ScriptedProvider
 from .stability import flaky_tolerant
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.1.0"
 
 __all__ = [
     "AssertionResult",
