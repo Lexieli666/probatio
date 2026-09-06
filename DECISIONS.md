@@ -1968,3 +1968,39 @@ DECISIONS 61, which is raised from `pytest_addoption`.
 - **Why record it at all:** DECISIONS 14 already says these flags belong to a version of somebody
   else's program. So does this behaviour, and it is the kind of thing that reads as a Probatio bug
   when it is met for the first time.
+
+## 95. `--probatio-timeout` exists because the shipped default could not record this suite
+
+- **Date:** 2026-09-05 (Phase 12)
+- **Q:** Route B's recording failed on `g-su-002` three times running with
+  `the Claude CLI did not answer within 120s`. `ClaudeCLIProvider.timeout_s` has been a constructor
+  argument since Phase 2 precisely so that a caller can change it (DECISIONS 14), but nothing on
+  the command line reaches the constructor: `plugin._build_provider` calls
+  `cli.build_provider(name, model)` and there is no third argument. A user recording against a
+  throttled plan therefore cannot raise the timeout without writing their own `provider` fixture.
+  Add a flag, or record fourteen of fifteen cases and say so?
+- **A:** Add the flag. `--probatio-timeout SECONDS` registers in the `probatio` group, defaults to
+  `None`, and reaches `build_provider(name, model, timeout_s)`, which passes it to
+  `ClaudeCLIProvider(timeout_s=...)` and to nothing else — `FakeProvider` does not wait, and
+  `AnthropicProvider` delegates timeouts to the SDK, so for those two the flag is accepted and
+  ignored rather than raising. With `--probatio-timeout 600` the case recorded.
+- **Why:** This is a gap the dogfooding found, which is what the dogfooding is for. Under the
+  throttling that set in after ~600 calls in one day, a single call was taking 40 to 90 seconds and
+  the occasional one exceeded two minutes; 120 s is a sensible default for a single turn with no
+  tools and a bad one for a fifteen-case suite with 124 variants on a busy plan. The three-strike
+  rule sends a sub-task to `BLOCKERS.md` after three attempts, and the third attempt is what
+  produced the diagnosis — repeating the same command a fourth time would have been the thing the
+  rule forbids, while fixing the cause is a different approach and not a fourth strike.
+  The timeout is not part of any cassette key, so a tape recorded with a raised timeout is
+  indistinguishable from one recorded without it; only whether it exists at all changes.
+  **Rejected alternatives.** Recording fourteen cases and reporting Route B over fourteen, which
+  loses a red-flag case from a comparison whose whole subject is red-flag behaviour, and loses it
+  for a reason that has nothing to do with either model. Raising `DEFAULT_TIMEOUT_S` itself, which
+  changes the shipped behaviour of every user's suite to solve one machine's throttling. An
+  environment variable, which is configuration that does not appear in `--help` and therefore does
+  not appear in the command a reader of `live/README.md` is asked to reproduce.
+  **Scope note:** this adds a flag spec §3.12's list does not have. It is recorded here rather than
+  asked about because `CLAUDE.md`'s must-ask list is a runtime dependency, the Python floor, the
+  public decorator or YAML syntax the demo suite fixes, and calling a live model from a test; a new
+  pytest option is none of those. `examples/consilium/live/README.md` uses it in the Route B
+  recording command, so the command as documented is the command that worked.

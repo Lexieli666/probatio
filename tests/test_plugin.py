@@ -1008,3 +1008,44 @@ def test_a_cost_overrun_sets_the_exit_status_and_prints_the_line(
     assert session.exitstatus == pytest.ExitCode.TESTS_FAILED
     printed = capsys.readouterr().out
     assert "probatio:" in printed and "0.004" in printed and "alpha" in printed
+
+
+# --- --probatio-timeout (DECISIONS 95) ----------------------------------------------------------
+
+
+def test_the_timeout_flag_reaches_the_claude_cli_adapter() -> None:
+    """The adapter always took a timeout; until now nothing on the command line could set it."""
+    from probatio.cli import build_provider
+    from probatio.providers.claude_cli import DEFAULT_TIMEOUT_S
+
+    default = build_provider("claude-cli", "m")
+    assert default.timeout_s == DEFAULT_TIMEOUT_S
+
+    raised = build_provider("claude-cli", "m", 300.0)
+    assert raised.timeout_s == 300.0
+    assert raised.model == "m"
+
+
+def test_the_timeout_flag_is_ignored_by_the_providers_that_have_none() -> None:
+    """``fake`` does not wait, and the Anthropic SDK owns its own timeouts."""
+    from probatio.cli import build_provider
+
+    fake = build_provider("fake", None, 300.0)
+    assert fake.name == "fake"
+    assert not hasattr(fake, "timeout_s")
+
+
+def test_the_timeout_flag_is_registered_and_defaults_to_the_adapters_own(
+    pytester: pytest.Pytester,
+) -> None:
+    """A flag nobody passes must change nothing."""
+    result = pytester.runpytest_subprocess("--help")
+    result.stdout.fnmatch_lines(["*--probatio-timeout*"])
+
+    pytester.makepyfile(
+        test_timeout="""
+        def test_default(request):
+            assert request.config.getoption("--probatio-timeout") is None
+        """
+    )
+    assert pytester.runpytest_subprocess("test_timeout.py").ret == 0

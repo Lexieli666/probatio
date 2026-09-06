@@ -120,10 +120,16 @@ Record against the second model into its own cassette directory:
 
 ```bash
 pytest examples/consilium/live -q --probatio-provider claude-cli \
-       --probatio-model claude-haiku-4-5-20251001 --cassette=record \
+       --probatio-model claude-haiku-4-5-20251001 --probatio-timeout 600 --cassette=record \
        --cassette-dir examples/consilium/live/cassettes-haiku \
        --baseline-dir .probatio/baseline-live
 ```
+
+`--probatio-timeout` is there because the shipped 120-second default could not finish this
+recording on a throttled plan: a single call was taking 40 to 90 seconds and the occasional one
+exceeded two minutes, which fails the case with `the Claude CLI did not answer within 120s`
+(DECISIONS 95). It changes no cassette key, so a tape recorded with it is indistinguishable from
+one recorded without.
 
 Then replay those tapes against the **opus** baselines, so snapshot drift is what a model change
 looks like in a report:

@@ -164,6 +164,34 @@ the ones around it — is recorded in DECISIONS 94 alongside the truncation, bec
 kind of fact: a property of a version of somebody else's program, and the kind of thing that reads
 as a Probatio bug the first time it is met.
 
+### Recording Route B, and the timeout the default could not carry
+
+The haiku recording met the same conditions from the other side. By then roughly 600 calls had
+been made in one day, a single call was taking 40 to 90 seconds against opus's 12, and the
+occasional one exceeded two minutes — which is `ClaudeCLIProvider`'s shipped `DEFAULT_TIMEOUT_S`,
+so it failed the case with `the Claude CLI did not answer within 120s`.
+
+Producing the fifteen committed haiku tapes took **five invocations and about three and a quarter
+hours of wall clock**: one attempt stopped early with four cases complete, one 86-minute run that
+left four tapes incomplete, a 47-minute re-record of six, a 21-minute attempt at the last two, and
+finally one case on its own. `g-su-002` failed three times, every time on the 120-second timeout.
+
+That is what produced `--probatio-timeout` (DECISIONS 95). `ClaudeCLIProvider.timeout_s` had been
+a constructor argument since Phase 2 so that a caller could change it, and no flag reached the
+constructor, so a user recording on a throttled plan had no way to say so without writing their own
+`provider` fixture. With `--probatio-timeout 600` the case recorded on the next attempt. The
+timeout is not part of a cassette key, so the tape is indistinguishable from one recorded under the
+default.
+
+Two smaller facts from the same exercise, both now written into
+`examples/consilium/live/README.md` and `PROGRESS.md` so the next person does not rediscover them:
+a tape is complete when it holds `2 * (1 + variants)` interactions, and **a case re-recorded after
+a partial failure keeps orphaned judge interactions**, because a judge call's cassette key includes
+the answer it grades and the re-recorded answer differs. Two tapes carried orphans and were deleted
+and recorded again, so every committed haiku tape holds exactly the interactions its case needs and
+the fifteen total exactly 278 — the same count as the opus tapes, which is the arithmetic above
+rather than a coincidence.
+
 ## 6. Cost cross-check against Consilium's published figures
 
 The offline suite prices Consilium's own recorded token counts, so it can be checked against the
