@@ -35,7 +35,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Final
+from typing import Any, Final
 
 import yaml
 
@@ -303,3 +303,153 @@ def test_the_one_red_flag_case_full_passes_is_named() -> None:
     ]
     assert passing == ["g-md-017"]
     assert f"red-flag case `full` passes is `{passing[0]}`" in SECTION_1_2
+
+
+# -- Phase 12: sections 3 and 4 -------------------------------------------------------------------
+
+LIVE: Final = REPO_ROOT / "examples" / "consilium" / "live"
+LIVE_RESULTS: Final = LIVE / "results" / "live-baseline.json"
+SECTION_3: Final = section("## 3. What the relations", "## 4. Judge validation")
+SECTION_4: Final = section("## 4. Judge validation", "## 5. Limitations")
+SECTION_5: Final = TEXT[TEXT.index("## 5. Limitations") :]
+
+
+def live_results() -> dict[str, Any]:
+    """The live suite's committed replay, which every §3 number comes from."""
+    return dict(json.loads(LIVE_RESULTS.read_text(encoding="utf-8")))
+
+
+def table_rows(section_text: str, width: int) -> list[list[str]]:
+    """Every markdown row of the given cell count, header and rule excluded."""
+    rows = []
+    for line in section_text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if len(cells) == width and set("".join(cells)) - set("-: "):
+            rows.append(cells)
+    return rows
+
+
+def test_section_3_relation_table_is_the_live_replays_own_measurement() -> None:
+    """Every cell of §3's table is read back out of live-baseline.json."""
+    measured = {r["relation"]: r for r in live_results()["relations"]}
+    rows = {
+        cells[0].strip("`"): cells[1:]
+        for cells in table_rows(SECTION_3, 7)
+        if cells[0].startswith("`")
+    }
+    assert set(rows) == set(measured), (sorted(rows), sorted(measured))
+    for name, cells in rows.items():
+        item = measured[name]
+        assert int(cells[0]) == item["n_cases"], name
+        assert int(cells[1]) == item["n_not_applicable"], name
+        assert cells[2] == f"{item['n_violations']}/{item['n_variants']}", name
+        assert float(cells[3]) == round(item["mean_violation_rate"], 2), name
+        assert cells[4].strip("`") == item["worst_case_id"], name
+        assert float(cells[5]) == round(item["worst_violation_rate"], 2), name
+
+
+def test_section_3_flip_arithmetic_matches_the_recorded_flips() -> None:
+    """13 flips, 12 of them the judge, and no similarity or not_contains anywhere."""
+    changed = [
+        assertion
+        for case in live_results()["cases"]
+        for relation in case["relations"]
+        for flip in relation["flips"]
+        for assertion in flip["changed_assertions"]
+    ]
+    flat = " ".join(SECTION_3.split())
+    assert int(re.search(r"There are (\d+) verdict flips", flat).group(1)) == len(changed)
+    assert int(re.search(r"`judge` in (\d+) of them", flat).group(1)) == changed.count("judge")
+    assert changed.count("contains") == 1
+    assert not {"similarity", "not_contains"} & set(changed)
+
+
+def test_section_3_names_the_only_case_that_flipped_on_a_non_judge_assertion() -> None:
+    case = next(c for c in live_results()["cases"] if c["case_id"] == "g-md-018")
+    flips = [f for r in case["relations"] for f in r["flips"]]
+    assert len(flips) == 1 and flips[0]["changed_assertions"] == ["contains"]
+    assert flips[0]["original_verdict"] is False and flips[0]["variant_verdict"] is True
+    flat = " ".join(SECTION_3.split())
+    assert "`g-md-018`" in flat and flips[0]["label"] in flat
+
+
+def test_section_3_variant_deletion_count_is_what_the_frozen_files_hold() -> None:
+    files = sorted((LIVE / "variants").glob("*.yaml"))
+    held = sum(len(yaml.safe_load(f.read_text(encoding="utf-8"))["variants"]) for f in files)
+    flat = " ".join(SECTION_3.split())
+    deleted, asked = (int(n) for n in re.search(r"\*\*(\d+) of the (\d+)\*\*", flat).groups())
+    assert asked == 3 * len(files)
+    assert deleted == asked - held
+
+
+def test_section_4_claude_rows_are_the_committed_record_and_the_progress_line() -> None:
+    """Sample 1 from its validation record; sample 2 from PROGRESS.md, as §4 says."""
+    record = json.loads(
+        (LIVE / "results" / "judges-sample-1" / "faithfulness.validation.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    rows = {
+        (cells[0], cells[2]): cells
+        for cells in table_rows(SECTION_4, 5)
+        if cells[0].startswith("sample")
+    }
+    sample_1 = next(v for k, v in rows.items() if k[0] == "sample 1" and "claude" in k[1])
+    assert int(sample_1[1]) == record["n"]
+    assert float(sample_1[3]) == round(record["agreement"], 3)
+    assert float(sample_1[4].strip("*")) == round(record["kappa"], 3)
+
+    progress = (REPO_ROOT / "PROGRESS.md").read_text(encoding="utf-8")
+    sample_2 = next(v for k, v in rows.items() if k[0] == "sample 2" and "claude" in k[1])
+    assert f"agreement={sample_2[3]} kappa={sample_2[4].strip('*')}" in progress
+    assert f"n={sample_2[1]} " in progress
+
+
+def test_section_4_gpt_rows_agree_with_the_kappa_recomputed_from_the_committed_csvs() -> None:
+    import csv
+
+    from probatio.judge import cohens_kappa
+
+    fixtures = REPO_ROOT / "tests" / "fixtures" / "consilium"
+    rows = {
+        (cells[0], cells[2]): cells
+        for cells in table_rows(SECTION_4, 5)
+        if cells[0].startswith("sample")
+    }
+    for sample, name in (
+        ("sample 1", "judge-sample-labeled.csv"),
+        ("sample 2", "judge-sample-2-labeled.csv"),
+    ):
+        with (fixtures / name).open(newline="", encoding="utf-8") as handle:
+            labelled = list(csv.DictReader(handle))
+        measured = cohens_kappa(
+            [r["judge_label"] for r in labelled], [r["human_label"] for r in labelled]
+        )
+        cells = next(v for k, v in rows.items() if k[0] == sample and "GPT-4o-mini" in k[1])
+        assert int(cells[1]) == measured.n, sample
+        assert float(cells[3]) == round(measured.agreement, 3), sample
+        assert float(cells[4]) == round(measured.kappa, 3), sample
+
+
+def test_section_4_claim_that_no_sample_2_record_is_committed_is_true() -> None:
+    assert "not committed" in SECTION_4
+    assert not (REPO_ROOT / ".probatio" / "judges" / "faithfulness.validation.json").exists()
+
+
+def test_section_4_unvalidated_warning_count_is_what_the_report_holds() -> None:
+    """§4 says fifteen warnings; the committed report has to carry fifteen."""
+    report = live_results()
+    unvalidated = [w for w in report["warnings"] if "no validation record" in w]
+    flat = " ".join(SECTION_4.split())
+    stated = re.search(r"(\w+) `judge verdict\(s\) from a rubric with no validation", flat).group(1)
+    assert {"fifteen": 15}[stated] == len(unvalidated)
+    assert len(unvalidated) == len(report["cases"])
+
+
+def test_section_5_variant_count_is_the_one_the_replay_measured() -> None:
+    variants = sum(r["n_variants"] for r in live_results()["relations"])
+    flat = " ".join(SECTION_5.split())
+    assert int(re.search(r"(\d+) variants, evaluated once", flat).group(1)) == variants

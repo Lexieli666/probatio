@@ -120,12 +120,87 @@ It is a retrospective catch and is labelled as one. The prospective catch, if an
 
 ## 3. What the relations did on real outputs
 
-*Pending Phase 12. The offline suite in §1 applies no metamorphic relation: variants would need
-tapes that the published traces cannot supply.*
+The offline suite in §1 applies no metamorphic relation: a variant is a different prompt and so a
+different cassette key, and Consilium's published traces hold no answer to a question Consilium was
+never asked. §2's live suite is where the relations fire, against a real model, and the rates below
+are read from `examples/consilium/live/results/live-baseline.json` — the `claude-opus-5` replay,
+which reproduces the recording run's rates exactly.
+
+| relation | cases | n/a | violations | mean rate | worst case | worst rate |
+|---|---|---|---|---|---|---|
+| `distractor_robust` | 15 | 0 | 5/30 | 0.17 | `g-cc-002` | 0.50 |
+| `format_jitter` | 15 | 0 | 6/45 | 0.13 | `g-cc-017` | 0.67 |
+| `order_invariant` | 6 | 9 | 0/6 | 0.00 | `g-cc-001` | 0.00 |
+| `paraphrase_invariant` | 15 | 0 | 2/43 | 0.04 | `g-cc-017` | 0.33 |
+
+**The null result is included, because it is a result.** Nine of the fifteen cases carry a single
+document, so `order_invariant` has no non-identity ordering to build and reports *not applicable* —
+`None`, never `0.0` (DECISIONS 8). On the six cases where it could fire, reordering the documents
+changed no verdict. A reader who wants "reordering the documents is safe" from this table can have
+it for six cases and must not have it for the other nine, and that is the distinction the
+not-applicable column exists to keep.
+
+**Twelve of the thirteen flips are the judge.** There are 13 verdict flips across all four
+relations; the assertion that changed is `judge` in 12 of them and `contains` in one. No
+`similarity` and no `not_contains` assertion flipped anywhere in the suite. That is worth stating
+plainly because it bounds what these rates mean: they are mostly measuring the stability of a
+rubric judge on paraphrased inputs, not the stability of the retrieval-grounded answer's factual
+content, which the exact assertions found stable throughout. Two explanations fit and this run
+cannot separate them — the variant genuinely produced a differently-grounded answer, or the judge
+is the least repeatable assertion in the suite. Separating them needs the same variant answered
+several times, which is what `--runs` does and what this phase did not spend calls on.
+
+**The one non-judge flip cuts against the suite's own story.** `g-md-018` fails its escalation
+`contains` assertion as recorded, and *passes* it when an unrelated clinical sentence is appended
+as an extra document (`distractor-end-1`). A flip from failing to passing is still a flip, and
+counting both directions is what stops a relation from being a one-way ratchet.
+
+**Two cases measure more than paraphrase.** `g-su-002` and `g-su-003` are the two golden questions
+written as deliberately misspelled, low-literacy text (`sied`, `speach`, `minits`, `somethin`).
+All six of their frozen paraphrases silently correct the spelling. None of them changes a symptom,
+a patient, a number or a duration, so none was deleted at review — but on those two cases
+`paraphrase_invariant` is measuring spelling normalisation alongside rewording, and their
+contribution to the 0.04 has to be read that way.
+
+The paraphrases themselves were frozen against `claude-opus-5` and then read by a human, who
+deleted **2 of the 45** and noted each deletion in its file's header; the details are in
+`docs/EVALUATION.md` §3.
 
 ## 4. Judge validation
 
-*Pending Phase 12. The offline suite in §1 carries no judge assertion, for the same reason.*
+The offline suite in §1 carries no judge assertion, because a judge is a provider call and the
+published traces hold no judge output to replay. The live suite carries one on every case, graded
+by `claude-opus-5` against a rubric derived from Consilium's own `faithfulness_v2.md`, and that
+judge was measured against the same eighty blind human labels Consilium used to validate its own.
+
+| sample | n | judge | agreement | κ |
+|---|---|---|---|---|
+| sample 1 | 40 | `claude-opus-5`, v2-derived rubric | 0.800 | **0.600** |
+| sample 2 | 40 | `claude-opus-5`, v2-derived rubric | 0.675 | **0.253** |
+| sample 1 | 40 | GPT-4o-mini, Consilium v1 rubric | 0.675 | 0.350 |
+| sample 2 | 40 | GPT-4o-mini, Consilium v2 rubric | 0.800 | 0.592 |
+
+**The two judges rank the two samples in opposite orders.** Probatio's judge is much better than
+Consilium's on sample 1 and much worse on sample 2. One caveat is load-bearing and is stated in
+full in `docs/EVALUATION.md` §4: Consilium ran *two different rubrics*, v1 on sample 1 and v2 on
+sample 2, and the rise from 0.350 to 0.592 is exactly what v2 was written to achieve, whereas
+Probatio ran one rubric on both. So the comparison has a moving comparator on one side. What
+survives is the narrower and still uncomfortable claim: one judge and one rubric scored κ = 0.600
+on forty labelled rows and κ = 0.253 on another forty from the same project, and neither number
+predicts the other.
+
+**The suite's judge is reported as unvalidated, and it is.** Only the sample-1 record is committed
+(`examples/consilium/live/results/judges-sample-1/`). Sample 2's measurement is real and its
+summary is in `PROGRESS.md` verbatim, but its record was not committed — it carried a machine path,
+and the three attempts made after that was fixed all failed, two of them by exhausting the
+three-attempt re-ask bound on a row whose reply would not parse. Rather than raise the bound until
+a number appeared, `.probatio/judges/` was left without a `faithfulness` record. The consequence is
+in every report the live suite produces: fifteen `judge verdict(s) from a rubric with no validation
+record` warnings, and `unenforceable=True` on all fifteen judge results. `docs/EVALUATION.md` §5
+lists all six attempts as provider-reliability data.
+
+That is the design position from spec §3.5 firing on this project's own work: a judge with no
+record on disk is not a validated judge, and the tool says so about itself.
 
 ## 5. Limitations
 
@@ -142,3 +217,35 @@ in one run; nothing here speaks to run-to-run variance, which is what `--runs` a
 suite are for. Costs in `replay-priced.json` are computed from the traces' token counts at the
 rates in `examples/consilium/prices.yaml` and are notional; the run that produced the answers was
 billed to Consilium's account, not to this project.
+
+Route B and the sections that depend on it carry their own limits, and they are larger.
+
+**The live system under test is not Consilium.** `examples/consilium/live/app_live.py` makes one
+grounded call with the corpus notes already in hand. Consilium plans, retrieves from a vector
+store, runs one or more agents and repairs the draft through a safety step. Nothing in §2, §3 or
+§4 is a measurement of Consilium-Health, and the shared questions and reference answers make that
+easy to forget, which is why every one of those sections says it again.
+
+**Retrieval is not modelled at all.** Each case carries the notes its golden item's
+`relevant_doc_ids` name, verbatim. The app is therefore given what a perfect retriever would have
+found, so nothing here speaks to retrieval quality — the one thing Consilium's `full` pipeline
+spends most of its tokens on.
+
+**Fifteen cases, one run each.** Every rate in §3 is over fifteen cases and, for the relations,
+124 variants, evaluated once. No case ran twice, so `--runs` measured nothing and no interval in
+this document is a confidence interval. The judge-heavy flip pattern in §3 is the clearest thing
+that repetition would resolve and this phase did not resolve.
+
+**One model family.** `claude-opus-5` and `claude-haiku-4-5-20251001` are both Anthropic models
+reached through the same CLI adapter. A difference between them is not evidence about models in
+general, and the absence of a difference is not evidence that the suite is insensitive.
+
+**The judge is unvalidated on disk, deliberately.** §4 explains why `.probatio/judges/` holds no
+`faithfulness` record. Every judge verdict in §2 and §3 therefore carries `unenforceable=True`, and
+the relation rates in §3 — 12 of whose 13 flips are the judge — inherit that. They are reported
+because an unenforceable result is still a measurement, and they should be read as measurements of
+an unvalidated instrument.
+
+**Costs are notional throughout.** The live suite's total is what the Claude CLI computes as the
+API price of calls made on a subscription that was not billed that money; `docs/providers.md`
+states the caveat for the adapter, and `docs/EVALUATION.md` §6 repeats it beside the figure.
