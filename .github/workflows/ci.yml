@@ -25,13 +25,13 @@ jobs:
       # No provider credentials exist in CI. The suite must never need one.
       PROBATIO_CI: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # Gate condition 5 diffs examples/demo_suite against the commit that introduced
           # it; a shallow clone has no such commit and the check would pass vacuously.
           fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 

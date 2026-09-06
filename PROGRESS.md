@@ -805,3 +805,68 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   DECISIONS 96 records.
   `examples/README.md`'s errata section is unchanged. DECISIONS 96–99;
   `docs/DESIGN.md` Phase 13; new `docs/PROVENANCE.md`, `tests/test_docs_provenance.py`.
+- 2026-09-06 — **Phase 14** — release prepared; publication pending the human's three commands.
+  Gate green: `pytest -q` 1214 passed, 0 skipped, 0 xfailed; coverage of `src/probatio` 100%
+  (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on `src tests examples`;
+  `mypy --strict src/probatio` clean (46 source files); `examples/demo_suite/` still differs from
+  8a998af by the one sanctioned Phase 9 edit and nothing else, with `git status --porcelain` on it
+  empty. **The Phase 14 box is deliberately unticked**: nothing is published, tagged, made public
+  or pushed, and the phase is not done until it is.
+  **Version.** `__version__ = "0.1.0"` in `src/probatio/__init__.py`, which `pyproject.toml` reads
+  through hatchling; `tests/test_smoke.py` asserts the new string.
+  **`CHANGELOG.md`**, Keep-a-Changelog style, one `Added` entry per shipped capability in spec §3
+  order — foundations, cases, providers, assertions, judge and validation, snapshots, budgets,
+  cassettes, metamorphic relations, flakiness statistics, reporters, the pytest surface, the
+  console script — then packaging, examples, documentation and CI. Its "Known limitations" section
+  is drawn from `docs/CASE_STUDY.md` §5 and the README's roadmap. **It states no measurement at
+  all** (DECISIONS 101): every limit is in words, pointing at the document that carries the figure.
+  `docs/PROVENANCE.md` gains one row for the version string and a `CHANGELOG.md` line in its
+  guards table, the sweep in `tests/test_docs_provenance.py` is parametrised over `README.md` and
+  `CHANGELOG.md`, and a second test asserts the measurements table names no changelog and that no
+  measurement's string appears in it. Both were provoked and seen to fail on a stray `42%` and a
+  stray `0.600`.
+  **Packaging.** `src/probatio/py.typed` added, and confirmed present in the wheel and in the
+  installed package on disk. `Changelog` added to `[project.urls]` and confirmed in the wheel's
+  `METADATA`. The sdist ships neither `tests/` nor `examples/` (DECISIONS 100): the Phase 0 sdist
+  was built, extracted and run, and `pytest -q` inside it stops with **10 collection errors**
+  before a test executes, because the suite needs `examples/`, `docs/`, `PROGRESS.md` and this
+  repository's git history. The sdist is now 53 entries — `src/probatio` (47 files including
+  `py.typed`), `README.md`, `CHANGELOG.md`, `LICENSE`, `pyproject.toml`, plus `.gitignore` and
+  `PKG-INFO` that hatchling adds; the wheel is `probatio/` and its `dist-info` and nothing else.
+  `python -m build` succeeded and `twine check dist/*` PASSED on both artefacts. The wheel was
+  installed into a fresh temporary venv, where it pulled exactly `pytest`, `pydantic`, `jsonschema`
+  and `PyYAML` with their transitive dependencies and nothing else;
+  `python -c "import probatio; print(probatio.__version__)"` printed `0.1.0`, `probatio --help`
+  printed the three subcommands, and `pytest --help` showed the plugin's option group, so the
+  `pytest11` entry point registers from an installed wheel and not only from an editable install.
+  **CI.** `actions/checkout` v4 → v5 and `actions/setup-python` v5 → v6, the two Node 20
+  deprecation annotations; the matrix stays at 3.11 and 3.12, `fetch-depth: 0` stays, and the
+  five gate steps are untouched.
+  **Pre-publication audit.** `git status --short` was empty at the start of this session and is
+  empty again after this phase's single commit. `grep -rn "api_key\|ANTHROPIC_API_KEY\|OPENAI" src
+  tests examples` returns exactly one line, `src/probatio/providers/claude_cli.py:51`, a docstring
+  sentence explaining that `ClaudeCLIProvider` avoids `--bare` *because* it would switch
+  authentication to `ANTHROPIC_API_KEY`; nothing live, no key, no OpenAI adapter.
+  `git log --all -S '/Users/yutongzhao' --oneline` lists exactly the three commits already on
+  record and nothing else: `f007344`, `b0aec38`, `4c2114e`. `git ls-files | grep -i -E
+  "package|notes/"` returns nothing at all — no build-package file is tracked under a name that
+  matches, and `CLAUDE.md`, the one build-package file that is tracked, does not match the pattern.
+  The last check was run exhaustively rather than from the list, by hashing every file in both
+  trees and then comparing every line of 40 characters or more across them (DECISIONS 102):
+  **nineteen** tracked files are byte-identical to a build-package file and **four** more carry its
+  content verbatim. Eighteen of the nineteen and all four are the sanctioned set — `CLAUDE.md`, the
+  fourteen corpus notes, `faithfulness_v2.md`, the two judge-label CSVs, `golden-subset.jsonl`
+  (fifteen lines of the package's `golden.jsonl`), `escalation_phrases.txt` (the thirty-eight
+  phrases of the package's `safety/escalation.py`, one per line) and the two files
+  `convert_traces.py --emit-live-cases` writes from those fixtures, `live/cases/*.yaml` and
+  `live/rubrics/faithfulness.md`. **The nineteenth is `tests/fixtures/claude_cli_payload.json`**,
+  which the audit list does not name. It is sanctioned and always was — DECISIONS 14 records it as
+  a verbatim copy of one real CLI payload, the one the Phase 2 prompt said a human would capture,
+  and `docs/providers.md`'s three dollar figures are derived from it — but it was recorded as a
+  copy of a *reply*, not of a *package file*, which is exactly the kind of thing a remembered list
+  misses. DECISIONS 102 writes the complete list down. Everything else that shares a long line with
+  the package shares the specification's own API signatures and sample YAML, the reference list
+  Phase 13 was handed, or a command quoted from the dogfood document.
+  **What is left, and it is the human's to run**: make the repository public, tag `v0.1.0` and
+  push the tag, `twine upload dist/*`, then `gh release create`. Nothing in this commit does any
+  of it. DECISIONS 100–102.

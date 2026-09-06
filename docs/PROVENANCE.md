@@ -7,6 +7,10 @@ row's check against the file it names, and fails the suite when a document and i
 — in either direction, so a figure edited in prose fails and a source re-recorded without updating
 the prose fails too.
 
+Phase 14 added `CHANGELOG.md` to the rule (DECISIONS 101). It states no measurement at all, so it
+holds no row in the first table; the sweep that guards it is the same sweep the README gets, which
+is what makes that emptiness a fact rather than an intention.
+
 ## How to read a row
 
 - **number** — the figure exactly as it appears in the prose, with any `**` emphasis removed.
@@ -116,8 +120,8 @@ pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassett
 
 ## Numerals that are not measurements
 
-Every other numeral in `README.md` is one of these. Each row says what the numeral is and where it
-is fixed; `re:` marks a pattern rather than a literal.
+Every other numeral in `README.md` and in `CHANGELOG.md` is one of these. Each row says what the
+numeral is and where it is fixed; `re:` marks a pattern rather than a literal.
 
 | numeral, as it appears | what it is | fixed in |
 |---|---|---|
@@ -133,6 +137,7 @@ is fixed; `re:` marks a pattern rather than a literal.
 | `re:https?://\S+` | a URL: an address, not a measurement | — |
 | `Python 3.11` | the language floor | `pyproject.toml` |
 | `Pre-1.0` | the release state | `pyproject.toml` |
+| `0.1.0` | the version this release carries, in `CHANGELOG.md`'s heading and link label | `src/probatio/__init__.py` |
 | `re:2026-09-0\d` | dates on which documentation and citations were checked | — |
 | `re:\b4c2114e\b` | the commit that produced R1 | `PROGRESS.md` |
 | `re:claude-haiku-4-5-20251001` | a model name | `examples/consilium/live/README.md` |
@@ -149,6 +154,7 @@ the artefact named beside it. This table is what stops a document from being add
 | document | provenance test |
 |---|---|
 | `README.md` | `tests/test_docs_provenance.py` |
+| `CHANGELOG.md` | `tests/test_docs_provenance.py` |
 | `docs/PROVENANCE.md` | `tests/test_docs_provenance.py` |
 | `docs/assertions.md` | `tests/test_docs_assertions.py` |
 | `docs/providers.md` | `tests/test_docs_providers.py` |
