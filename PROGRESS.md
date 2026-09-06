@@ -666,3 +666,29 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   45 live calls (40 rows plus 5 re-asks). `docs/EVALUATION.md` reports this run beside the
   committed one as a same-judge, same-rubric, same-labels repeatability observation.
 
+- 2026-09-05 — **Phase 12 (resume point, written mid-phase)** — blocks 0–4 and the Route-B-independent
+  half of block 6 are committed and the gate is green at 987 passed. **What remains is block 5 and
+  `docs/CASE_STUDY.md` §2 only.** A fresh session resumes exactly here:
+  1. `examples/consilium/live/cassettes-haiku/test_live/` is being recorded by
+     `pytest examples/consilium/live -q -k "not g-cc-001 and not g-cc-017" --probatio-provider
+     claude-cli --probatio-model claude-haiku-4-5-20251001 --cassette=record --cassette-dir
+     examples/consilium/live/cassettes-haiku --baseline-dir .probatio/baseline-live`. `g-cc-001` and
+     `g-cc-017` were already complete from an earlier attempt, which is why they are deselected.
+     A tape is complete when it holds `2 * (1 + variants)` interactions: 20 for a two-document case,
+     18 for a one-document case, 18 for `g-md-017` and 16 for `g-su-003` (those two keep two
+     paraphrases, not three). **A case re-recorded after a partial failure keeps orphaned judge
+     interactions**, because a judge call's cassette key includes the answer it grades and a
+     re-recorded answer differs; `g-cc-002` carries three such orphans. They are never looked up on
+     replay, but a tape whose count exceeds the expected one should be deleted and that case
+     re-recorded alone before the tapes are committed.
+  2. Then, offline:
+     `pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes-haiku
+     --baseline-dir .probatio/baseline-live --probatio-model claude-haiku-4-5-20251001
+     --probatio-results examples/consilium/live/results/live-changed.json
+     --probatio-report examples/consilium/live/results/live-changed.md`.
+     `--probatio-model` is not optional on a replay (DECISIONS 91).
+  3. Write `docs/CASE_STUDY.md` §2 from `live-baseline.json` and `live-changed.json`, update §0
+     (which still calls Route B pending), extend `tests/test_docs_case_study.py` to cover §2's
+     numbers, and tick Phase 12 above with a full run-log line naming every results file.
+     If the two models are not distinguished, runbook 4.6 fixes the sentence to use.
+
