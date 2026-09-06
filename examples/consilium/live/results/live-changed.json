@@ -1,0 +1,2010 @@
+{
+  "cases": [
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.008909 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 8737.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-cc-001",
+      "cost_usd": 0.008909,
+      "failure": null,
+      "latency_ms": 8737.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-cc-001]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-cc-001",
+          "flips": [],
+          "n_variants": 1,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-cc-001",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-cc-001",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-cc-001",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 1,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.3333333333333333
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.828 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.8281951951394051,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is supported by the sources: the 'with' convention presumes relationship without requiring explicit documentation of causation (Source 1), the presumption applies only to pairings the index lists and is overridden by contradictory documentation (Sources 1\u20132), neuropathy is an E11 subcategory (Source 1), and it is the most consequential yet over-applied rule in diabetes coding (Source 1).; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-cc-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-cc-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "condition_coding"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.008923 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 6433.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-cc-002",
+      "cost_usd": 0.008923,
+      "failure": "g-cc-002: snapshot scores_changed\n  [g-cc-002] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    similarity      pass 0.842  pass 0.773  score\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  pass 1.000\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 6433.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-cc-002]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-cc-002",
+          "flips": [],
+          "n_variants": 1,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-cc-002",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-end-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 1,
+          "relation": "distractor_robust",
+          "violation_rate": 0.5
+        },
+        {
+          "case_id": "g-cc-002",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-cc-002",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.773 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7729964658118088,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is directly supported by the sources: Excludes1 notation is defined identically in source 2, the override mechanism for presumptions is stated in source 2, the hypertension and heart disease rule is quoted verbatim from source 1, and the automatic presumption for hypertension with chronic kidney disease is explicitly stated in source 1.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-cc-002",
+        "detail": "[g-cc-002] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  similarity      pass 0.842  pass 0.773  score\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  pass 1.000\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-cc-002.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "condition_coding"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.008449 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 8090.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-cc-017",
+      "cost_usd": 0.008449,
+      "failure": null,
+      "latency_ms": 8090.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-cc-017]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-cc-017",
+          "flips": [],
+          "n_variants": 1,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-cc-017",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-start-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-end-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 2,
+          "relation": "distractor_robust",
+          "violation_rate": 1.0
+        },
+        {
+          "case_id": "g-cc-017",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "whitespace",
+              "original_verdict": true,
+              "variant_verdict": false
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "casing",
+              "original_verdict": true,
+              "variant_verdict": false
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "markdown",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 3,
+          "relation": "format_jitter",
+          "violation_rate": 1.0
+        },
+        {
+          "case_id": "g-cc-017",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 1,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.3333333333333333
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.745 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7454908059694301,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is supported by the source documents, including the meta-claim that the documents do not explain step-by-step how to determine if a three-character code can stand alone, paired with accurate quotation and paraphrase of what the documents do convey about this topic.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-cc-017",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-cc-017.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "condition_coding"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.006861 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 6759.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-ge-001",
+      "cost_usd": 0.006861000000000001,
+      "failure": null,
+      "latency_ms": 6759.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-ge-001]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-ge-001",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-ge-001",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-ge-001",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-ge-001",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.712 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7120519997898305,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is directly supported by the source document, including the diagnostic criteria for U.S. Stage 1 and Stage 2 hypertension, the European threshold of 140/90 mm Hg, the requirement for multiple readings on separate occasions, and the statement that recommendations should specify which convention is used.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-ge-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-ge-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "guideline_evidence"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.004617 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 3046.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-ge-002",
+      "cost_usd": 0.004617,
+      "failure": "g-ge-002: snapshot scores_changed\n  [g-ge-002] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    similarity      pass 0.795  pass 0.652  score\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  pass 1.000\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 3046.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-ge-002]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-ge-002",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-ge-002",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-ge-002",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "whitespace",
+              "original_verdict": true,
+              "variant_verdict": false
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "markdown",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 2,
+          "relation": "format_jitter",
+          "violation_rate": 0.6666666666666666
+        },
+        {
+          "case_id": "g-ge-002",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.652 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6523402245935298,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): All factual claims are supported: the 130/80 mm Hg target for most treated adults (source 1), individualization for older adults with frailty (source 1), European threshold of 140/90 mm Hg (source 1), and that the target depends on guideline body (source 1).; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-ge-002",
+        "detail": "[g-ge-002] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  similarity      pass 0.795  pass 0.652  score\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  pass 1.000\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-ge-002.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "guideline_evidence"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.006966 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 6902.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-ge-024",
+      "cost_usd": 0.006966,
+      "failure": null,
+      "latency_ms": 6902.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-ge-024]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-ge-024",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-ge-024",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-ge-024",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-ge-024",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.737 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7367680302964713,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is directly supported by the source document, including the diagnostic approach, first-line antibiotic options, treatment principles, and recurrence management strategies.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-ge-024",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-ge-024.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "guideline_evidence"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.007340 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 6079.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-gh-001",
+      "cost_usd": 0.00734,
+      "failure": null,
+      "latency_ms": 6079.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-gh-001]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-gh-001",
+          "flips": [],
+          "n_variants": 1,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-gh-001",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-gh-001",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "whitespace",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 1,
+          "relation": "format_jitter",
+          "violation_rate": 0.3333333333333333
+        },
+        {
+          "case_id": "g-gh-001",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.752 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7519042205842531,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is supported by the source documents.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-gh-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-gh-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "general_health"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.004940 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 4034.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-gh-002",
+      "cost_usd": 0.00494,
+      "failure": "g-gh-002: verdict failed\n  judge: judge 'faithfulness' returned fail with score 0.83 (threshold 1.00): The answer claims tissues don't effectively take up glucose, but the source only states they 'respond poorly to insulin' without specifying this glucose uptake mechanism.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)\ng-gh-002: snapshot scores_changed\n  [g-gh-002] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    similarity      pass 0.749  pass 0.758\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  fail 0.830  verdict, score\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 4034.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-gh-002]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-gh-002",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-gh-002",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-start-1",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 1,
+          "relation": "distractor_robust",
+          "violation_rate": 0.5
+        },
+        {
+          "case_id": "g-gh-002",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "whitespace",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "casing",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "markdown",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 3,
+          "relation": "format_jitter",
+          "violation_rate": 1.0
+        },
+        {
+          "case_id": "g-gh-002",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-2",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-3",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 2,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.6666666666666666
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.758 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7577692080971109,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned fail with score 0.83 (threshold 1.00): The answer claims tissues don't effectively take up glucose, but the source only states they 'respond poorly to insulin' without specifying this glucose uptake mechanism.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": false,
+          "score": 0.83,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-gh-002",
+        "detail": "[g-gh-002] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  similarity      pass 0.749  pass 0.758\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  fail 0.830  verdict, score\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-gh-002.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": false,
+        "met_floor": false,
+        "pass_rate": 0.0,
+        "passes": 0,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 0.7934506882081973,
+        "wilson_low": 0.0
+      },
+      "suite": "test_live",
+      "tags": [
+        "general_health"
+      ],
+      "verdict": false
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.006029 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 6240.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-gh-017",
+      "cost_usd": 0.006029,
+      "failure": "g-gh-017: snapshot scores_changed\n  [g-gh-017] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    similarity      pass 0.737  pass 0.677  score\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  pass 1.000\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 6240.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-gh-017]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-gh-017",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-gh-017",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-gh-017",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-gh-017",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.677 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6770171055942608,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is supported by the source document, which explicitly describes the whole-pattern dietary approach (including specific foods to emphasize and limit), sodium reduction with packaged-food sources and mg targets, potassium and alcohol guidance, weight reduction, the trials' methodology, and the lack of evidence for superfoods/vinegar/garlic.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-gh-017",
+        "detail": "[g-gh-017] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  similarity      pass 0.737  pass 0.677  score\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  pass 1.000\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-gh-017.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "general_health"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.008915 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 9825.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-md-017",
+      "cost_usd": 0.008915000000000001,
+      "failure": null,
+      "latency_ms": 9825.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-md-017]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-md-017",
+          "flips": [],
+          "n_variants": 1,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-md-017",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-end-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 1,
+          "relation": "distractor_robust",
+          "violation_rate": 0.5
+        },
+        {
+          "case_id": "g-md-017",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "casing",
+              "original_verdict": true,
+              "variant_verdict": false
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "markdown",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 2,
+          "relation": "format_jitter",
+          "violation_rate": 0.6666666666666666
+        },
+        {
+          "case_id": "g-md-017",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-1",
+              "original_verdict": true,
+              "variant_verdict": false
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 1,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.5
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 3/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.07894736842105263,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.585 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.5853824766953393,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim in the answer is supported by the provided sources.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-md-017",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-md-017.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "multi_dimensional",
+        "red-flag"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.008266 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 12125.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-md-018",
+      "cost_usd": 0.008265999999999999,
+      "failure": "g-md-018: verdict failed\n  judge: judge 'faithfulness' returned fail with score 0.50 (threshold 1.00): The claim that 'the provided document does not cover the full range of pregnancy-related complications' is unsupported; the source makes no statement about its scope regarding pregnancy complications.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)\ng-md-018: snapshot scores_changed\n  [g-md-018] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    contains        fail 0.000  pass 0.026  verdict\n    similarity      pass 0.611  pass 0.527  score\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  fail 0.500  verdict, score\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 12125.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-md-018]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-md-018",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-md-018",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-md-018",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-md-018",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-2",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-3",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 2,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.6666666666666666
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 1/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.02631578947368421,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.527 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.5266616612985967,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned fail with score 0.50 (threshold 1.00): The claim that 'the provided document does not cover the full range of pregnancy-related complications' is unsupported; the source makes no statement about its scope regarding pregnancy complications.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": false,
+          "score": 0.5,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-md-018",
+        "detail": "[g-md-018] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  contains        fail 0.000  pass 0.026  verdict\n  similarity      pass 0.611  pass 0.527  score\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  fail 0.500  verdict, score\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-md-018.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": false,
+        "met_floor": false,
+        "pass_rate": 0.0,
+        "passes": 0,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 0.7934506882081973,
+        "wilson_low": 0.0
+      },
+      "suite": "test_live",
+      "tags": [
+        "multi_dimensional",
+        "red-flag"
+      ],
+      "verdict": false
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.009110 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 10137.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-md-021",
+      "cost_usd": 0.00911,
+      "failure": "g-md-021: verdict failed\n  judge: judge 'faithfulness' returned fail with score 0.56 (threshold 1.00): The section 'What would be assessed' contains multiple unsupported claims; the sources list red flag symptoms but do not describe what an emergency assessment would include, making claims about vital signs, kidney function, blood tests, and organ function unsupported.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)\ng-md-021: snapshot scores_changed\n  [g-md-021] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    contains        pass 0.053  pass 0.026\n    similarity      pass 0.729  pass 0.691\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  fail 0.562  verdict, score\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 10137.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-md-021]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-md-021",
+          "flips": [],
+          "n_variants": 1,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-md-021",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-md-021",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "whitespace",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "markdown",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 2,
+          "relation": "format_jitter",
+          "violation_rate": 0.6666666666666666
+        },
+        {
+          "case_id": "g-md-021",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-1",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-3",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 2,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.6666666666666666
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 1/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.02631578947368421,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.691 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6906294256802958,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned fail with score 0.56 (threshold 1.00): The section 'What would be assessed' contains multiple unsupported claims; the sources list red flag symptoms but do not describe what an emergency assessment would include, making claims about vital signs, kidney function, blood tests, and organ function unsupported.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": false,
+          "score": 0.5625,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-md-021",
+        "detail": "[g-md-021] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  contains        pass 0.053  pass 0.026\n  similarity      pass 0.729  pass 0.691\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  fail 0.562  verdict, score\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-md-021.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": false,
+        "met_floor": false,
+        "pass_rate": 0.0,
+        "passes": 0,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 0.7934506882081973,
+        "wilson_low": 0.0
+      },
+      "suite": "test_live",
+      "tags": [
+        "multi_dimensional",
+        "red-flag"
+      ],
+      "verdict": false
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.005773 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 6585.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-su-001",
+      "cost_usd": 0.005773,
+      "failure": null,
+      "latency_ms": 6585.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-su-001]",
+      "passed": true,
+      "relations": [
+        {
+          "case_id": "g-su-001",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-su-001",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-su-001",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-su-001",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 2/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.05263157894736842,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.695 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6947973407402522,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim is supported by the source: chest pressure/heaviness lasting more than a few minutes as a heart attack red flag, calling emergency services rather than self-transporting, paramedic capabilities (ECG, treatment, routing), the urgency of time and preservation of function, avoiding the error of waiting, false alarms as good outcomes, and actions while waiting (stay still, have someone present, describe symptom onset).; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-su-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live/test_live/g-su-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 1,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.2065493117918027
+      },
+      "suite": "test_live",
+      "tags": [
+        "symptom_urgency",
+        "red-flag"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.006221 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 7427.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-su-002",
+      "cost_usd": 0.006220999999999999,
+      "failure": "g-su-002: verdict failed\n  judge: judge 'faithfulness' returned fail with score 0.90 (threshold 1.00): The claim that grey appearance along with arm ache and sweating indicates a possible heart attack is unsupported; the source documents list arm discomfort and cold sweat as cardiac warning signs but do not mention skin appearance changes.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)\ng-su-002: snapshot scores_changed\n  [g-su-002] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    contains        pass 0.026  pass 0.026\n    similarity      pass 0.683  pass 0.696\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  fail 0.900  verdict, score\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 7427.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-su-002]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-su-002",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-su-002",
+          "flips": [],
+          "n_variants": 2,
+          "n_violations": 0,
+          "relation": "distractor_robust",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-su-002",
+          "flips": [],
+          "n_variants": 3,
+          "n_violations": 0,
+          "relation": "format_jitter",
+          "violation_rate": 0.0
+        },
+        {
+          "case_id": "g-su-002",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-1",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 1,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 0.3333333333333333
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 1/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.02631578947368421,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.696 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.696399525693656,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned fail with score 0.90 (threshold 1.00): The claim that grey appearance along with arm ache and sweating indicates a possible heart attack is unsupported; the source documents list arm discomfort and cold sweat as cardiac warning signs but do not mention skin appearance changes.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": false,
+          "score": 0.9,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-su-002",
+        "detail": "[g-su-002] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  contains        pass 0.026  pass 0.026\n  similarity      pass 0.683  pass 0.696\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  fail 0.900  verdict, score\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-su-002.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": false,
+        "met_floor": false,
+        "pass_rate": 0.0,
+        "passes": 0,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 0.7934506882081973,
+        "wilson_low": 0.0
+      },
+      "suite": "test_live",
+      "tags": [
+        "symptom_urgency",
+        "red-flag"
+      ],
+      "verdict": false
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.005934 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 7015.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-su-003",
+      "cost_usd": 0.005934,
+      "failure": "g-su-003: verdict failed\n  judge: judge 'faithfulness' returned fail with score 0.86 (threshold 1.00): The answer claims that assessment will \"determine what caused these symptoms,\" but the source does not explicitly identify cause determination as a purpose of urgent assessment; it only discusses determining stroke type (clot or bleed) for treatment and reducing subsequent stroke risk.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)\ng-su-003: snapshot scores_changed\n  [g-su-003] scores changed since baseline; fix it with: pytest --update-baseline\n    assertion       baseline    current     change\n    contains        pass 0.026  pass 0.053\n    similarity      pass 0.670  pass 0.677\n    not_contains    pass 1.000  pass 1.000\n    judge           pass 1.000  fail 0.860  verdict, score\n    budget_cost     pass   n/a  pass   n/a\n    budget_latency  pass   n/a  pass   n/a",
+      "latency_ms": 7015.0,
+      "model": "claude-haiku-4-5-20251001",
+      "node_id": "examples/consilium/live/test_live.py::test_case[g-su-003]",
+      "passed": false,
+      "relations": [
+        {
+          "case_id": "g-su-003",
+          "flips": [],
+          "n_variants": 0,
+          "n_violations": 0,
+          "relation": "order_invariant",
+          "violation_rate": null
+        },
+        {
+          "case_id": "g-su-003",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-start-1",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "distractor-end-1",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 2,
+          "relation": "distractor_robust",
+          "violation_rate": 1.0
+        },
+        {
+          "case_id": "g-su-003",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "casing",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 3,
+          "n_violations": 1,
+          "relation": "format_jitter",
+          "violation_rate": 0.3333333333333333
+        },
+        {
+          "case_id": "g-su-003",
+          "flips": [
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-1",
+              "original_verdict": false,
+              "variant_verdict": true
+            },
+            {
+              "changed_assertions": [
+                "judge"
+              ],
+              "label": "paraphrase-2",
+              "original_verdict": false,
+              "variant_verdict": true
+            }
+          ],
+          "n_variants": 2,
+          "n_violations": 2,
+          "relation": "paraphrase_invariant",
+          "violation_rate": 1.0
+        }
+      ],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 2/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.05263157894736842,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.677 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6767952801501589,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned fail with score 0.86 (threshold 1.00): The answer claims that assessment will \"determine what caused these symptoms,\" but the source does not explicitly identify cause determination as a purpose of urgent assessment; it only discusses determining stroke type (clot or bleed) for treatment and reducing subsequent stroke risk.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": false,
+          "score": 0.86,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-su-003",
+        "detail": "[g-su-003] scores changed since baseline; fix it with: pytest --update-baseline\n  assertion       baseline    current     change\n  contains        pass 0.026  pass 0.053\n  similarity      pass 0.670  pass 0.677\n  not_contains    pass 1.000  pass 1.000\n  judge           pass 1.000  fail 0.860  verdict, score\n  budget_cost     pass   n/a  pass   n/a\n  budget_latency  pass   n/a  pass   n/a",
+        "mode": "scores",
+        "passed": false,
+        "path": ".probatio/baseline-live/test_live/g-su-003.json",
+        "state": "scores_changed"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": false,
+        "met_floor": false,
+        "pass_rate": 0.0,
+        "passes": 0,
+        "runs": 1,
+        "tolerated": false,
+        "wilson_high": 0.7934506882081973,
+        "wilson_low": 0.0
+      },
+      "suite": "test_live",
+      "tags": [
+        "symptom_urgency",
+        "red-flag"
+      ],
+      "verdict": false
+    }
+  ],
+  "cost_ceiling_usd": null,
+  "cost_exceeded": false,
+  "cost_total_usd": 0.987356,
+  "cost_unknown_case_ids": [],
+  "relations": [
+    {
+      "mean_violation_rate": 0.23333333333333334,
+      "n_cases": 15,
+      "n_not_applicable": 0,
+      "n_variants": 30,
+      "n_violations": 7,
+      "relation": "distractor_robust",
+      "worst_case_id": "g-cc-017",
+      "worst_violation_rate": 1.0
+    },
+    {
+      "mean_violation_rate": 0.31111111111111106,
+      "n_cases": 15,
+      "n_not_applicable": 0,
+      "n_variants": 45,
+      "n_violations": 14,
+      "relation": "format_jitter",
+      "worst_case_id": "g-cc-017",
+      "worst_violation_rate": 1.0
+    },
+    {
+      "mean_violation_rate": 0.0,
+      "n_cases": 6,
+      "n_not_applicable": 9,
+      "n_variants": 6,
+      "n_violations": 0,
+      "relation": "order_invariant",
+      "worst_case_id": "g-cc-001",
+      "worst_violation_rate": 0.0
+    },
+    {
+      "mean_violation_rate": 0.3,
+      "n_cases": 15,
+      "n_not_applicable": 0,
+      "n_variants": 43,
+      "n_violations": 12,
+      "relation": "paraphrase_invariant",
+      "worst_case_id": "g-su-003",
+      "worst_violation_rate": 1.0
+    }
+  ],
+  "runs": 1,
+  "stability": {
+    "n_below_floor": 0,
+    "n_repeated_cases": 0,
+    "stability_score": null
+  },
+  "warnings": [
+    "g-cc-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-cc-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-cc-017: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-ge-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-ge-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-ge-024: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-gh-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-gh-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-gh-017: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-md-017: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-md-018: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-md-021: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-su-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-su-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-su-003: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)"
+  ]
+}

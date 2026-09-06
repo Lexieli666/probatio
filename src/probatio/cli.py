@@ -118,7 +118,7 @@ def parse_label_map(text: str) -> dict[str, str]:
     return mapping
 
 
-def build_provider(name: str, model: str | None) -> Provider:
+def build_provider(name: str, model: str | None, timeout_s: float | None = None) -> Provider:
     """Construct one of the shipped providers by name.
 
     The adapters are imported inside this function so that naming ``anthropic`` without the
@@ -128,6 +128,10 @@ def build_provider(name: str, model: str | None) -> Provider:
     Args:
         name: One of :data:`PROVIDER_CHOICES`.
         model: The default model for the provider, or ``None`` for its own default.
+        timeout_s: Seconds one call may take before it is killed, or ``None`` for the adapter's
+            own default. Only ``claude-cli`` has one; the other two ignore it, because
+            ``FakeProvider`` does not wait and the Anthropic SDK owns its own timeouts
+            (DECISIONS 95).
 
     Returns:
         The provider.
@@ -146,7 +150,9 @@ def build_provider(name: str, model: str | None) -> Provider:
     if name == "claude-cli":
         from .providers.claude_cli import ClaudeCLIProvider
 
-        return ClaudeCLIProvider(model=model)
+        if timeout_s is None:
+            return ClaudeCLIProvider(model=model)
+        return ClaudeCLIProvider(model=model, timeout_s=timeout_s)
     raise ProbatioConfigError(
         f"{name!r} is not a provider Probatio ships; choose one of {', '.join(PROVIDER_CHOICES)}"
     )

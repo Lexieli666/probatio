@@ -20,7 +20,7 @@ with phase N's code.
   repository-level `conftest.py` that repeats it (DECISIONS 16)
 - [x] **Phase 10** — JUnit XML and results JSON reporters (spec §3.11)
 - [x] **Phase 11** — Consilium dogfood, offline, from published traces
-- [ ] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
+- [x] **Phase 12** — Live Claude CLI steps: record, freeze, validate; the regression case study
 - [ ] **Phase 13** — Prior-art table, docs, README final (spec §7)
 - [ ] **Phase 14** — Public repo, CI green, PyPI release, `v0.1.0`, resume bullets
 - [ ] **Phase 15** — *(optional)* Variance study seed
@@ -665,30 +665,51 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 
   45 live calls (40 rows plus 5 re-asks). `docs/EVALUATION.md` reports this run beside the
   committed one as a same-judge, same-rubric, same-labels repeatability observation.
-
-- 2026-09-05 — **Phase 12 (resume point, written mid-phase)** — blocks 0–4 and the Route-B-independent
-  half of block 6 are committed and the gate is green at 987 passed. **What remains is block 5 and
-  `docs/CASE_STUDY.md` §2 only.** A fresh session resumes exactly here:
-  1. `examples/consilium/live/cassettes-haiku/test_live/` is being recorded by
-     `pytest examples/consilium/live -q -k "not g-cc-001 and not g-cc-017" --probatio-provider
-     claude-cli --probatio-model claude-haiku-4-5-20251001 --cassette=record --cassette-dir
-     examples/consilium/live/cassettes-haiku --baseline-dir .probatio/baseline-live`. `g-cc-001` and
-     `g-cc-017` were already complete from an earlier attempt, which is why they are deselected.
-     A tape is complete when it holds `2 * (1 + variants)` interactions: 20 for a two-document case,
-     18 for a one-document case, 18 for `g-md-017` and 16 for `g-su-003` (those two keep two
-     paraphrases, not three). **A case re-recorded after a partial failure keeps orphaned judge
-     interactions**, because a judge call's cassette key includes the answer it grades and a
-     re-recorded answer differs; `g-cc-002` carries three such orphans. They are never looked up on
-     replay, but a tape whose count exceeds the expected one should be deleted and that case
-     re-recorded alone before the tapes are committed.
-  2. Then, offline:
-     `pytest examples/consilium/live -q --cassette-dir examples/consilium/live/cassettes-haiku
-     --baseline-dir .probatio/baseline-live --probatio-model claude-haiku-4-5-20251001
-     --probatio-results examples/consilium/live/results/live-changed.json
-     --probatio-report examples/consilium/live/results/live-changed.md`.
-     `--probatio-model` is not optional on a replay (DECISIONS 91).
-  3. Write `docs/CASE_STUDY.md` §2 from `live-baseline.json` and `live-changed.json`, update §0
-     (which still calls Route B pending), extend `tests/test_docs_case_study.py` to cover §2's
-     numbers, and tick Phase 12 above with a full run-log line naming every results file.
-     If the two models are not distinguished, runbook 4.6 fixes the sentence to use.
-
+- 2026-09-05 — **Phase 12** — gate green: `pytest -q` 998 passed, 0 skipped, 0 xfailed;
+  coverage of `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and
+  `ruff format --check` clean on `src tests examples`; `mypy --strict src/probatio` clean
+  (46 source files); `examples/demo_suite/` still differs from 8a998af by the one sanctioned
+  Phase 9 edit and nothing else. **The only phase that called a model**, always through
+  `ClaudeCLIProvider` on a Claude plan, never with an API key, and never from the test suite.
+  **Live calls: about 940** — 1 preflight, 18 freezing variants, 278 recording the opus suite,
+  about 184 validating the judge, and about 460 recording Route B across five invocations.
+  **Results files this phase produced**, all committed:
+  `examples/consilium/live/results/preflight.json` (the payload the parser was checked against),
+  `live-baseline.json` / `.md` (the opus replay), `live-changed.json` / `.md` (the haiku replay),
+  `judges-sample-1/faithfulness.validation.json`, the fifteen tapes under
+  `examples/consilium/live/cassettes/test_live/` and fifteen more under `cassettes-haiku/test_live/`
+  (278 interactions each), and the fifteen `scores` baselines under
+  `.probatio/baseline-live/test_live/`. `.probatio/judges/` holds **no** `faithfulness` record, on
+  purpose; see below.
+  **Three defects in `src/probatio` were found by dogfooding, not by review.** The cassette store's
+  active case covered only the system under test, so every judge call and every relation-variant
+  call reached it with no case to file under — nine phases had never exercised a cassette store
+  together with a judge or a relation (DECISIONS 90). `validate-judge --run-judge` propagated an
+  unparsable judge reply, so one bad row in forty ended a forty-row run (DECISIONS 92). And
+  `ClaudeCLIProvider`'s timeout had been a constructor argument since Phase 2 with no flag reaching
+  it, which is now `--probatio-timeout` (DECISIONS 95). Two smaller fixes: the validation record's
+  `labels_file` goes through `artefacts.display_path` (DECISIONS 93), and `Judge.parse` quotes the
+  reply it could not parse (DECISIONS 94).
+  **Route A stays the headline and Route B is real.** Changing one flag from `claude-opus-5` to
+  `claude-haiku-4-5-20251001` moved the verdict on 4 of 15 cases, drifted 8 of 15 snapshots, took
+  `paraphrase_invariant` from 0.04 to 0.30 and `format_jitter` from 0.13 to 0.31, and cost
+  $0.987356 against $6.037457 in notional API price. All five haiku assertion failures are the
+  judge, and the one case that moved the other way is `g-md-018`, whose answer matched 0 of 38
+  escalation phrases under opus and 1 of 38 under haiku.
+  **The judge is reported as unvalidated, and it is.** Sample 1 gave kappa 0.600 / agreement 0.800
+  with 8 of 40 rows re-asked, and its record is committed. Sample 2 was attempted six times and
+  completed once, at kappa 0.253 / agreement 0.675 with 5 re-asked; that record was not committed
+  because `labels_file` carried a machine path, and the three attempts made after the root fix all
+  failed. Rather than raise the re-ask bound until a number appeared, `.probatio/judges/` was left
+  empty, so every live run prints fifteen unvalidated-judge warnings and all fifteen judge results
+  carry `unenforceable=True`. The two kappas reverse the ordering the GPT-4o-mini judge gave on the
+  same labels (0.350 and 0.592), which `docs/EVALUATION.md` §4 leads with, caveated by the fact
+  that Consilium ran two rubrics where Probatio ran one.
+  **2 of 45 frozen paraphrases were deleted at human review**, each noted in its file's header.
+  New `docs/EVALUATION.md` and `docs/CASE_STUDY.md` §§2–5, both with provenance tests
+  (`tests/test_docs_evaluation.py`, 17 tests; `tests/test_docs_case_study.py`, now 27) that parse
+  every number out of the prose and re-derive it from the artefact named beside it; seven were
+  provoked by editing a document and seen to fail. The unpushed range was rewritten once to drop a
+  validation record that carried a home directory; `git log origin/main..main -S '/Users/...'`
+  is empty. DECISIONS 87–95; `docs/DESIGN.md` Phase 12; new `docs/EVALUATION.md`,
+  `examples/consilium/live/README.md`.
