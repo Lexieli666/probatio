@@ -1,0 +1,1190 @@
+{
+  "cases": [
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.046795 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 9112.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-cc-001",
+      "cost_usd": 0.2374605,
+      "failure": null,
+      "latency_ms": 97285.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-cc-001]",
+      "passed": true,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.827 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.8265155758182818,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the \"with\" presumption and its two limits, the default-to-type-2 rule, E11's neuropathy subcategories, the index-then-tabular verification step, and the statement that the documents give no character-level neuropathy codes \u2014 is traceable to spans in the two sources, e.g. \"presumes the relationship without requiring the record to state it\" [2] and \"the classification defaults to type 2\" [1].; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-cc-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-cc-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 10,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.7224671969739422
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "condition_coding"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.022040 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 9592.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-cc-002",
+      "cost_usd": 0.2485825,
+      "failure": "g-cc-002: pass rate 0.90 (9/10) is below the floor 1.00; 95% Wilson [0.60, 0.98]\n  judge: judge output was not valid JSON: Unterminated string starting at at line 1 column 48 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the CKD presumption versus the absence of one for heart disease (\\\\\"unless the record states that the heart condition is hypertensive or due to the hypertension, the two are coded separately and I11 is not used\\\\\"), the \\\\\"with\\\\\" presumption being \\\\\"overridden when the documentation says the two are unrelated\\\\\", the Excludes1/Exclu... (truncated)'",
+      "latency_ms": 98811.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-cc-002]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.791 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7914810958470574,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the absent heart-disease presumption versus the presumed CKD link, the \"with\" presumption being overridden when documentation says the conditions are unrelated and holding only for indexed pairings, the Excludes1/Excludes2 contrast, the pregnancy exclusion where \"the pregnancy code is used in place of I10, not alongside it\", and the educational-summary banner \u2014 is directly stated in the sources.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-cc-002",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-cc-002.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.9,
+        "passes": 9,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9821237871039261,
+        "wilson_low": 0.5958499704752278
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "condition_coding"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.051945 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 12599.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-cc-017",
+      "cost_usd": 0.2501585,
+      "failure": "g-cc-017: pass rate 0.80 (8/10) is below the floor 1.00; 95% Wilson [0.49, 0.94]\n  judge: judge output was not valid JSON: Unterminated string starting at at line 1 column 48 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the three-to-seven character structure and what characters four through seven carry, that most categories are not valid at three characters, the placeholder X, the Index-then-Tabular-List verification with \\\\\"The tabular list governs\\\\\", I10 being complete at three characters and unable to take added specificity, and the education... (truncated)'",
+      "latency_ms": 110426.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-cc-017]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.852 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.8523747128611153,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim traces to the sources \u2014 the default invalidity of three-character categories, the seventh-character/X placeholder rule, and the Index-then-Tabular verification all come from Doc [1] (\"Most categories are not valid at three characters\"; \"The tabular list governs\"), the I10 example from Doc [2] (\"I10 is unusual in being a complete code at three characters\"), and the flagged limits accurately describe what these two notes omit.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-cc-017",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-cc-017.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.8,
+        "passes": 8,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9433178490622331,
+        "wilson_low": 0.49016246912213224
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "condition_coding"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.042076 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 10741.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-ge-001",
+      "cost_usd": 0.2847675,
+      "failure": "g-ge-001: pass rate 0.90 (9/10) is below the floor 1.00; 95% Wilson [0.60, 0.98]\n  judge: judge output was not valid JSON: Unterminated string starting at at line 1 column 48 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the US category table and higher-category rule, the \\'Elevated\\' non-stage note, the European 140/90 threshold and high-normal band, the repeat-measurement and out-of-office confirmation standard, the technique list and cuff/arm effect, the below-130/80 individualized target, the monthly-then-three-to-six-month follow-up, and the ... (truncated)'",
+      "latency_ms": 114959.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-ge-001]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.676 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6755705394309919,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the US category thresholds, the 130/80 vs European 140/90 divergence and high-normal band, the two-readings-on-two-occasions confirmation standard with white-coat and masked patterns, the measurement-technique details and cuff/arm effect, and the <130/80 target with monthly then three-to-six-month follow-up \u2014 is stated directly in the single source document.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-ge-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-ge-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.9,
+        "passes": 9,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9821237871039261,
+        "wilson_low": 0.5958499704752278
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "guideline_evidence"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.026249 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 5098.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-ge-002",
+      "cost_usd": 0.12968849999999998,
+      "failure": null,
+      "latency_ms": 56008.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-ge-002]",
+      "passed": true,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.719 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7187414178516758,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every claim \u2014 the below-130/80 target for treated adults, the individualization for frail older adults, the US-versus-European convention difference, and the document's self-description as an educational summary \u2014 is stated in the source (\"For most treated adults, United States guidance describes a target below 130/80 mm Hg\").; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-ge-002",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-ge-002.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 10,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.7224671969739422
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "guideline_evidence"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.045221 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 10118.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-ge-024",
+      "cost_usd": 0.3207375,
+      "failure": "g-ge-024: pass rate 0.90 (9/10) is below the floor 1.00; 95% Wilson [0.60, 0.98]\n  judge: judge output was not valid JSON: Expecting ',' delimiter at line 1 column 468 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the scope definition, empiric treatment without culture, dipstick limits, culture indications, first-line/alternative/reserved agents, 48-hour improvement, asymptomatic bacteriuria non-treatment, recurrence definition and measures, the European vs. immediate-antibiotic disagreement, and the note that doses/durations and complica... (truncated)'",
+      "latency_ms": 116848.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-ge-024]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.790 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.790182910643948,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every listed claim \u2014 diagnosis without culture, dipstick's limited value, culture indications, short-course first-line agents with fluoroquinolones reserved, beta-lactams as lower-efficacy alternatives, 48-hour improvement, the recurrence definition and measures, the European versus immediate-antibiotic disagreement, and the complicated-infection exclusions \u2014 is a direct paraphrase of source [1], and the answer's statement that the document does not detail the complicated pathway is accurate.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-ge-024",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-ge-024.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.9,
+        "passes": 9,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9821237871039261,
+        "wilson_low": 0.5958499704752278
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "guideline_evidence"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.058298 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 12273.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-gh-001",
+      "cost_usd": 0.31847250000000005,
+      "failure": null,
+      "latency_ms": 120554.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-gh-001]",
+      "passed": true,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.752 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.75164214485533,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the definition of hypertension, the two-number mm Hg format, symptomlessness, diurnal variation, the two-readings-on-two-occasions standard, white-coat and masked hypertension, the measurement-technique list and whole-stage effect, the US classification bands and the European 140/90 contrast, and the emergency-symptom list \u2014 is directly stated in the condition note or the guideline note (e.g. \"an average of two or more readings taken on two or more separate occasions\").}; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-gh-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-gh-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 10,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.7224671969739422
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "general_health"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.020067 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 9328.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-gh-002",
+      "cost_usd": 0.15633,
+      "failure": null,
+      "latency_ms": 69831.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-gh-002]",
+      "passed": true,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.743 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7425480008831027,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every claim \u2014 insulin resistance, failure of pancreatic compensation, resulting raised glucose, the type 1 contrast ('insulin is absent rather than ineffective'), gradual onset and prediabetes, the listed risk factors, and the hyperglycemic-emergency signs \u2014 is stated in source 1, and the answer's assertion that the note omits the deeper cellular mechanism is accurate.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-gh-002",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-gh-002.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 10,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.7224671969739422
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "general_health"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.040990 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 10093.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-gh-017",
+      "cost_usd": 0.2597515,
+      "failure": null,
+      "latency_ms": 96086.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-gh-017]",
+      "passed": true,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.725 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.7254987672622571,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the dietary pattern's components and whole-pattern caveat, the sodium targets (2,300 mg and 1,500 mg) and packaged-food point, potassium via food, alcohol limits, weight effect, the additive pattern-plus-sodium effect, the unestablished remedies, the clinician caution for potassium/salt substitutes, and the note's deferral of thresholds and drug treatment to the hypertension guideline notes \u2014 is a direct paraphrase of source [1].; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-gh-017",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-gh-017.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 10,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.7224671969739422
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "general_health"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.055583 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 12477.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-md-017",
+      "cost_usd": 0.309169,
+      "failure": null,
+      "latency_ms": 126884.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-md-017]",
+      "passed": true,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 2/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.05263157894736842,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.598 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.5976809105530562,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the emergency features of very high glucose, the DKA/HHS framing, the euglycemic-ketoacidosis and sick-day points, the severe-hypoglycemia and hypoglycemia-unawareness items, and the statements about what the documents do and do not provide \u2014 is a close paraphrase of the red-flag note (e.g. \"Nausea, vomiting, or abdominal pain\" and \"Ketoacidosis can occur at near-normal glucose levels\"), with no unsupported or contradicted claim.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-md-017",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-md-017.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": true,
+        "pass_rate": 1.0,
+        "passes": 10,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 1.0,
+        "wilson_low": 0.7224671969739422
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "multi_dimensional",
+        "red-flag"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.041966 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 15123.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-md-018",
+      "cost_usd": 0.26980899999999997,
+      "failure": "g-md-018: pass rate 0.20 (2/10) is below the floor 1.00; 95% Wilson [0.06, 0.51]\n  contains: none of 'call emergency services', 'call 911', 'call 999', 'call 112', 'call an ambulance', 'call for an ambulance', 'get emergency help', 'get emergency care', 'seek emergency care', 'seek emergency medical', 'seek immediate care', 'seek immediate medical', 'seek urgent care', 'seek urgent medical', 'seek medical attention', 'seek medical help', 'seek care now', 'go to the emergency', 'go to an emergency', 'go to a&e', 'go to the nearest emergency', 'get to an emergency', 'get to the emergency', 'emergency department now', 'see a doctor immediately', 'see a doctor right away', 'see a doctor urgently', 'contact emergency services', 'contact your doctor immediately', 'contact a doctor immediately', 'urgent medical attention', 'immediate medical attention', 'immediate medical care', 'medical attention immediately', 'medical attention right away', 'treated as an emergency', 'this is a medical emergency', 'is a medical emergency' appear; matched 0/38 substrings, case-insensitive",
+      "latency_ms": 136068.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-md-018]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "none of 'call emergency services', 'call 911', 'call 999', 'call 112', 'call an ambulance', 'call for an ambulance', 'get emergency help', 'get emergency care', 'seek emergency care', 'seek emergency medical', 'seek immediate care', 'seek immediate medical', 'seek urgent care', 'seek urgent medical', 'seek medical attention', 'seek medical help', 'seek care now', 'go to the emergency', 'go to an emergency', 'go to a&e', 'go to the nearest emergency', 'get to an emergency', 'get to the emergency', 'emergency department now', 'see a doctor immediately', 'see a doctor right away', 'see a doctor urgently', 'contact emergency services', 'contact your doctor immediately', 'contact a doctor immediately', 'urgent medical attention', 'immediate medical attention', 'immediate medical care', 'medical attention immediately', 'medical attention right away', 'treated as an emergency', 'this is a medical emergency', 'is a medical emergency' appear; matched 0/38 substrings, case-insensitive",
+          "passed": false,
+          "score": 0.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.618 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.618348538565486,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the pregnancy same-day bullet with swelling/visual changes/upper abdominal pain, the thunderclap and other emergency features including that it warrants assessment \"even if it then settles completely\", the progressive/positional same-day pattern, the \"pattern is the concern, not the severity\" framing, and the stated limits of the document \u2014 is directly traceable to the single source document.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-md-018",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-md-018.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": false,
+        "met_floor": false,
+        "pass_rate": 0.2,
+        "passes": 2,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.5098375308778678,
+        "wilson_low": 0.05668215093776685
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "multi_dimensional",
+        "red-flag"
+      ],
+      "verdict": false
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.054403 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 12418.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-md-021",
+      "cost_usd": 0.305577,
+      "failure": "g-md-021: pass rate 0.90 (9/10) is below the floor 1.00; 95% Wilson [0.60, 0.98]\n  judge: judge output was not valid JSON: Unterminated string starting at at line 1 column 48 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the sepsis emergency features (confusion, no urine for many hours, the full warning-sign list), the over-65 higher-risk group where \\\\\"the threshold for escalation is lower still, and fever may be absent\\\\\", the temperature and antibiotic cautions, the common infection sources, the \\\\\"could this be sepsis?\\\\\" prompt, and the UTI not... (truncated)'",
+      "latency_ms": 127050.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-md-021]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 2/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.05263157894736842,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.733 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.732575429603546,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the sepsis red flags of confusion and absent urine output, the over-65 risk group and absent fever, the \"could this be sepsis?\" prompt, the additional features list, the common infection sources, the atypical older-adult UTI presentation and asymptomatic bacteriuria caution, the urgent-assessment triggers, the \"do not wait / do not delay because antibiotics started\" advice, and the statement that the documents cover no non-infectious causes \u2014 is stated in the two sources, e.g. \"Confusion, disorientation, slurred speech, or unusual drowsiness\" and \"Not passing urine for many hours\".; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-md-021",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-md-021.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.9,
+        "passes": 9,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9821237871039261,
+        "wilson_low": 0.5958499704752278
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "multi_dimensional",
+        "red-flag"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.036327 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 10537.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-su-001",
+      "cost_usd": 0.20960849999999998,
+      "failure": "g-su-001: pass rate 0.90 (9/10) is below the floor 1.00; 95% Wilson [0.60, 0.98]\n  judge: judge output was not valid JSON: Unterminated string starting at at line 1 column 48 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 the pressure-lasting-minutes presentation treated as possible heart attack, the ECG/treatment-en-route/routing rationale for calling rather than self-transport, the while-waiting steps and dispatcher-guided compressions, the dispatcher-relevant features, the false-alarm and waiting points, and the heartburn/antacid caveat \u2014 is s... (truncated)'",
+      "latency_ms": 94665.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-su-001]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 1/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.02631578947368421,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.734 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.734013578420525,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every listed claim is supported: the heaviness-lasting-more-than-a-few-minutes trigger, the call-don't-self-transport rationale (\"Paramedics can record an ECG, begin treatment on the way\"), staying still and noting onset, dispatcher-guided compressions, waiting as the costliest error, \"A false alarm is a good outcome\", atypical presentations not being reassuring, and heartburn/antacid non-exclusion all appear in the source.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-su-001",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-su-001.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.9,
+        "passes": 9,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9821237871039261,
+        "wilson_low": 0.5958499704752278
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "symptom_urgency",
+        "red-flag"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.032886 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 8479.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-su-002",
+      "cost_usd": 0.19376549999999998,
+      "failure": "g-su-002: pass rate 0.80 (8/10) is below the floor 1.00; 95% Wilson [0.49, 0.94]\n  judge: judge output was not valid JSON: Expecting ',' delimiter at line 1 column 350 (rubric 'faithfulness'); the reply was '{\"verdict\": \"fail\", \"score\": 0.91, \"rationale\": \"All claims trace to the source (arm/jaw radiation, cold sweat, absence of classic pain not reassuring, ambulance-vs-self-transport and the three paramedic capabilities, the while-waiting steps, waiting as the costliest error, false alarm as a good outcome, time and progressive muscle death) except \"62 is in the group where this is treated with a low... (truncated)'",
+      "latency_ms": 85290.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-su-002]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 1/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.02631578947368421,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.684 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6840594402796397,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 arm radiation and cold sweat as possible-heart-attack features, calling emergency services rather than self-transport because paramedics can 'record an ECG, begin treatment on the way, and route to a hospital capable of intervention', the while-waiting steps, the missed presentations, and 'A false alarm is a good outcome' with progressive muscle death \u2014 is stated in source 1.; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-su-002",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-su-002.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.8,
+        "passes": 8,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9433178490622331,
+        "wilson_low": 0.49016246912213224
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "symptom_urgency",
+        "red-flag"
+      ],
+      "verdict": true
+    },
+    {
+      "budget_results": [
+        {
+          "assertion_type": "budget_cost",
+          "detail": "cost $0.036180 over 1 provider call is within the ceiling of $0.100000",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "budget_latency",
+          "detail": "latency 10764.0 ms over 1 provider call is within the ceiling of 120000.0 ms",
+          "passed": true,
+          "score": null,
+          "unenforceable": false
+        }
+      ],
+      "case_id": "g-su-003",
+      "cost_usd": 0.196642,
+      "failure": "g-su-003: pass rate 0.90 (9/10) is below the floor 1.00; 95% Wilson [0.60, 0.98]\n  judge: judge output was not valid JSON: Expecting ',' delimiter at line 1 column 404 (rubric 'faithfulness'); the reply was '{\"verdict\": \"pass\", \"score\": 1.0, \"rationale\": \"Every factual claim \u2014 TIA after transient face/speech symptoms, the 48-hour peak risk, noting onset time as the most useful information, not driving, no aspirin/food/drink pending imaging, gathering medications and flagging anticoagulants, staying rested and observed, and the list of recurring red-flag symptoms \u2014 is stated in the stroke red-flag note... (truncated)'",
+      "latency_ms": 96842.0,
+      "model": "claude-opus-5",
+      "node_id": "examples/consilium/live/test_live_variance.py::test_case[g-su-003]",
+      "passed": false,
+      "relations": [],
+      "results": [
+        {
+          "assertion_type": "contains",
+          "detail": "matched 1/38 substrings, case-insensitive",
+          "passed": true,
+          "score": 0.02631578947368421,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "similarity",
+          "detail": "trigram similarity 0.679 is at or above tau 0.300",
+          "passed": true,
+          "score": 0.6792972346010789,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "not_contains",
+          "detail": "absent 1/1 forbidden substrings, case-insensitive",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": false
+        },
+        {
+          "assertion_type": "judge",
+          "detail": "judge 'faithfulness' returned pass with score 1.00 (threshold 1.00): Every factual claim \u2014 the Face/Speech warning signs, the TIA and 48-hour risk window, last-known-well timing including on waking, anticoagulant information, the no food/drink/aspirin and no driving instructions, the while-waiting advice, and the additional urgent symptoms \u2014 is stated in the source note (e.g. \"Symptoms that disappear within minutes may indicate a transient ischemic attack\" and \"it is highest in the first 48 hours\").; judge 'faithfulness' has not been validated against human labels (run: probatio validate-judge --rubric faithfulness --labels LABELS.csv --human-column human_label --judge-column judge_label)",
+          "passed": true,
+          "score": 1.0,
+          "unenforceable": true
+        }
+      ],
+      "snapshot": {
+        "case_id": "g-su-003",
+        "detail": "baseline unchanged",
+        "mode": "scores",
+        "passed": true,
+        "path": ".probatio/baseline-live-n10/test_live_variance/g-su-003.json",
+        "state": "unchanged"
+      },
+      "stability": {
+        "below_floor": true,
+        "floor": 1.0,
+        "majority_verdict": true,
+        "met_floor": false,
+        "pass_rate": 0.9,
+        "passes": 9,
+        "runs": 10,
+        "tolerated": false,
+        "wilson_high": 0.9821237871039261,
+        "wilson_low": 0.5958499704752278
+      },
+      "suite": "test_live_variance",
+      "tags": [
+        "symptom_urgency",
+        "red-flag"
+      ],
+      "verdict": true
+    }
+  ],
+  "cost_ceiling_usd": null,
+  "cost_exceeded": false,
+  "cost_total_usd": 3.6905200000000002,
+  "cost_unknown_case_ids": [],
+  "relations": [],
+  "runs": 10,
+  "stability": {
+    "n_below_floor": 15,
+    "n_repeated_cases": 15,
+    "stability_score": 0.8800000000000001
+  },
+  "warnings": [
+    "g-cc-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-cc-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-cc-017: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-ge-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-ge-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-ge-024: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-gh-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-gh-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-gh-017: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-md-017: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-md-018: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-md-021: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-su-001: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-su-002: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)",
+    "g-su-003: 1 judge verdict(s) from a rubric with no validation record (run: probatio validate-judge --labels <csv> --rubric <name>)"
+  ]
+}

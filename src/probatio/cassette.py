@@ -15,7 +15,9 @@ five samples and replay hands back ``completions[run_index % len(completions)]``
 nondeterminism the recording saw is reproduced at zero cost. A tape with one sample replayed under
 several runs can only report a pass rate of 0 or 1, which is a true statement about a one-sample
 measurement and a misleading one to print without a caveat, so the store records a note
-(:data:`SINGLE_SAMPLE_NOTE`) that Phase 9's reporter surfaces.
+(:data:`SINGLE_SAMPLE_NOTE`) that Phase 9's reporter surfaces — for the system under test only,
+since a judge's prompt carries the answer it grades and so keys one interaction per run by
+construction (DECISIONS 106).
 
 **A miss is never a call.** Replay never touches ``inner``. A key the tape does not carry is
 :class:`~probatio.errors.StaleCassetteError` and a case with no file is
@@ -530,6 +532,13 @@ class CassetteStore:
         Returns:
             The sample this run replays, with the latency the tape recorded.
 
+            A one-sample interaction replayed under a later run adds
+            :data:`SINGLE_SAMPLE_NOTE` to :attr:`notes` — unless a judge is speaking. A judge
+            prompt carries the answer it is grading, so a suite recorded under ``--runs N`` whose
+            answers differed leaves one judge interaction *per run*, each with one sample and each
+            replayed only at its own run index. Noting those would tell the reader that a case's
+            pass rate can only be 0 or 1 while the report beside it prints 0.90 (DECISIONS 106).
+
         Raises:
             MissingCassetteError: The case has no tape at all.
             StaleCassetteError: The tape exists but holds no interaction for this call.
@@ -554,7 +563,7 @@ class CassetteStore:
                 case_id=case.case_id,
                 fix=self.record_command,
             )
-        if len(interaction.completions) == 1 and case.run_index > 0:
+        if len(interaction.completions) == 1 and case.run_index > 0 and self._template is None:
             self._note(
                 f"{case.case_id}: {SINGLE_SAMPLE_NOTE} replayed for every run, so its pass rate "
                 "can only be 0 or 1"
