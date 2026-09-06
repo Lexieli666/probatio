@@ -453,3 +453,161 @@ def test_section_5_variant_count_is_the_one_the_replay_measured() -> None:
     variants = sum(r["n_variants"] for r in live_results()["relations"])
     flat = " ".join(SECTION_5.split())
     assert int(re.search(r"(\d+) variants, evaluated once", flat).group(1)) == variants
+
+
+# -- Phase 12: section 2, Route B -----------------------------------------------------------------
+
+CHANGED_RESULTS: Final = LIVE / "results" / "live-changed.json"
+SECTION_2: Final = section("## 2. Route B", "## 3. What the relations")
+
+
+def changed_results() -> dict[str, Any]:
+    """The haiku replay §2 is written from."""
+    return dict(json.loads(CHANGED_RESULTS.read_text(encoding="utf-8")))
+
+
+def by_case(report: dict[str, Any]) -> dict[str, Any]:
+    """A report's cases, keyed by case id."""
+    return {case["case_id"]: case for case in report["cases"]}
+
+
+def test_section_2_comparison_table_is_both_committed_reports() -> None:
+    """Every cell of §2.2 is read back out of live-baseline.json and live-changed.json."""
+    base, changed = live_results(), changed_results()
+    rows = {cells[0]: cells[1:] for cells in table_rows(SECTION_2, 3)}
+
+    verdicts = rows["cases whose **verdict** passed"]
+    for column, report in zip(verdicts, (base, changed), strict=True):
+        passed, total = (int(n) for n in re.match(r"(\d+) of (\d+)", column).groups())
+        assert total == len(report["cases"])
+        assert passed == sum(1 for c in report["cases"] if c["verdict"])
+
+    failed = rows["cases the report **failed**"]
+    for column, report in zip(failed, (base, changed), strict=True):
+        assert int(column) == sum(1 for c in report["cases"] if not c["passed"])
+
+    drifted = rows["snapshots `scores_changed`"][1]
+    assert int(re.match(r"(\d+) of", drifted).group(1)) == sum(
+        1 for c in changed["cases"] if c["snapshot"]["state"] == "scores_changed"
+    )
+
+    for report, column in ((base, 0), (changed, 1)):
+        for relation in report["relations"]:
+            cell = rows[f"`{relation['relation']}`"][column]
+            counted, rate = re.match(r"(\d+/\d+) \(([\d.]+)\)", cell).groups()
+            assert counted == f"{relation['n_violations']}/{relation['n_variants']}"
+            assert float(rate) == round(relation["mean_violation_rate"], 2)
+
+    costs = rows["notional cost of the recording"]
+    for column, report in zip(costs, (base, changed), strict=True):
+        assert float(column.lstrip("$")) == round(report["cost_total_usd"], 6)
+
+
+def test_section_2_names_the_three_cases_failed_only_by_a_drifted_snapshot() -> None:
+    """A case that passes every assertion and is still failed is the snapshot's doing."""
+    changed = by_case(changed_results())
+    snapshot_only = sorted(
+        cid
+        for cid, case in changed.items()
+        if case["verdict"] and not case["passed"] and case["snapshot"]["state"] != "unchanged"
+    )
+    flat = " ".join(SECTION_2.split())
+    stated = re.search(r"Three cases — (.+?) — pass every assertion", flat).group(1)
+    assert sorted(re.findall(r"g-[a-z]{2}-\d{3}", stated)) == snapshot_only
+    assert len(snapshot_only) == 3
+
+
+def test_section_2_judge_table_is_the_two_reports_judge_results() -> None:
+    """Five cases, all five on the judge, with both scores as recorded."""
+    base, changed = by_case(live_results()), by_case(changed_results())
+    rows = {
+        cells[0].strip("`"): cells[1:]
+        for cells in table_rows(SECTION_2, 3)
+        if re.fullmatch(r"`g-[a-z]{2}-\d{3}`", cells[0])
+    }
+    failing = sorted(
+        cid for cid, case in changed.items() if any(not r["passed"] for r in case["results"])
+    )
+    assert sorted(rows) == failing
+    assert len(rows) == 5
+
+    for cid, (opus_cell, haiku_cell) in rows.items():
+        opus = next(r for r in base[cid]["results"] if r["assertion_type"] == "judge")
+        haiku = next(r for r in changed[cid]["results"] if r["assertion_type"] == "judge")
+        assert opus["passed"] is True and haiku["passed"] is False, cid
+        assert float(re.search(r"score ([\d.]+)", opus_cell).group(1)) == round(opus["score"], 2)
+        assert float(re.search(r"score ([\d.]+)", haiku_cell).group(1)) == round(haiku["score"], 2)
+        failed_types = {r["assertion_type"] for r in changed[cid]["results"] if not r["passed"]}
+        assert failed_types == {"judge"}, (cid, failed_types)
+
+
+def test_section_2_quotes_two_judge_details_verbatim() -> None:
+    """The two blockquoted rationales are substrings of the recorded assertion details."""
+    changed = by_case(changed_results())
+    blocks: list[str] = []
+    current: list[str] = []
+    for line in SECTION_2.splitlines():
+        if line.startswith(">"):
+            current.append(line.lstrip(">").strip())
+        elif current:
+            blocks.append(" ".join(current))
+            current = []
+    if current:
+        blocks.append(" ".join(current))
+    quoted = [
+        m.groups()
+        for m in (re.match(r"`(g-[a-z]{2}-\d{3})` — \"(.+)\"$", block) for block in blocks)
+        if m
+    ]
+    assert len(quoted) == 2, "the section quotes two details; the parser found a different number"
+    for cid, quote in quoted:
+        detail = next(r for r in changed[cid]["results"] if r["assertion_type"] == "judge")[
+            "detail"
+        ]
+        wanted = " ".join(quote.replace('\\"', '"').split())
+        assert wanted in " ".join(detail.split()), cid
+
+
+def test_section_2_escalation_reversal_on_g_md_018_is_what_both_runs_recorded() -> None:
+    """Opus matched 0 of 38 escalation phrases; haiku matched 1, and §2 says both numbers."""
+    base = next(
+        r
+        for r in by_case(live_results())["g-md-018"]["results"]
+        if r["assertion_type"] == "contains"
+    )
+    changed = next(
+        r
+        for r in by_case(changed_results())["g-md-018"]["results"]
+        if r["assertion_type"] == "contains"
+    )
+    assert base["passed"] is False and changed["passed"] is True
+    matched, total = (
+        int(n) for n in re.search(r"matched (\d+)/(\d+) substrings", changed["detail"]).groups()
+    )
+    flat = " ".join(SECTION_2.split())
+    assert f"**0 of the {total}**" in flat
+    assert f"matching {matched} of {total}" in flat
+
+
+def test_section_2_cost_ratio_is_the_one_the_two_totals_give() -> None:
+    base, changed = live_results(), changed_results()
+    ratio = base["cost_total_usd"] / changed["cost_total_usd"]
+    flat = " ".join(SECTION_2.split())
+    assert "$0.99" in flat and "$6.04" in flat
+    assert round(ratio) == 6
+    assert "six times" in flat
+
+
+def test_section_2_paraphrase_rates_it_contrasts_are_the_measured_ones() -> None:
+    rates = {
+        report["relations"][0]["relation"]: report for report in (live_results(), changed_results())
+    }
+    del rates
+    base = next(r for r in live_results()["relations"] if r["relation"] == "paraphrase_invariant")
+    changed = next(
+        r for r in changed_results()["relations"] if r["relation"] == "paraphrase_invariant"
+    )
+    flat = " ".join(SECTION_2.split())
+    low, high = re.search(r"goes from ([\d.]+) to ([\d.]+)", flat).groups()
+    assert float(low) == round(base["mean_violation_rate"], 2)
+    assert float(high) == round(changed["mean_violation_rate"], 2)

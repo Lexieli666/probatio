@@ -38,9 +38,7 @@ MODEL = "claude-opus-5"
 def live(pytester: pytest.Pytester) -> Path:
     """A copy of the live suite and its committed baselines in a temporary rootdir."""
     target = pytester.path / "live"
-    shutil.copytree(
-        LIVE, target, ignore=shutil.ignore_patterns("__pycache__", "results", "cassettes-haiku")
-    )
+    shutil.copytree(LIVE, target, ignore=shutil.ignore_patterns("__pycache__", "results"))
     baselines = pytester.path / ".probatio" / "baseline-live" / "test_live"
     shutil.copytree(BASELINES / "test_live", baselines)
     return target
@@ -129,3 +127,38 @@ def test_the_same_run_against_no_tapes_raises_rather_than_answering(
     )
     assert result.ret != 0
     result.stdout.fnmatch_lines(["*MissingCassetteError*"])
+
+
+def test_the_route_b_tapes_replay_to_the_committed_changed_report(
+    pytester: pytest.Pytester, live: Path
+) -> None:
+    """Route B is only evidence if its tapes still produce the report the case study quotes.
+
+    The haiku tapes replay against the **opus** baselines, which is what makes the snapshot column
+    say `scores_changed` rather than `unchanged`; that drift is §2's subject, so it is asserted
+    rather than tolerated.
+    """
+    results = pytester.path / "changed.json"
+    pytester.runpytest_subprocess(
+        "live",
+        "--cassette-dir",
+        "live/cassettes-haiku",
+        "--baseline-dir",
+        ".probatio/baseline-live",
+        "--probatio-model",
+        "claude-haiku-4-5-20251001",
+        "--probatio-results",
+        str(results),
+    )
+    replayed = read_results(results)
+    committed = read_results(LIVE / "results" / "live-changed.json")
+
+    assert {c.case_id: c.verdict for c in replayed.cases} == {
+        c.case_id: c.verdict for c in committed.cases
+    }
+    assert {c.case_id: (c.snapshot.state if c.snapshot else None) for c in replayed.cases} == {
+        c.case_id: (c.snapshot.state if c.snapshot else None) for c in committed.cases
+    }
+    assert {r.relation: r.n_violations for r in replayed.relations} == {
+        r.relation: r.n_violations for r in committed.relations
+    }

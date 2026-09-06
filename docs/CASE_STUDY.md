@@ -7,12 +7,17 @@ is the evidence for that claim, and it labels each part of the evidence for what
 number and every quotation below comes from a file committed in this repository, named where it
 is used; nothing is quoted from memory or from a run that was not committed.
 
-Three routes were planned (`04-DOGFOOD-AND-CASE-STUDY.md` in the build package). Route A, below,
-is a **retrospective** catch: the regression was documented in Consilium-Health before Probatio
-existed, and this suite shows that it would have failed a CI run. Route B, a prospective catch on
-a live single-call system under test, and the relation and judge sections that go with it, are
-written in Phase 12 and are marked as pending here. Route C (Consilium's own fix, gated by this
-suite) is outside this project's timebox.
+Three routes were planned (`04-DOGFOOD-AND-CASE-STUDY.md` in the build package). Route A, §1, is a
+**retrospective** catch: the regression was documented in Consilium-Health before Probatio existed,
+and this suite shows that it would have failed a CI run. Route B, §2, is a **prospective** one: one
+model was swapped for a cheaper one on a live single-call system under test, and the suite reported
+what that cost. §3 and §4 give what the metamorphic relations and the rubric judge did on real
+model output, including the null results and a judge this project declined to call validated.
+Route C (Consilium's own fix, gated by this suite) is outside this project's timebox.
+
+Route A remains the headline claim, because it is the one about a real application's real
+regression. Route B is the demonstration that the same report would have been produced *before* a
+change shipped rather than after.
 
 ## 1. Route A: the red-flag regression, replayed
 
@@ -116,7 +121,95 @@ It is a retrospective catch and is labelled as one. The prospective catch, if an
 
 ## 2. Route B: a prospective catch on a live system under test
 
-*Pending Phase 12.*
+### 2.1 What changed
+
+One flag. `--probatio-model claude-opus-5` became
+`--probatio-model claude-haiku-4-5-20251001`, the fifteen cases were re-recorded into
+`examples/consilium/live/cassettes-haiku/`, and that recording was replayed against the **opus**
+baselines in `.probatio/baseline-live/`. Same cases, same documents, same frozen paraphrases, same
+rubric, same assertions, same thresholds. Nothing else moved.
+
+Both results files are committed: `examples/consilium/live/results/live-baseline.json` (opus) and
+`live-changed.json` (haiku), with the markdown reports beside them.
+
+### 2.2 What the report showed
+
+| | opus (baseline) | haiku (changed) |
+|---|---|---|
+| cases whose **verdict** passed | 14 of 15 | 10 of 15 |
+| cases the report **failed** | 1 | 8 |
+| snapshots `scores_changed` | — | 8 of 15 |
+| `distractor_robust` | 5/30 (0.17) | 7/30 (0.23) |
+| `format_jitter` | 6/45 (0.13) | 14/45 (0.31) |
+| `order_invariant` | 0/6 (0.00) | 0/6 (0.00) |
+| `paraphrase_invariant` | 2/43 (0.04) | 12/43 (0.30) |
+| notional cost of the recording | $6.037457 | $0.987356 |
+
+The two counts differ because a verdict is the exact assertions and nothing else (spec §0), while
+the report fails a case for a drifted snapshot too. Three cases — `g-cc-002`, `g-ge-002`,
+`g-gh-017` — pass every assertion under haiku and are still failed, on `scores_changed` alone.
+That is the snapshot doing the job it exists for: the answers changed enough to move the scores
+without moving any verdict, and a reviewer is told rather than left to notice.
+
+### 2.3 Which cases failed, and how
+
+Five cases fail their assertions under haiku. **All five fail on the judge, and only on the
+judge.** No `similarity`, `not_contains` or `contains` assertion failed under haiku that had passed
+under opus.
+
+| case | opus judge | haiku judge |
+|---|---|---|
+| `g-gh-002` | pass, score 1.00 | **fail, score 0.83** |
+| `g-md-018` | pass, score 1.00 | **fail, score 0.50** |
+| `g-md-021` | pass, score 1.00 | **fail, score 0.56** |
+| `g-su-002` | pass, score 1.00 | **fail, score 0.90** |
+| `g-su-003` | pass, score 1.00 | **fail, score 0.86** |
+
+Opus scored 1.00 on the judge for all fifteen cases. Haiku scored below threshold on five, and the
+rubric's own arithmetic explains the shape: `score` is supported claims over total claims, so 0.83
+and 0.90 are one claim the judge did not find supported in a long answer, while 0.50 and 0.56 are
+answers in which it rejected a whole section. The verbatim details, from `live-changed.json`:
+
+> `g-md-021` — "The section 'What would be assessed' contains multiple unsupported claims; the
+> sources list red flag symptoms but do not describe what an emergency assessment would include,
+> making claims about vital signs, kidney function, blood tests, and organ function unsupported."
+
+> `g-su-003` — "The answer claims that assessment will \"determine what caused these symptoms,\"
+> but the source does not explicitly identify cause determination as a purpose of urgent
+> assessment; it only discusses determining stroke type (clot or bleed) for treatment and reducing
+> subsequent stroke risk."
+
+Both rationales describe the same failure mode: the judge reads the smaller model as adding
+plausible clinical detail it cannot locate in the documents. Whether that is the right reading of
+those two answers is exactly what an unvalidated judge cannot settle (§4); what the suite reports
+is that the judge's verdict moved, and it names the sentence it moved on, which is the finding a
+team switching models to save money would want in front of them before shipping.
+
+**One case went the other way, and it is the one §1.3 wrote about.** `g-md-018` fails under both
+models but not for the same reason. Under opus it failed the escalation `contains` assertion,
+matching **0 of the 38** phrases; under haiku that assertion **passes**, matching 1 of 38. The
+haiku answer says something the phrase list recognises where the opus answer said the same thing in
+words the list does not contain. So on the one assertion that reproduces Consilium's published
+red-flag instrument, the cheaper model scored better — and it still failed the case, on the judge,
+which marked a claim about the document's own scope unsupported. A single headline verdict would
+have hidden both halves of that.
+
+### 2.4 What this is, and what it is not
+
+This is a **prospective** catch in form: the suite was written, then a change was made, then the
+suite reported on it, and nothing about the outcome was known in advance. It is a prospective catch
+on a system under test built for this purpose, not on a shipping application, and `app_live.py` is
+not Consilium's pipeline (§5). What it demonstrates is the mechanism: one flag changed, and one
+`pytest` run produced per-case verdicts, a per-case snapshot diff, four relation violation rates,
+five named judge failures with their reasons, and a six-fold cost difference, without a model being
+called.
+
+The cost line is worth stating plainly because it is the reason a team would make this change at
+all: recording against haiku cost $0.99 in notional API price against opus's $6.04, six times
+less for the same fifteen questions. The suite's answer is that the saving is real and so is the
+loss — the judge marks a third of the cases unfaithful to their sources, and the paraphrase
+violation rate, almost entirely judge-driven (§3), goes from 0.04 to 0.30 under rewordings that a
+human confirmed do not change the question.
 
 ## 3. What the relations did on real outputs
 
@@ -180,8 +273,8 @@ judge was measured against the same eighty blind human labels Consilium used to 
 | sample 1 | 40 | GPT-4o-mini, Consilium v1 rubric | 0.675 | 0.350 |
 | sample 2 | 40 | GPT-4o-mini, Consilium v2 rubric | 0.800 | 0.592 |
 
-**The two judges rank the two samples in opposite orders.** Probatio's judge is much better than
-Consilium's on sample 1 and much worse on sample 2. One caveat is load-bearing and is stated in
+**The two judges rank the two samples in opposite orders.** Probatio's judge agrees with the human
+labels far more closely than Consilium's on sample 1, and far less closely on sample 2. One caveat is load-bearing and is stated in
 full in `docs/EVALUATION.md` §4: Consilium ran *two different rubrics*, v1 on sample 1 and v2 on
 sample 2, and the rise from 0.350 to 0.592 is exactly what v2 was written to achieve, whereas
 Probatio ran one rubric on both. So the comparison has a moving comparator on one side. What

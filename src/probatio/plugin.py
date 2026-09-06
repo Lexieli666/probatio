@@ -169,6 +169,13 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         help="YAML price table making cost ceilings enforceable",
     )
     group.addoption(
+        "--probatio-timeout",
+        metavar="SECONDS",
+        type=float,
+        default=None,
+        help="seconds one provider call may take before it is killed (claude-cli only)",
+    )
+    group.addoption(
         "--cassette",
         default="replay",
         choices=CASSETTE_MODES,
@@ -432,7 +439,10 @@ def _build_provider(config: pytest.Config, *, judge: bool) -> Provider:
     if judge:
         name = str(config.getoption("--probatio-judge-provider") or name)
         model = config.getoption("--probatio-judge-model") or model
-    inner = build_provider(name, str(model) if model else None)
+    timeout = config.getoption("--probatio-timeout")
+    inner = build_provider(
+        name, str(model) if model else None, float(timeout) if timeout is not None else None
+    )
     taped = CassetteProvider(inner, state.store, settings.cassette_mode)
     return _ObservingProvider(taped, state)
 
