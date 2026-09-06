@@ -2189,3 +2189,103 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   written down so the next audit compares against a checked artefact rather than a recollection.
   Rejected alternative: reporting the prompt's list as confirmed and mentioning the payload in
   passing, which is how a sanctioned copy quietly becomes an unrecorded one.
+
+## 103. Two suites in `live/`, so every command in that directory names its module
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** DECISIONS 87 settled the collision between `examples/consilium` and the live suite
+  underneath it by putting `--ignore=examples/consilium/live` on the offline commands and leaving
+  `pytest examples/consilium/live` to collect only itself. Phase 15 adds a second module to that
+  directory, `test_live_variance.py`, whose tapes are in `cassettes-n10/` and whose baselines are
+  in `.probatio/baseline-live-n10/`. `pytest examples/consilium/live` now collects both, and one
+  `--cassette-dir` cannot serve them: every variance case would raise `MissingCassetteError`.
+  Which command moves this time?
+- **A:** Every command in `examples/consilium/live/README.md` now names its module —
+  `pytest examples/consilium/live/test_live.py` — and Phase 15's name theirs. All six Phase 12
+  commands were re-run in that form; the offline replay reproduces `results/live-baseline.json`
+  and `.md` byte for byte, which is checked against the committed files rather than assumed, and
+  `tests/test_consilium_live_replay.py`'s four `pytester` runs were changed the same way and still
+  pass. `docs/PROVENANCE.md`'s R3 carries the new form.
+- **Why:** It is DECISIONS 87's answer one level down, and the argument is the same: the flag or
+  the path belongs in the command a reader can see, not in a `conftest.py` above the suite that
+  silently excludes half of it. The rejected alternative — a `collect_ignore` in a new
+  `examples/consilium/live/conftest.py` — would make `pytest examples/consilium/live` mean
+  "the Phase 12 suite" for reasons invisible in the command, and would make the Phase 15 suite
+  reachable only by a path that contradicts the directory it lives in. Moving the variance suite
+  to a subdirectory of its own was rejected because it shares `cases/`, `rubrics/`, `app_live.py`
+  and the answers in `cassettes/test_live/` with the suite it varies, and a study separated from
+  what it studies is the arrangement DECISIONS 87 already turned down once.
+
+## 104. Experiment A carries no relation decorator and no `flaky_tolerant` marker
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** `test_live_variance.py` is `test_live.py` under `--runs 10`. Should it keep the four
+  relation decorators and the flakiness floor its sibling would carry?
+- **A:** Neither. The module has one parametrised test, `probatio.check`, and nothing else, and
+  its docstring says why.
+- **Why:** Two separate reasons that happen to point the same way. The relations multiply the work
+  by eleven — each run evaluates the original case and ten variants — so 300 live calls become
+  some 3,300, which is a different phase and a different rate-limit conversation; and the number
+  that came out would be a pass rate over a population that mixes run-to-run variation with
+  variant-to-variant variation, with no way to separate the two again, which is exactly the
+  confusion `docs/EVALUATION.md` §2 already says this suite cannot resolve. `flaky_tolerant` is
+  absent for a different reason: it changes the rule that decides the case, and here the pass
+  *rate* is the measurement, not the thing being ruled on. A floor of `p=0.8` would make eight
+  passes in ten a green case and hide the very distribution the study is for. Rejected
+  alternative: keeping the relations and reporting the variance of the relation rates too, which
+  is a real question and a different experiment, and would have cost eleven times the calls to
+  answer both badly.
+
+## 105. The variance suite's baselines come from an offline replay, not from the recording
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** The recording command carries `--baseline-dir .probatio/baseline-live-n10`, a directory
+  that does not exist, so the recording run records the baselines as it goes — from whatever the
+  first run of each case produced *in that invocation*. A recording that has to be resumed after a
+  rate limit then leaves half the baselines belonging to an earlier set of samples than the tapes
+  they sit beside, and the replay reports `scores_changed` for a reason that is an accident of how
+  the recording was interrupted.
+- **A:** Record the tapes, then record the baselines from an offline replay with
+  `--update-baseline`, then run the replay that writes the results. Three commands, all three in
+  `examples/consilium/live/README.md`, which is exactly the shape Phase 12 already used for
+  `test_live.py` (its steps 2, 3 and 5).
+- **Why:** A baseline is a claim about what the committed tapes produce, so it should be written
+  by a run that read the committed tapes. Deriving it from the recording couples it to the
+  invocation history rather than to the artefact, and the coupling is invisible until somebody
+  re-records one case. Rejected alternative: recording in one uninterrupted invocation and relying
+  on that, which is not a property of the procedure but of the day it was run on.
+
+## 106. The one-sample note is not made for a judge call
+
+- **Date:** 2026-09-06 (Phase 15)
+- **Q:** The first replay of experiment A printed, for all fifteen cases,
+  `<case>: 1 recorded sample replayed for every run, so its pass rate can only be 0 or 1` — beside
+  a table whose pass rates read 1.00, 0.90, 0.80 and 0.20. The tapes are right and the rates are
+  right; the note is wrong. Spec §3.8 asks for that note, so is the report at fault or the spec?
+- **A:** The report, and the condition was one term short. `CassetteStore.replay` noted any
+  interaction with a single sample replayed at a run index above zero. Under `--runs N` the
+  system-under-test call has a stable key and accumulates N samples, but a **judge** call's prompt
+  carries the answer it is grading, so a run whose answer differed is a different key: a case's
+  tape holds one judge interaction *per run*, each with exactly one sample, each replayed only at
+  its own run index. Every one of them tripped the note. The condition now also requires
+  `self._template is None`, which is exactly "no judge is speaking", and the note's sentence is
+  true again. `tests/test_cassette.py` gains a test that records three judge calls under three run
+  indices and asserts the store makes no note; it fails against the code as it stood.
+  `examples/consilium/live/results/live-n10.*` were re-recorded with the fix, and the fifteen
+  false lines are gone from `live-n10.md`.
+- **Why:** Spec §3.8's sentence — "a single-sample tape under `--runs N` therefore yields a pass
+  rate of exactly 0 or 1, and the report notes `1 recorded sample`" — is a statement about the
+  tape that answers the case. It was implemented as a statement about any interaction, which was
+  indistinguishable from the intended one until a suite recorded a judge under `--runs N`, and
+  nothing before this phase had. Suppressing the note for judge calls loses no real warning: a
+  judge tape with one sample and a *varying* answer cannot arise from a recording, and a
+  hand-built one would raise `StaleCassetteError` on the key rather than replay quietly, so the
+  case whose pass rate really is pinned to 0 or 1 is still the case whose system-under-test
+  interaction has one sample, and that one still notes.
+  **Rejected alternatives.** Rewording the note to be true of any interaction — "an interaction
+  with 1 recorded sample was replayed" — which keeps the phrase the spec asks for and drops the
+  only part a reader can act on. Suppressing the note whenever *some* interaction of the case has
+  more than one sample, which is a heuristic over the file rather than a fact about the call, and
+  would hide a genuinely pinned case in a suite that also grades. Leaving it and explaining the
+  discrepancy in `docs/EVALUATION.md`, which publishes a committed artefact that contradicts its
+  own table and asks the reader to trust the prose over the run.

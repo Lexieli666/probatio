@@ -278,6 +278,32 @@ def test_a_one_sample_tape_replayed_for_several_runs_is_noted(tmp_path: Path) ->
     assert "0 or 1" in fresh.notes[0]
 
 
+def test_a_one_sample_judge_interaction_is_not_noted(tmp_path: Path) -> None:
+    """A judge tape holds one sample per run by construction; saying so would be a false alarm.
+
+    Under ``--runs N`` the judge prompt carries the answer it is grading, so a run that produced a
+    different answer is a different key. Each of those interactions has one sample and is replayed
+    only at its own run index, and the note would tell the reader that the case's pass rate can
+    only be 0 or 1 when the report beside it prints a rate between the two (DECISIONS 106).
+    """
+    template = judge_template_hash()
+    recorder = store(tmp_path)
+    writer = CassetteProvider(fake("graded"), recorder, "record")
+    for run_index in range(3):
+        recorder.begin_case(SUITE, CASE, run_index)
+        with recorder.judge_calls(template):
+            writer.complete(f"grade answer {run_index}")
+    recorder.end_case()
+
+    fresh = store(tmp_path)
+    player = CassetteProvider(fake("wrong"), fresh, "replay")
+    for run_index in range(3):
+        fresh.begin_case(SUITE, CASE, run_index)
+        with fresh.judge_calls(template):
+            player.complete(f"grade answer {run_index}")
+    assert fresh.notes == [], fresh.notes
+
+
 # -- record ----------------------------------------------------------------------------------
 
 

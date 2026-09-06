@@ -27,6 +27,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SUITE = REPO_ROOT / "examples" / "consilium"
 LIVE = SUITE / "live"
 BASELINES = REPO_ROOT / ".probatio" / "baseline-live"
+VARIANCE_BASELINES = REPO_ROOT / ".probatio" / "baseline-live-n10"
 
 CASE_IDS = (SUITE / "CASES.txt").read_text(encoding="utf-8").split()
 RELATIONS = ("distractor_robust", "format_jitter", "order_invariant", "paraphrase_invariant")
@@ -36,11 +37,15 @@ MODEL = "claude-opus-5"
 
 @pytest.fixture
 def live(pytester: pytest.Pytester) -> Path:
-    """A copy of the live suite and its committed baselines in a temporary rootdir."""
+    """A copy of the live suite and both sets of committed baselines in a temporary rootdir."""
     target = pytester.path / "live"
     shutil.copytree(LIVE, target, ignore=shutil.ignore_patterns("__pycache__", "results"))
-    baselines = pytester.path / ".probatio" / "baseline-live" / "test_live"
-    shutil.copytree(BASELINES / "test_live", baselines)
+    baselines = pytester.path / ".probatio"
+    shutil.copytree(BASELINES / "test_live", baselines / BASELINES.name / "test_live")
+    shutil.copytree(
+        VARIANCE_BASELINES / "test_live_variance",
+        baselines / VARIANCE_BASELINES.name / "test_live_variance",
+    )
     return target
 
 
@@ -48,7 +53,7 @@ def run_live(pytester: pytest.Pytester, *extra: str) -> Path:
     """Replay the live suite against the copied tapes and return its results JSON."""
     results = pytester.path / "live.json"
     pytester.runpytest_subprocess(
-        "live",
+        "live/test_live.py",
         "--cassette-dir",
         "live/cassettes",
         "--baseline-dir",
@@ -117,7 +122,7 @@ def test_the_same_run_against_no_tapes_raises_rather_than_answering(
 ) -> None:
     """Replay never falls through to the inner provider; a missing tape is an error."""
     result = pytester.runpytest_subprocess(
-        "live",
+        "live/test_live.py",
         "--cassette-dir",
         "no-such-cassettes",
         "--baseline-dir",
@@ -140,7 +145,7 @@ def test_the_route_b_tapes_replay_to_the_committed_changed_report(
     """
     results = pytester.path / "changed.json"
     pytester.runpytest_subprocess(
-        "live",
+        "live/test_live.py",
         "--cassette-dir",
         "live/cassettes-haiku",
         "--baseline-dir",
@@ -162,3 +167,84 @@ def test_the_route_b_tapes_replay_to_the_committed_changed_report(
     assert {r.relation: r.n_violations for r in replayed.relations} == {
         r.relation: r.n_violations for r in committed.relations
     }
+
+
+# -- Phase 15, experiment A: the same fifteen cases recorded ten times ------------------------
+
+RUNS = 10
+"""``--runs 10``: the recording appended one sample per run (DECISIONS 44), so replay reads ten."""
+
+
+def run_variance(pytester: pytest.Pytester, results: Path) -> Path:
+    """Replay the variance suite under ``--runs 10`` against the copied tapes."""
+    pytester.runpytest_subprocess(
+        "live/test_live_variance.py",
+        "--runs",
+        str(RUNS),
+        "--cassette-dir",
+        "live/cassettes-n10",
+        "--baseline-dir",
+        ".probatio/baseline-live-n10",
+        "--probatio-model",
+        MODEL,
+        "--probatio-results",
+        str(results),
+    )
+    assert results.exists(), "the variance suite wrote no results file"
+    return results
+
+
+def test_the_variance_suite_replays_to_the_committed_results(
+    pytester: pytest.Pytester, live: Path
+) -> None:
+    """Ten runs a case, every pass rate and every interval reproduced from the tapes."""
+    replayed = read_results(run_variance(pytester, pytester.path / "n10.json"))
+    committed = read_results(LIVE / "results" / "live-n10.json")
+
+    assert replayed.runs == committed.runs == RUNS
+    assert {c.case_id for c in replayed.cases} == set(CASE_IDS)
+    assert {c.case_id: c.stability.model_dump() for c in replayed.cases} == {
+        c.case_id: c.stability.model_dump() for c in committed.cases
+    }
+    assert {c.case_id: c.verdict for c in replayed.cases} == {
+        c.case_id: c.verdict for c in committed.cases
+    }
+    states = {case.snapshot.state for case in replayed.cases if case.snapshot is not None}
+    assert states == {"unchanged"}, sorted(states)
+
+
+def test_the_variance_suite_carries_no_relation_and_calls_no_model(
+    pytester: pytest.Pytester, live: Path
+) -> None:
+    """No relation decorator, so no variant call; and the tapes hold exactly what was recorded.
+
+    Zero inner calls is asserted the way this module's Phase 12 tests assert it: the configured
+    provider is the default ``fake``, whose ``FAKE(<hash>)`` fallback carries no reference wording
+    and no gradeable claim, and pointing the same run at a directory with no tapes raises instead
+    of answering.
+    """
+    replayed = read_results(run_variance(pytester, pytester.path / "n10.json"))
+    assert [relation for case in replayed.cases for relation in case.relations] == []
+
+    tape = json.loads(
+        (live / "cassettes-n10" / "test_live_variance" / "g-su-001.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    samples = [c for i in tape["interactions"] for c in i["completions"]]
+    assert len(samples) == 2 * RUNS, "ten answers and ten gradings is what --runs 10 records"
+    assert all("FAKE(" not in completion["text"] for completion in samples)
+
+    missing = pytester.runpytest_subprocess(
+        "live/test_live_variance.py",
+        "--runs",
+        str(RUNS),
+        "--cassette-dir",
+        "no-such-cassettes",
+        "--baseline-dir",
+        ".probatio/baseline-live-n10",
+        "--probatio-model",
+        MODEL,
+    )
+    assert missing.ret != 0
+    missing.stdout.fnmatch_lines(["*MissingCassetteError*"])
