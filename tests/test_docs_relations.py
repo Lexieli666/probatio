@@ -37,24 +37,50 @@ def test_all_four_reference_keys_are_listed() -> None:
         assert f"`{key}`" in references, key
 
 
-def test_the_references_defer_their_details_to_phase_13() -> None:
+def test_every_reference_entry_carries_the_details_verified_in_phase_13() -> None:
+    """Phase 13 replaced the four placeholders; every entry now names a venue, a year and a DOI."""
     references = TEXT.split("## References", 1)[1]
-    assert "verified and filled in in Phase 13" in references
-    assert "provisional" in references
+    entries = [line for line in references.splitlines() if line.startswith("- `[")]
+    assert len(entries) == len(KEYS) + 1  # the four relation keys, plus [MTF] for the README
+    for entry in entries:
+        block = references.split(entry, 1)[1].split("\n- `[", 1)[0]
+        text = entry + block
+        assert re.search(r"\b(20)\d{2}\b", text), entry
+        assert re.search(r"DOI \[10\.\d{4,}/", text), entry
 
 
-def test_no_reference_invents_a_year_a_doi_or_a_venue() -> None:
-    """Spec §7 and CLAUDE.md: no fact in the docs that a committed source does not support.
-
-    Only the entries themselves are checked, not the paragraph above them that promises the
-    authors, venue, year and DOI are filled in in Phase 13.
-    """
+def test_the_references_are_the_ones_verified_against_crossref() -> None:
+    """The five DOIs checked on 2026-09-05; a sixth entry would be one nobody verified."""
     references = TEXT.split("## References", 1)[1]
-    entries = "\n".join(line for line in references.splitlines() if line.startswith("- `["))
-    assert entries.count("- `[") == len(KEYS)
-    assert re.search(r"\b(19|20)\d{2}\b", entries) is None
-    for invention in ("doi", "arxiv", "proceedings", "et al., "):
-        assert invention not in entries.lower()
+    assert "Verified on 2026-09-05 against Crossref" in references
+    dois = set(re.findall(r"DOI \[(10\.[^\]]+)\]", references))
+    assert dois == {
+        "10.1109/ASE63991.2025.00385",
+        "10.1109/ICSME64153.2025.00025",
+        "10.1145/3143561",
+        "10.1109/TSE.2016.2532875",
+        "10.1145/3787120.3787123",
+    }, dois
+
+
+def test_every_doi_link_points_at_the_doi_it_names() -> None:
+    references = TEXT.split("## References", 1)[1]
+    for doi, href in re.findall(r"DOI \[(10\.[^\]]+)\]\(([^)]+)\)", references):
+        assert href == f"https://doi.org/{doi}", doi
+
+
+def test_the_catalogue_size_is_attributed_to_the_abstract_that_states_it() -> None:
+    """The abstract of [MR-CATALOG-NLP] gives 191 relations, where the brief said "about 190"."""
+    references = TEXT.split("## References", 1)[1]
+    entry = references.split("- `[MR-CATALOG-NLP]`", 1)[1].split("\n- `[", 1)[0]
+    assert "**191**" in entry
+    assert "abstract" in entry
+
+
+def test_the_doc_claims_no_relation_of_its_own() -> None:
+    """05 §5: the contribution is the packaging, and the doc has to say so where it cites."""
+    references = TEXT.split("## References", 1)[1]
+    assert "claims no new relation" in references
 
 
 def test_the_recipe_lists_its_four_steps() -> None:

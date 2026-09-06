@@ -55,7 +55,36 @@ def test_the_doc_covers_the_sections_the_specification_asks_for(heading: str) ->
 def test_no_pass_rate_in_the_doc_is_quoted_from_a_run_that_is_not_committed() -> None:
     """The only numbers here are arithmetic; the demo's own figures live in PROGRESS.md."""
     quoted = set(re.findall(r"\b0\.\d\d\b", TEXT))
-    assert quoted <= {"0.57", "0.72", "0.80", "1.00"}, quoted
+    assert quoted <= {"0.00", "0.38", "0.57", "0.72", "0.80", "0.90", "1.00"}, quoted
+
+
+def test_the_stability_score_the_doc_explains_is_the_mean_of_the_rates_the_run_printed() -> None:
+    """Phase 13: the doc reads `0.90` off the committed run's own cases table, so re-derive it."""
+    progress = (Path(__file__).resolve().parents[1] / "PROGRESS.md").read_text(encoding="utf-8")
+    block = progress.split("pytest examples/demo_suite --runs 5", 1)[1].split("```", 2)[1]
+    rows = [line for line in block.splitlines() if "[0." in line]
+    rates = [float(line.split()[3]) for line in rows]
+    assert len(rates) == 12
+    assert sorted(rates) == [0.0, 0.8] + [1.0] * 10
+    assert f"{sum(rates) / len(rates):.2f}" == "0.90"
+    assert f"stability score: {sum(rates) / len(rates):.2f} over {len(rates)} repeated case(s)" in (
+        TEXT
+    )
+
+
+def test_the_flaky_lower_bound_the_doc_quotes_is_the_one_wilson_computes() -> None:
+    low, _ = wilson_interval(4, 5)
+    assert f"whose observed 0.80 still has a lower bound of {low:.2f}" in TEXT
+
+
+def test_the_doc_points_at_the_commit_that_produced_the_run_it_quotes() -> None:
+    assert "commit `4c2114e`" in TEXT
+
+
+def test_per_run_fixture_isolation_is_named_as_roadmap_and_not_as_shipped() -> None:
+    fixtures = TEXT.split("## What `--runs` does to fixtures", 1)[1]
+    assert "on the roadmap" in fixtures
+    assert "is not in v0.1" in " ".join(fixtures.split())
 
 
 def test_the_doc_warns_that_the_below_floor_count_needs_a_long_enough_run() -> None:

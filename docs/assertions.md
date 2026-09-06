@@ -237,10 +237,33 @@ Read down the column to pick a `tau`:
   a `tau` above about 0.85 is testing for a template, not for meaning.
 - **0.453** — the same claim in genuinely different words. A case whose wording is free to move
   needs its floor somewhere below this line. `examples/demo_suite/cases/` commits `tau: 0.30` and
-  `tau: 0.35`; those are the two values this repository has actually run. No general recommended
-  range appears here, because none has been measured yet: Phase 11's Consilium data is what will
-  produce one, and until it does a number in this document would be invention.
+  `tau: 0.35`; those are the two values this repository has actually run.
 - **0.223** — same topic, contradictory claim. Above this line is where similarity stops
   discriminating and a judge starts being the right tool.
 - **0.000** — a refusal. Short outputs share almost nothing with a long reference, which is what
   makes similarity a serviceable refusal detector and a poor correctness one.
+
+### What real answers score
+
+The table above is five hand-written pairs. `examples/consilium/` is thirty real answers to fifteen
+real questions, each scored against that question's hand-written reference answer, and it is the
+only measured basis this repository has for choosing a `tau`. From
+`examples/consilium/results/replay-unpriced.json`:
+
+| answers | n | lowest | highest | median |
+|---|---|---|---|---|
+| `test_baseline` — `baseline_llm`, one grounded call | 15 | 0.443 | 0.649 | 0.538 |
+| `test_full` — the multi-agent pipeline | 15 | 0.398 | 0.705 | 0.574 |
+
+Every one of the thirty is above the `tau: 0.30` those cases commit — the worst of them, 0.398,
+sits 0.098 above the floor — and every one is below the 0.923 that a moved clause scores in the
+table above. The shape of the advice is therefore: **a floor for free-form prose belongs just
+under the band its own answers occupy, not near the middle of [0, 1]**. That is what makes it fire
+when an answer stops being about the question rather than when it is reworded.
+
+No single recommended number follows from this, for two reasons. Thirty answers to fifteen
+questions from one corpus, in one domain, at one answer length, is a band and not a distribution;
+and the band moves with what the reference is — a fixed line compared against itself lives up
+where 0.923 is, and a floor read off this table would be uselessly low for it. Measure your own
+suite once: run it, read the similarity scores out of `--probatio-results`, and put the floor
+under them, rather than borrowing a number from this one.
