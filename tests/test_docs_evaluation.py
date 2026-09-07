@@ -362,11 +362,16 @@ def _section_7_rows() -> list[tuple[str, str, str]]:
     return rows
 
 
-def test_section_7_lists_the_three_decisions_the_dogfood_suites_exposed() -> None:
-    """Phase 13: DECISIONS 90, 92 and 95, each with the commit that fixed it."""
+def test_section_7_lists_the_four_decisions_the_dogfood_suites_exposed() -> None:
+    """Phase 13: DECISIONS 90, 92 and 95; Phase 15 adds 106. Each with the commit that fixed it."""
     rows = _section_7_rows()
-    assert [entry for entry, _, _ in rows] == ["DECISIONS 90", "DECISIONS 92", "DECISIONS 95"]
-    assert [kind for _, kind, _ in rows] == ["defect", "defect", "gap"]
+    assert [entry for entry, _, _ in rows] == [
+        "DECISIONS 90",
+        "DECISIONS 92",
+        "DECISIONS 95",
+        "DECISIONS 106",
+    ]
+    assert [kind for _, kind, _ in rows] == ["defect", "defect", "gap", "defect"]
 
 
 def test_every_decision_section_7_names_exists_in_decisions_md() -> None:

@@ -225,7 +225,7 @@ states that caveat for `ClaudeCLIProvider` generally.
 ## 7. What dogfooding found about Probatio itself
 
 The Consilium suites were built to test Consilium's answers. They also tested Probatio, and they
-found three things nine phases of unit tests and `pytester` sessions had not. Each is recorded as
+found four things nine phases of unit tests and `pytester` sessions had not. Each is recorded as
 a numbered decision and fixed in a named commit; none was found by review.
 
 | # | what the suites exposed | kind | fixed in |
@@ -233,6 +233,7 @@ a numbered decision and fixed in a named commit; none was found by review.
 | DECISIONS 90 | The cassette store's active case covered the system under test only, so a `judge` call — made while the case's assertions are being evaluated — and every relation-variant call reached the store with no case to file under. The first live recording died on its first case with `a cassette call was made outside a case`. | defect | `528333f` |
 | DECISIONS 92 | `validate-judge --run-judge` propagated an unparsable judge reply, so one bad row in forty ended a forty-row run. Against a real model that is roughly one row in eight, which makes a whole-command retry succeed about one time in sixty. | defect | `3ffde31` |
 | DECISIONS 95 | `ClaudeCLIProvider.timeout_s` had been a constructor argument since Phase 2 with no flag reaching it, so a developer recording on a throttled plan could not raise the 120-second default without writing their own `provider` fixture. | gap | `15651f2` |
+| DECISIONS 106 | The single-sample note fired on judge interactions as well as on the interaction the runs draw from. A judge prompt carries the answer it grades, so under `--runs N` each run keys its own judge tape of one sample; the first replay of the variance suite told the reader fifteen times that a pass rate could only be 0 or 1, beside the table in §8.1 that reads 0.90, 0.80 and 0.20. | defect | `c558c3c` |
 
 **Why the first two survived nine phases.** Both live in the seam between two features that had
 never been exercised together. No suite before `examples/consilium/live/` had combined a cassette
@@ -251,7 +252,13 @@ distinction between "the code is wrong" and "the code cannot be reached from whe
 is invisible from inside a test suite and obvious the first time somebody uses the tool for
 something they actually wanted.
 
-Two smaller corrections came out of the same work and are recorded with them: the validation
+**The fourth arrived three phases later, from the first suite to run a judge under `--runs N`.**
+It is the same shape as the first two — a note whose condition was written for one kind of call
+and applied to every kind — and it was invisible until a recording existed in which those two
+kinds behaved differently. Nothing about it needed a live model to find; it needed a suite that
+graded and repeated at the same time, and Phase 15's is the first.
+
+Two smaller corrections came out of the Phase 12 work and are recorded with it: the validation
 record's `labels_file` now goes through `artefacts.display_path` so a committed record names the
 repository rather than a home directory (DECISIONS 93, commit `ceed3f9`), and `Judge.parse` quotes
 the reply it could not parse, which is what let one real truncated reply become
@@ -375,6 +382,12 @@ than `g-md-018` coincided with a judge call that did not return a passing verdic
 suite the judge — not the answer — is where almost all the run-to-run movement is. Experiment B then shows that most of *that* is the
 judge failing to produce a verdict rather than producing a different one: on identical input,
 fourteen of fifteen cases never changed their mind, and one did.
+
+That unanimity on fourteen of fifteen cases is also the answer to what `docs/CASE_STUDY.md` §2's
+judge-driven relation flips are made of — the answers varying under a judge that mostly repeats
+itself, not a judge changing its mind about the same text — and the **9 of the 150** gradings that
+returned no parsable JSON belong with them as an observation about the provider (DECISIONS 92, 94)
+rather than as a judge disagreeing with itself.
 
 What this does not show: that the same holds for other suites, other rubrics, other models or
 other question types; that 0.88 is a stability score to expect anywhere else; or that ten runs is

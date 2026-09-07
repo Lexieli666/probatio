@@ -1908,6 +1908,16 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   the whole command, which the arithmetic above rules out. Note that the assertion path never had
   this problem: `assertions/judge.py` already turns `JudgeOutputError` into a failed
   `AssertionResult` and never raises, as spec §3.5 requires; the asymmetry was in the CLI alone.
+- **Correction, 2026-09-06 (Phase 15).** The rejected-alternatives paragraph above calls 124 "the
+  live suite's recorded judge calls". It is not. The fifteen tapes committed under
+  `examples/consilium/live/cassettes/test_live/` hold 278 interactions, of which 139 are judge
+  calls: one for each of the fifteen cases and one for each of the 124 variants the four relations
+  generate from them. 124 was the variant count, and the judge graded the original answer as well
+  as every variant's. The original text is left as written. Its argument does not turn on the
+  figure — a judge validated under different CLI flags would not be the judge whose verdicts the
+  suite reports, whether that judge was asked 124 times or 139 — and this file records what was
+  decided when it was decided, so a wrong number in it is corrected beneath the entry rather than
+  inside it.
 
 ## 93. The validation record's `labels_file` is rootdir-relative, like every other persisted path
 
@@ -2349,3 +2359,27 @@ DECISIONS 61, which is raised from `pytest_addoption`.
   runbook's §3 is a position in a document that was never written; §8 is a position in the one
   that was. The prompt for this phase allows exactly this ("or a new section if 3 is taken by the
   relation table"). The open question §8 answers is stated in **§2**, and §8 names it that way.
+
+## 110. `Unreleased` lists the single-sample fix and the two live studies, and nothing else
+
+- **Date:** 2026-09-06 (after Phase 15)
+- **Q:** Three candidates were named for the changelog's `Unreleased` section: the DECISIONS 106
+  fix, the two additions under `examples/consilium/live/`, and the rule that a replay of a live
+  tape must carry `--probatio-model`. Which of them belong in a section that describes what changed
+  since `0.1.0`?
+- **A:** The first two. The `--probatio-model` rule is not listed. DECISIONS 91 settled it in
+  Phase 12, three phases before the release, and settled it by changing no code at all — the rule
+  is DECISIONS 43's cassette key working as written, and the fix was to the commands in
+  `examples/consilium/live/README.md`. A user upgrading from `0.1.0` meets exactly the behaviour
+  `0.1.0` shipped. Two smaller consequences of the entries that are listed: `docs/PROVENANCE.md`
+  gains a `re:DECISIONS \d+` row under "numerals that are not measurements", because the changelog
+  now cites a decision by number and the sweep would otherwise read `106` as an unsourced figure;
+  and the sentence `CHANGELOG.md` already makes — that it states no measurement — is kept, so
+  neither new entry prints a count or a rate.
+- **Why:** A changelog that lists a rule the previous release already enforced tells a reader to
+  look for a migration that does not exist, and the next reader cannot tell that entry apart from
+  the ones that do describe a change. The place for a rule that was always true is the
+  documentation of the command it governs, which is where it already is. The rejected alternative
+  was an `Unreleased` note under a "clarified" heading; it was rejected because
+  `CHANGELOG.md`'s own preamble commits the file to Keep a Changelog's headings, none of which
+  means "this did not change".

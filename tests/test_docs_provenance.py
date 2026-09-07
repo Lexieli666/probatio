@@ -484,19 +484,27 @@ def test_the_case_study_section_links_the_repository_the_dogfood_suite_names() -
     assert f"[Consilium-Health]({url})" in readme
 
 
+WORDS: Final = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven"}
+
+
 def test_the_case_study_section_points_at_what_dogfooding_found_about_probatio() -> None:
-    """The three defects are a finding about the tool, so the case study has to name them."""
+    """What the suites found is a finding about the tool, so the README has to count them all.
+
+    The counts are read out of §7's own table rather than written here, so a row added to that
+    table without a matching edit to the README fails this test instead of going unnoticed.
+    """
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
     section = readme.split("## Case study", 1)[1].split("\n## ", 1)[0]
-    assert "three things wrong with Probatio itself" in section
     assert "docs/EVALUATION.md) §7" in section
 
     evaluation = (REPO_ROOT / "docs" / "EVALUATION.md").read_text(encoding="utf-8")
     seven = evaluation.split("## 7. What dogfooding found about Probatio itself", 1)[1]
     listed = [line for line in seven.splitlines() if line.startswith("| DECISIONS ")]
-    assert len(listed) == 3, listed
     kinds = [line.strip("|").split("|")[2].strip() for line in listed]
-    assert kinds.count("defect") == 2 and kinds.count("gap") == 1
+    assert kinds.count("defect") + kinds.count("gap") == len(listed), kinds
+
+    assert f"{WORDS[len(listed)]} things wrong with Probatio itself" in section
+    assert f"{WORDS[kinds.count('defect')]} defects and {WORDS[kinds.count('gap')]} gap" in section
 
 
 def test_the_quick_starts_not_applicable_claim_is_true_of_the_case_it_shows() -> None:

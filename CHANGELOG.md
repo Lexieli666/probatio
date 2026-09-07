@@ -12,6 +12,29 @@ This file states no measurement. Every figure Probatio has produced about itself
 produced it in [`docs/PROVENANCE.md`](docs/PROVENANCE.md); repeating a number here would be a
 second copy with no test behind it.
 
+## [Unreleased]
+
+### Fixed
+
+- **The single-sample note is made for the interaction that defines a case's runs, not for every
+  interaction.** A judge call's prompt carries the answer it is grading, so under `--runs N` a
+  case's tape holds one judge interaction per run, each with exactly one recorded sample. The note
+  that warns a reader when a one-sample tape pins a case's pass rate therefore fired on every
+  judged case, beside pass rates the tapes had genuinely measured over N answers. It is now
+  suppressed while a judge is speaking; the system-under-test interaction, whose samples the runs
+  actually draw from, still notes (DECISIONS 106).
+
+### Added
+
+- **The repetition study under `examples/consilium/live/`**, in two parts, both offline from
+  committed tapes. `test_live_variance.py` answers the live cases repeatedly under `--runs N` and
+  reports a per-case pass rate, a Wilson interval and a suite stability score.
+  `judge_repeatability.py` holds the answer still: it reads each case's recorded answer off the
+  committed tape by cassette key and asks the same judge, with the same rubric and the same prompt
+  template, to grade those exact bytes repeatedly, writing `results/judge-repeatability.json`. Both
+  are written up in [`docs/EVALUATION.md`](docs/EVALUATION.md) §8; recording either one is a live
+  step a human runs deliberately, as `examples/consilium/live/README.md` says.
+
 ## [0.1.0] — 2026-09-06
 
 First release. Probatio is a pytest plugin for regression-testing LLM applications, distributed as
