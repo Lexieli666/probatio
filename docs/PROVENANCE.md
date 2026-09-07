@@ -153,9 +153,9 @@ python examples/consilium/live/judge_repeatability.py --replay
 | `2/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance runs-passed | R4 |
 | `0.88` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.md` | text | R4 |
 | `$3.690520` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.md` | text | R4 |
-| `9 of 15` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance disagreeing | R4 |
+| `9 of 15` | `docs/EVALUATION.md`, `README.md` | `examples/consilium/live/results/live-n10.json` | variance disagreeing | R4 |
 | `15 of 15` | `docs/EVALUATION.md` | `examples/consilium/live/results/live-n10.json` | variance below 0.8 | R4 |
-| `4 of 10` | `docs/EVALUATION.md` | `examples/consilium/live/cases` | variance-assertion g-md-018 contains 10 | R4 |
+| `4 of 10` | `docs/EVALUATION.md`, `docs/CASE_STUDY.md` | `examples/consilium/live/cases` | variance-assertion g-md-018 contains 10 | R4 |
 | `7/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat passes | R5 |
 | `3/10` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat passes | R5 |
 | `0.89` | `docs/EVALUATION.md` | `examples/consilium/live/results/judge-repeatability.json` | judge-repeat score | R5 |
@@ -203,6 +203,7 @@ is fixed; `re:` marks a pattern rather than a literal.
 | `re:claude-opus-5` | a model name | `examples/consilium/live/README.md` |
 | `re:gpt-4o-mini-2024-07-18` | a model name | `examples/consilium/README.md` |
 | `re:§\d+(\.\d+)?` | a section reference | — |
+| `re:DECISIONS \d+` | a reference to a numbered entry in `DECISIONS.md` | `DECISIONS.md` |
 | `re:Phases? \d+( and \d+)?` | a phase reference | `PROGRESS.md` |
 
 ## Which test guards which document

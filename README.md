@@ -208,11 +208,14 @@ eight snapshots drifted, three of them on cases whose every assertion still pass
 the question; and that the cheaper recording cost **$0.987356 against $6.037457** in notional API
 price, a six-fold difference. It is prospective in form — suite first, change second, outcome
 unknown in advance — and it is on a system under test built for the purpose, not on a shipping
-application. The case study says so in those words.
+application. The case study says so in those words, and its counts are a single
+draw: a variance seed that answered the same fifteen cases ten times found **9 of 15** of them had
+at least one run whose verdict disagreed with the case's own majority, with the per-case rates and
+intervals in [`docs/EVALUATION.md`](docs/EVALUATION.md) §8.
 
-Dogfooding also found three things wrong with Probatio itself — two defects and one gap that nine
-phases of unit tests had not reached — all fixed during Phase 12 and listed with the commit that
-fixed each in [`docs/EVALUATION.md`](docs/EVALUATION.md) §7.
+Dogfooding also found four things wrong with Probatio itself — three defects and one gap that nine
+phases of unit tests had not reached — each fixed in Phase 12 or Phase 15 and listed with the
+commit that fixed it in [`docs/EVALUATION.md`](docs/EVALUATION.md) §7.
 
 ## Design positions
 

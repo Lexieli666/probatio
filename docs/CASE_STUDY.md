@@ -194,6 +194,11 @@ red-flag instrument, the cheaper model scored better — and it still failed the
 which marked a claim about the document's own scope unsupported. A single headline verdict would
 have hidden both halves of that.
 
+That opus failure is one draw. Phase 15 answered the same case ten more times and the escalation
+`contains` assertion passed **4 of 10** of them, so what is reported above as the failure is one
+outcome of an assertion this suite is not stable on; `docs/EVALUATION.md` §8 has the ten runs and
+the interval around them.
+
 ### 2.4 What this is, and what it is not
 
 This is a **prospective** catch in form: the suite was written, then a change was made, then the
