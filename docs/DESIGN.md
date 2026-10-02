@@ -768,7 +768,7 @@ argues against everywhere else.
 
 **The README quotes one run, and names the commit that produced it.** Every figure in the two
 headline-feature sections comes from the `--runs 5` run of the demo suite recorded verbatim in
-`PROGRESS.md` at commit `4c2114e`, and the README says so in the sentence beside the excerpt. The
+`PROGRESS.md` at commit `20470e7`, and the README says so in the sentence beside the excerpt. The
 alternative was to re-run the suite while writing the README and paste the fresh output, which is
 what most projects do and which produces a README nobody can reproduce: the reader has no way to
 tell which commit's behaviour they are looking at, and the next change to a table's column widths

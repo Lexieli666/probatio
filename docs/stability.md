@@ -52,7 +52,7 @@ one.
 
 ## What a committed run says
 
-`pytest examples/demo_suite --runs 5`, run at commit `4c2114e` and quoted in full in
+`pytest examples/demo_suite --runs 5`, run at commit `20470e7` and quoted in full in
 `PROGRESS.md`, ends its `probatio` section with these two lines:
 
 ```

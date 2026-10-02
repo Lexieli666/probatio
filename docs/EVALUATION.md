@@ -230,10 +230,10 @@ a numbered decision and fixed in a named commit; none was found by review.
 
 | # | what the suites exposed | kind | fixed in |
 |---|---|---|---|
-| DECISIONS 90 | The cassette store's active case covered the system under test only, so a `judge` call — made while the case's assertions are being evaluated — and every relation-variant call reached the store with no case to file under. The first live recording died on its first case with `a cassette call was made outside a case`. | defect | `528333f` |
-| DECISIONS 92 | `validate-judge --run-judge` propagated an unparsable judge reply, so one bad row in forty ended a forty-row run. Against a real model that is roughly one row in eight, which makes a whole-command retry succeed about one time in sixty. | defect | `3ffde31` |
-| DECISIONS 95 | `ClaudeCLIProvider.timeout_s` had been a constructor argument since Phase 2 with no flag reaching it, so a developer recording on a throttled plan could not raise the 120-second default without writing their own `provider` fixture. | gap | `15651f2` |
-| DECISIONS 106 | The single-sample note fired on judge interactions as well as on the interaction the runs draw from. A judge prompt carries the answer it grades, so under `--runs N` each run keys its own judge tape of one sample; the first replay of the variance suite told the reader fifteen times that a pass rate could only be 0 or 1, beside the table in §8.1 that reads 0.90, 0.80 and 0.20. | defect | `c558c3c` |
+| DECISIONS 90 | The cassette store's active case covered the system under test only, so a `judge` call — made while the case's assertions are being evaluated — and every relation-variant call reached the store with no case to file under. The first live recording died on its first case with `a cassette call was made outside a case`. | defect | `25d8bd0` |
+| DECISIONS 92 | `validate-judge --run-judge` propagated an unparsable judge reply, so one bad row in forty ended a forty-row run. Against a real model that is roughly one row in eight, which makes a whole-command retry succeed about one time in sixty. | defect | `17ed261` |
+| DECISIONS 95 | `ClaudeCLIProvider.timeout_s` had been a constructor argument since Phase 2 with no flag reaching it, so a developer recording on a throttled plan could not raise the 120-second default without writing their own `provider` fixture. | gap | `1267fa0` |
+| DECISIONS 106 | The single-sample note fired on judge interactions as well as on the interaction the runs draw from. A judge prompt carries the answer it grades, so under `--runs N` each run keys its own judge tape of one sample; the first replay of the variance suite told the reader fifteen times that a pass rate could only be 0 or 1, beside the table in §8.1 that reads 0.90, 0.80 and 0.20. | defect | `f5b6d1a` |
 
 **Why the first two survived nine phases.** Both live in the seam between two features that had
 never been exercised together. No suite before `examples/consilium/live/` had combined a cassette
@@ -260,7 +260,7 @@ graded and repeated at the same time, and Phase 15's is the first.
 
 Two smaller corrections came out of the Phase 12 work and are recorded with it: the validation
 record's `labels_file` now goes through `artefacts.display_path` so a committed record names the
-repository rather than a home directory (DECISIONS 93, commit `ceed3f9`), and `Judge.parse` quotes
+repository rather than a home directory (DECISIONS 93, commit `b0ff3b9`), and `Judge.parse` quotes
 the reply it could not parse, which is what let one real truncated reply become
 `tests/fixtures/claude_cli_truncated_judge_reply.txt` instead of an invented one (DECISIONS 94,
 same commit).

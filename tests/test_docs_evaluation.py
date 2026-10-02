@@ -385,7 +385,7 @@ def test_every_commit_section_7_names_is_in_this_repositorys_history() -> None:
     """A commit hash is a claim about a file; `git cat-file` is the file."""
     import subprocess
 
-    for _, _, commit in _section_7_rows() + [("", "", "ceed3f9")]:
+    for _, _, commit in _section_7_rows() + [("", "", "b0ff3b9")]:
         completed = subprocess.run(
             ["git", "cat-file", "-t", commit],
             cwd=REPO_ROOT,

@@ -49,7 +49,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples` (and on the new repository-level `conftest.py`, which is outside the gate's
   paths); `mypy --strict src/probatio` clean (11 source files); `examples/demo_suite/` byte-identical
-  to 8a998af, its introducing commit, with `git status --porcelain` on it empty. Shipped
+  to 0f6d248, its introducing commit, with `git status --porcelain` on it empty. Shipped
   `errors.py`, `hashing.py`, `case.py` and `providers/` (`base`, `fake`, `anthropic`, `claude_cli`);
   `probatio/__init__.py` exports `LLMCase`, `load_cases`, `Completion`, `Provider`, `FakeProvider`,
   `ScriptedProvider` and the eight error classes. `load_cases` returns the demo suite's ten cases in
@@ -65,7 +65,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-03 — **Phase 3** — gate green: `pytest -q` 229 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples` (and on the transitional repository-level `conftest.py`); `mypy --strict
-  src/probatio` clean (19 source files); `examples/demo_suite/` byte-identical to 8a998af, with
+  src/probatio` clean (19 source files); `examples/demo_suite/` byte-identical to 0f6d248, with
   `git status --porcelain` on it empty. Shipped `assertions/` (`result`, `backends`, `contains`,
   `schema`, `similarity`, `judge`) and `runner.py`; `probatio/__init__.py` adds `AssertionResult`.
   `evaluate_case` runs every assertion in declaration order and returns one result each; the
@@ -80,7 +80,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-03 — **Phase 4** — gate green: `pytest -q` 357 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (25 source files);
-  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  `examples/demo_suite/` byte-identical to 0f6d248 with `git status --porcelain` on it empty.
   Shipped `judge/` (`prompt`, `rubric`, `core`, `kappa`, `validation`) and
   `cli.py`'s `validate-judge`; `assertions/judge.py` now grades, keeping its
   `judge_provider is None` branch unchanged. Cohen's kappa reproduces the numbers published in
@@ -113,7 +113,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-03 — **Phase 5** — gate green: `pytest -q` 390 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (26 source files);
-  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  `examples/demo_suite/` byte-identical to 0f6d248 with `git status --porcelain` on it empty.
   Shipped `snapshot.py`: `Baseline`, `BaselineAssertion`, `SnapshotResult`, `BaselineStore` and
   `prompt_hash`. The store is constructed with a `baseline_dir` (default
   `Path.cwd() / ".probatio" / "baseline"`; Phase 9's plugin passes the rootdir-based and
@@ -145,7 +145,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-04 — **Phase 6** — gate green: `pytest -q` 444 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (27 source files);
-  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  `examples/demo_suite/` byte-identical to 0f6d248 with `git status --porcelain` on it empty.
   Shipped `budget.py`: `ModelPrice`, `PriceTable`, `price_completions`, `case_cost`,
   `evaluate_budget` and `SuiteBudget`. `PriceTable.load` reads a YAML mapping of model name to
   `{input_per_mtok, output_per_mtok}`; an unknown key, a negative price and a price that is not a
@@ -187,7 +187,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-04 — **Phase 7** — gate green: `pytest -q` 517 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (29 source files);
-  `examples/demo_suite/` byte-identical to 8a998af with `git status --porcelain` on it empty.
+  `examples/demo_suite/` byte-identical to 0f6d248 with `git status --porcelain` on it empty.
   Shipped `cassette.py` (`interaction_key`, `Interaction`, `Cassette`, `ActiveCase`,
   `CassetteStore`, `CassetteProvider`, `ImportedCall`, `parse_trace_line`, `read_trace`,
   `import_cassettes`) and `cli.py`'s `import-cassettes`. `CassetteProvider(inner, store, mode)`
@@ -242,7 +242,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-04 — **Phase 8** — gate green: `pytest -q` 653 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples` (and on the transitional repository-level `conftest.py`); `mypy --strict
-  src/probatio` clean (35 source files); `examples/demo_suite/` byte-identical to 8a998af with
+  src/probatio` clean (35 source files); `examples/demo_suite/` byte-identical to 0f6d248 with
   `git status --porcelain` on it empty. Shipped `metamorphic/` (`base`, `relations`, `variants`,
   `evaluate`, `freeze`), `cli.py`'s `freeze-variants`, the `probatio_relation` marker registration
   in `plugin.py`, and `docs/relations.md`; `probatio/__init__.py` adds `order_invariant`,
@@ -305,7 +305,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-04 — **Phase 9** — gate green: `pytest -q` 856 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (44 source files);
-  `examples/demo_suite/` differs from 8a998af by **the one sanctioned edit and nothing else**, with
+  `examples/demo_suite/` differs from 0f6d248 by **the one sanctioned edit and nothing else**, with
   no untracked file inside it. Shipped `stability/` (`wilson`, `stats`), `collector.py`,
   `session.py`, `reporters/` (`tables`, `terminal`, `markdown`) and the whole of `plugin.py`;
   `probatio/__init__.py` now exports spec §6's complete list, adding `flaky_tolerant`,
@@ -408,7 +408,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-04 — **Phase 10** — gate green: `pytest -q` 906 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (46 source files);
-  `examples/demo_suite/` still differs from 8a998af by the one sanctioned Phase 9 edit and nothing
+  `examples/demo_suite/` still differs from 0f6d248 by the one sanctioned Phase 9 edit and nothing
   else, with no untracked file inside it, and `pytest examples/demo_suite --runs 5` reproduces the
   Phase 9 run above **line for line**, tables, rates, warnings and total alike. Shipped
   `reporters/results.py` (`render_results`, `write_results`, `read_results`) and
@@ -485,7 +485,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-04 — **Phase 11** — gate green: `pytest -q` 915 passed, 0 skipped, 0 xfailed; coverage of
   `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on
   `src tests examples`; `mypy --strict src/probatio` clean (46 source files);
-  `examples/demo_suite/` still differs from 8a998af by the one sanctioned Phase 9 edit and nothing
+  `examples/demo_suite/` still differs from 0f6d248 by the one sanctioned Phase 9 edit and nothing
   else, with no untracked file inside it. Shipped `examples/consilium/`: `convert_traces.py`,
   `app.py`, `test_full.py`, `test_baseline.py`, `prices.yaml`, thirty cassettes under
   `cassettes/test_full/` and `cassettes/test_baseline/`, thirty `snapshot: scores` baselines under
@@ -583,13 +583,13 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   `pytest -q` 939 passed, 0 skipped, 0 xfailed; coverage of `src/probatio` 100%
   (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on `src tests examples`;
   `mypy --strict src/probatio` clean (46 source files); `examples/demo_suite/` still differs from
-  8a998af by the one sanctioned Phase 9 edit and nothing else, with no untracked file inside it.
-  **The price-table history, recorded rather than rewritten.** `b0aec38` committed
+  0f6d248 by the one sanctioned Phase 9 edit and nothing else, with no untracked file inside it.
+  **The price-table history, recorded rather than rewritten.** `ebeb52a` committed
   `examples/consilium/results/replay-priced.*` and the thirty `.probatio/baseline-priced/` files as
   a *priced* run, but the run behind them had been made against a `prices.yaml` whose rates were
   still commented out, so every cost in them was unknown and the two "priced" files were the
-  unpriced ones under another name. `c638edd` filled the rates and re-recorded, and was wrong the
-  same way. `e4f10d3` is the correction that holds: `gpt-4o-mini-2024-07-18` at $0.15 input and
+  unpriced ones under another name. `fbd7375` filled the rates and re-recorded, and was wrong the
+  same way. `b98d70e` is the correction that holds: `gpt-4o-mini-2024-07-18` at $0.15 input and
   $0.60 output per Mtok, read off the OpenAI price page (checked 2026-09-04, the URL and the row
   are in `prices.yaml`'s header), with the priced run re-recorded against them — which is where
   `$0.015070` and the per-case figures in `replay-priced.md` come from. The three commits stand as
@@ -628,7 +628,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   middle of its answer, which the test could only check as a substring; it now quotes that
   answer's real opening, verbatim from the tape, so all eight quotations are prefix-checked
   alike. `examples/consilium/README.md`'s provenance row for `prices.yaml` said the rates were
-  commented out, which `e4f10d3` had made stale; it now carries the rates, the date checked, and
+  commented out, which `b98d70e` had made stale; it now carries the rates, the date checked, and
   which of the two committed runs predates them. What the test does not confirm, and cannot:
   §1.3's and §1.4's characterisations of what the answers mean, and
   every claim about Consilium's own repository — `docs/FAILURE_CASES.md` case 1, the red-flag
@@ -668,7 +668,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-05 — **Phase 12** — gate green: `pytest -q` 998 passed, 0 skipped, 0 xfailed;
   coverage of `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and
   `ruff format --check` clean on `src tests examples`; `mypy --strict src/probatio` clean
-  (46 source files); `examples/demo_suite/` still differs from 8a998af by the one sanctioned
+  (46 source files); `examples/demo_suite/` still differs from 0f6d248 by the one sanctioned
   Phase 9 edit and nothing else. **The only phase that called a model**, always through
   `ClaudeCLIProvider` on a Claude plan, never with an API key, and never from the test suite.
   **Live calls: about 940** — 1 preflight, 18 freezing variants, 278 recording the opus suite,
@@ -716,7 +716,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-06 — **Phase 13** — gate green: `pytest -q` 1212 passed, 0 skipped, 0 xfailed;
   coverage of `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and
   `ruff format --check` clean on `src tests examples`; `mypy --strict src/probatio` clean
-  (46 source files); `examples/demo_suite/` still differs from 8a998af by the one sanctioned
+  (46 source files); `examples/demo_suite/` still differs from 0f6d248 by the one sanctioned
   Phase 9 edit and nothing else, with `git status --porcelain` on it empty. **Nothing under `src/`
   or `examples/` changed in this phase**: it is documentation, and the tests that hold the
   documentation to its sources.
@@ -724,7 +724,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   features, and the judge described as **measured agreement** rather than validated, per
   `05-RESUME-AND-INTERVIEW.md` §5); a fifteen-line quick start whose every line but one is
   verbatim from the frozen `examples/demo_suite/`; the two headline features, each quoting the
-  `probatio` section of the committed `--runs 5` run recorded in this file and naming `4c2114e` as
+  `probatio` section of the committed `--runs 5` run recorded in this file and naming `20470e7` as
   the commit that produced it, with `n below floor: 12 of 12` explained in a sentence; the
   prior-art table, captioned "checked against each tool's documentation on 2026-09-05", with the
   pages read listed under it, what is **not** a differentiator said plainly (pytest-native,
@@ -786,8 +786,8 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   recommendation). It is the one document with no figures of its own, so DECISIONS 99 covers it
   from the index instead of a seventh module.
   **`docs/EVALUATION.md` gained §7, "What dogfooding found about Probatio itself"**: DECISIONS 90
-  (the cassette store's active case, fixed in `528333f`), 92 (the judge re-ask, `3ffde31`) and 95
-  (`--probatio-timeout`, `15651f2`) as the two defects and one gap the Consilium suites exposed,
+  (the cassette store's active case, fixed in `25d8bd0`), 92 (the judge re-ask, `17ed261`) and 95
+  (`--probatio-timeout`, `1267fa0`) as the two defects and one gap the Consilium suites exposed,
   with why the two defects survived nine phases and why the third is listed even though nothing
   was wrong with the code. Five new tests check the table's entries exist in `DECISIONS.md` and
   its commits exist in this repository's history.
@@ -809,7 +809,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   Gate green: `pytest -q` 1214 passed, 0 skipped, 0 xfailed; coverage of `src/probatio` 100%
   (`coverage run -m pytest`); `ruff check` and `ruff format --check` clean on `src tests examples`;
   `mypy --strict src/probatio` clean (46 source files); `examples/demo_suite/` still differs from
-  8a998af by the one sanctioned Phase 9 edit and nothing else, with `git status --porcelain` on it
+  0f6d248 by the one sanctioned Phase 9 edit and nothing else, with `git status --porcelain` on it
   empty. **The Phase 14 box is deliberately unticked**: nothing is published, tagged, made public
   or pushed, and the phase is not done until it is.
   **Version.** `__version__ = "0.1.0"` in `src/probatio/__init__.py`, which `pyproject.toml` reads
@@ -848,7 +848,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   sentence explaining that `ClaudeCLIProvider` avoids `--bare` *because* it would switch
   authentication to `ANTHROPIC_API_KEY`; nothing live, no key, no OpenAI adapter.
   `git log --all -S '/Users/lexie' --oneline` lists exactly the three commits already on
-  record and nothing else: `f007344`, `b0aec38`, `4c2114e`. `git ls-files | grep -i -E
+  record and nothing else: `b201c82`, `ebeb52a`, `20470e7`. `git ls-files | grep -i -E
   "package|notes/"` returns nothing at all — no build-package file is tracked under a name that
   matches, and `CLAUDE.md`, the one build-package file that is tracked, does not match the pattern.
   The last check was run exhaustively rather than from the list, by hashing every file in both
@@ -872,8 +872,8 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   of it. DECISIONS 100–102.
 
 - 2026-09-06 — **Phase 14** — published. Repository made public
-  (`gh repo edit --visibility public`, run 34059932746 green on 3.11 and 3.12 at `d958e32`); tag
-  `v0.1.0` on `d958e32` pushed; `twine check` passed on both artefacts and `twine upload` put
+  (`gh repo edit --visibility public`, run 34059932746 green on 3.11 and 3.12 at `50b7007`); tag
+  `v0.1.0` on `50b7007` pushed; `twine check` passed on both artefacts and `twine upload` put
   `probatio-llm 0.1.0` at <https://pypi.org/project/probatio-llm/0.1.0/>; a clean virtualenv
   `pip install probatio-llm==0.1.0` imported `probatio` at `0.1.0` and `pytest --help` listed the
   plugin's options; GitHub release <https://github.com/Lexieli666/probatio/releases/tag/v0.1.0>
@@ -883,7 +883,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 - 2026-09-06 — **Phase 15** — gate green: `pytest -q` 1336 passed, 0 skipped, 0 xfailed;
   coverage of `src/probatio` 100% (`coverage run -m pytest`); `ruff check` and
   `ruff format --check` clean on `src tests examples`; `mypy --strict src/probatio` clean
-  (46 source files); `examples/demo_suite/` still differs from 8a998af by the one sanctioned
+  (46 source files); `examples/demo_suite/` still differs from 0f6d248 by the one sanctioned
   Phase 9 edit and nothing else, with `git status --porcelain` on it empty. **The second phase
   that called a model**, always through `ClaudeCLIProvider` on `claude-opus-5`, the Phase 12
   model, never with an API key, and never from the test suite.

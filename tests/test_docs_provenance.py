@@ -425,9 +425,9 @@ def test_the_readme_quotes_the_committed_run_and_nothing_else() -> None:
 
 def test_the_readme_names_the_commit_the_run_it_quotes_came_from() -> None:
     readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-    assert "run at commit `4c2114e`" in readme
+    assert "run at commit `20470e7`" in readme
     completed = subprocess.run(
-        ["git", "cat-file", "-t", "4c2114e"],
+        ["git", "cat-file", "-t", "20470e7"],
         cwd=REPO_ROOT,
         capture_output=True,
         text=True,

@@ -46,7 +46,7 @@ is what makes that emptiness a fact rather than an intention.
 Five commands recur and are written once here rather than in twenty rows:
 
 ```bash
-# R1 — the demo suite's committed --runs 5 run, quoted in PROGRESS.md at commit 4c2114e
+# R1 — the demo suite's committed --runs 5 run, quoted in PROGRESS.md at commit 20470e7
 pytest examples/demo_suite --runs 5
 
 # R2 — the offline Consilium replay
@@ -198,7 +198,7 @@ is fixed; `re:` marks a pattern rather than a literal.
 | `Pre-1.0` | the release state | `pyproject.toml` |
 | `0.1.0` | the version this release carries, in `CHANGELOG.md`'s heading and link label | `src/probatio/__init__.py` |
 | `re:2026-09-0\d` | dates on which documentation and citations were checked | — |
-| `re:\b4c2114e\b` | the commit that produced R1 | `PROGRESS.md` |
+| `re:\b20470e7\b` | the commit that produced R1 | `PROGRESS.md` |
 | `re:claude-haiku-4-5-20251001` | a model name | `examples/consilium/live/README.md` |
 | `re:claude-opus-5` | a model name | `examples/consilium/live/README.md` |
 | `re:gpt-4o-mini-2024-07-18` | a model name | `examples/consilium/README.md` |

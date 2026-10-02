@@ -78,7 +78,7 @@ def test_the_flaky_lower_bound_the_doc_quotes_is_the_one_wilson_computes() -> No
 
 
 def test_the_doc_points_at_the_commit_that_produced_the_run_it_quotes() -> None:
-    assert "commit `4c2114e`" in TEXT
+    assert "commit `20470e7`" in TEXT
 
 
 def test_per_run_fixture_isolation_is_named_as_roadmap_and_not_as_shipped() -> None:

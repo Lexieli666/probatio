@@ -62,7 +62,7 @@ does not move. Four ship as decorators — `@order_invariant`, `@paraphrase_inva
 never folded into its pass or fail. A violation counts in either direction: a variant that passes
 where the original failed breaks the invariant just as much.
 
-From `pytest examples/demo_suite --runs 5`, run at commit `4c2114e` and recorded verbatim in
+From `pytest examples/demo_suite --runs 5`, run at commit `20470e7` and recorded verbatim in
 [`PROGRESS.md`](PROGRESS.md):
 
 ```
