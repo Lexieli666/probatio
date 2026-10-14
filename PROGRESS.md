@@ -356,7 +356,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
 ```
   ============================= test session starts ==============================
   platform darwin -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0
-  rootdir: /Users/lexie/code/probatio
+  rootdir: ~/code/probatio
   configfile: pyproject.toml
   plugins: probatio-llm-0.1.0.dev0
   collected 12 items
@@ -847,7 +847,7 @@ One line per phase, appended in the phase's own commit: date, phase, gate result
   tests examples` returns exactly one line, `src/probatio/providers/claude_cli.py:51`, a docstring
   sentence explaining that `ClaudeCLIProvider` avoids `--bare` *because* it would switch
   authentication to `ANTHROPIC_API_KEY`; nothing live, no key, no OpenAI adapter.
-  `git log --all -S '/Users/lexie' --oneline` lists exactly the three commits already on
+  `git log --all -S '~' --oneline` lists exactly the three commits already on
   record and nothing else: `b201c82`, `ebeb52a`, `20470e7`. `git ls-files | grep -i -E
   "package|notes/"` returns nothing at all — no build-package file is tracked under a name that
   matches, and `CLAUDE.md`, the one build-package file that is tracked, does not match the pattern.
